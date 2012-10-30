@@ -13,6 +13,7 @@
 		<commons-cli.version>1.2</commons-cli.version>
 		<slf4j.version>1.7.1</slf4j.version>
 		<logback.version>1.0.7</logback.version>
+		<voms-api-java.version>3.0-SNAPSHOT</voms-api-java.version>
 
 	</properties>
 
@@ -63,6 +64,11 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commons-io.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.italiangrid</groupId>
+			<artifactId>voms-api-java</artifactId>
+			<version>${voms-api-java.version}</version>
 		</dependency>
 	</dependencies>
 </project>
