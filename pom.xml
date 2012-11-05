@@ -1,74 +1,99 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.italiangrid</groupId>
-	<artifactId>voms-clients</artifactId>
-	<version>0.1-SNAPSHOT</version>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.italiangrid</groupId>
+  <artifactId>voms-clients</artifactId>
+  <version>0.1-SNAPSHOT</version>
 
-	<name>VOMS clients</name>
+  <name>VOMS clients</name>
 
-	<properties>
+  <properties>
 
-		<commons-io.version>2.0.1</commons-io.version>
-		<commons-cli.version>1.2</commons-cli.version>
-		<slf4j.version>1.7.1</slf4j.version>
-		<logback.version>1.0.7</logback.version>
-		<voms-api-java.version>3.0-SNAPSHOT</voms-api-java.version>
+    <commons-io.version>2.0.1</commons-io.version>
+    <commons-cli.version>1.2</commons-cli.version>
+    <slf4j.version>1.7.1</slf4j.version>
+    <logback.version>1.0.7</logback.version>
+    <voms-api-java.version>3.0-SNAPSHOT</voms-api-java.version>
 
-	</properties>
+  </properties>
 
-	<developers>
-		<developer>
-			<id>dandreotti</id>
-			<name>Daniele Andreotti</name>
-			<email>daniele.andreotti@cnaf.infn.it</email>
-			<organization>INFN CNAF</organization>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-	</developers>
+  <developers>
+    <developer>
+      <id>dandreotti</id>
+      <name>Daniele Andreotti</name>
+      <email>daniele.andreotti@cnaf.infn.it</email>
+      <organization>INFN CNAF</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+  <build>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>${commons-cli.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.italiangrid</groupId>
-			<artifactId>voms-api-java</artifactId>
-			<version>${voms-api-java.version}</version>
-		</dependency>
-	</dependencies>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+      <!-- Maven Assembly Plugin -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
+          <outputDirectory>${project.build.directory}/releases/</outputDirectory>
+          <descriptors>
+            <descriptor>${basedir}/src/main/assemblies/assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>${commons-cli.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.italiangrid</groupId>
+      <artifactId>voms-api-java</artifactId>
+      <version>${voms-api-java.version}</version>
+    </dependency>
+  </dependencies>
 </project>
