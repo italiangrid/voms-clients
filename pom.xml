@@ -14,6 +14,7 @@
     <slf4j.version>1.7.1</slf4j.version>
     <logback.version>1.0.7</logback.version>
     <voms-api-java.version>3.0-SNAPSHOT</voms-api-java.version>
+    <voms-clients.libs/>
 
   </properties>
 

@@ -29,18 +29,21 @@
   <files>
     <file>
       <source>${basedir}/src/main/bash/voms-proxy-init.sh</source>
+      <filtered>true</filtered>
       <destName>voms-proxy-init</destName>
       <outputDirectory>bin</outputDirectory>
       <fileMode>0755</fileMode>
     </file>
     <file>
       <source>${basedir}/src/main/bash/voms-proxy-info.sh</source>
+      <filtered>true</filtered>
       <destName>voms-proxy-info</destName>
       <outputDirectory>bin</outputDirectory>
       <fileMode>0755</fileMode>
     </file>
     <file>
       <source>${basedir}/src/main/bash/voms-proxy-destroy.sh</source>
+      <filtered>true</filtered>
       <destName>voms-proxy-destroy</destName>
       <outputDirectory>bin</outputDirectory>
       <fileMode>0755</fileMode>

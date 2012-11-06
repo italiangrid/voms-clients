@@ -1,31 +1,34 @@
 #!/bin/bash
 #set -x
 
-PRG="$0"
-while [ -h "$PRG" ]; do
-  ls=`ls -ld "$PRG"`
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '/.*' > /dev/null; then
-    PRG="$link"
-  else
-    PRG=`dirname "$PRG"`/"$link"
-  fi
-done
+VOMSCLIENT_LIBS=${voms-clients.libs}
 
-# get standard environment variables
-PRGDIR=`dirname "$PRG"`
+if [ "x$VOMSCLIENT_LIBS" == "x" ]; then
 
-# set HOME, if not already set
-[ -z "$VOMSCLIENTS_HOME" ] && VOMSCLIENTS_HOME=`cd "$PRGDIR/.." ; pwd`
+  PRG="$0"
+  while [ -h "$PRG" ]; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+      PRG="$link"
+    else
+      PRG=`dirname "$PRG"`/"$link"
+    fi
+  done
 
-# location of the dependency jars
-VOMSCLIENTS_LIBS=$VOMSCLIENTS_HOME/lib
+  PRGDIR=`dirname "$PRG"`
+
+  VOMSCLIENTS_HOME=`cd "$PRGDIR/.." ; pwd`
+
+  VOMSCLIENTS_LIBS=$VOMSCLIENTS_HOME/lib
+
+fi
 
 # ':' separated list of jars, for the classpath
 VOMSCLIENTS_DEPS=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 
 # location of the voms-clients jar file
-VOMSCLIENTS_JAR="$VOMSCLIENTS_HOME/lib/voms-clients.jar"
+VOMSCLIENTS_JAR="$VOMSCLIENTS_LIBS/voms-clients.jar"
 
 # the classpath
 VOMSCLIENTS_CP="$VOMSCLIENTS_DEPS$VOMSCLIENTS_JAR"
