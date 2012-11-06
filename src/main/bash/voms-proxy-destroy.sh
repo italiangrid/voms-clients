@@ -25,15 +25,9 @@ if [ "x$VOMSCLIENT_LIBS" == "x" ]; then
 fi
 
 # ':' separated list of jars, for the classpath
-VOMSCLIENTS_DEPS=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
+VOMSCLIENTS_CP=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 
-# location of the voms-clients jar file
-#VOMSCLIENTS_JAR="$VOMSCLIENTS_LIBS/voms-clients.jar"
-
-# the classpath
-VOMSCLIENTS_CP="$VOMSCLIENTS_DEPS$VOMSCLIENTS_JAR"
-
-# the name of the class implementing voms-proxy-destroy
+# the class implementing voms-proxy-destroy
 VOMSPROXYDESTROY_CLASS="org.italiangrid.vomsclients.VomsProxyDestroy"
 
 java -DeffectiveUserId=$EUID -cp $VOMSCLIENTS_CP $VOMSPROXYDESTROY_CLASS "$@"

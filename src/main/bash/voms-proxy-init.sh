@@ -25,13 +25,7 @@ if [ "x$VOMSCLIENT_LIBS" == "x" ]; then
 fi
 
 # ':' separated list of jars, for the classpath
-VOMSCLIENTS_DEPS=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
-
-# location of the voms-clients jar file
-VOMSCLIENTS_JAR="$VOMSCLIENTS_LIBS/voms-clients.jar"
-
-# the classpath
-VOMSCLIENTS_CP="$VOMSCLIENTS_DEPS$VOMSCLIENTS_JAR"
+VOMSCLIENTS_CP=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 
 # the class implementing voms-proxy-init
 VOMSPROXYINIT_CLASS="org.italiangrid.vomsclients.VomsProxyInit"
