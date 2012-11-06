@@ -39,6 +39,13 @@
       <outputDirectory>bin</outputDirectory>
       <fileMode>0755</fileMode>
     </file>
+    <file>
+      <source>${basedir}/src/main/bash/voms-proxy-destroy.sh</source>
+      <destName>voms-proxy-destroy</destName>
+      <outputDirectory>bin</outputDirectory>
+      <fileMode>0755</fileMode>
+    </file>
+    
   </files>
 
 
