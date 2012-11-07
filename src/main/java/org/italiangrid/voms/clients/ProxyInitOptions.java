@@ -16,10 +16,8 @@ public class ProxyInitOptions {
 	private String certFile;
 	private String keyFile;
 	private String generatedProxyFile;
-	
-	private String targets;
-	
-	private String validityString;
+		
+	private String lifetimeString;
 	
 	private String policyFile;
 	
@@ -31,9 +29,13 @@ public class ProxyInitOptions {
 	
 	private int timeoutInSeconds;
 	
-	private boolean verifyAC;
+	private boolean verifyAC = true;
+	
+	private boolean readPasswordFromStdin = false;
 	
 	private List<String> vomsCommands;
+	
+	private List<String> targets;
 	
 	
 
@@ -80,31 +82,17 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @return the targets
+	 * @return the lifetimeString
 	 */
-	public String getTargets() {
-		return targets;
+	public String getLifetimeString() {
+		return lifetimeString;
 	}
 
 	/**
-	 * @param targets the targets to set
+	 * @param lifetimeString the lifetimeString to set
 	 */
-	public void setTargets(String targets) {
-		this.targets = targets;
-	}
-
-	/**
-	 * @return the validityString
-	 */
-	public String getValidityString() {
-		return validityString;
-	}
-
-	/**
-	 * @param validityString the validityString to set
-	 */
-	public void setValidityString(String validityString) {
-		this.validityString = validityString;
+	public void setLifetimeString(String lifetimeString) {
+		this.lifetimeString = lifetimeString;
 	}
 
 	/**
@@ -203,6 +191,34 @@ public class ProxyInitOptions {
 	 */
 	public void setVomsCommands(List<String> vomsCommands) {
 		this.vomsCommands = vomsCommands;
+	}
+
+	/**
+	 * @return the readPasswordFromStdin
+	 */
+	public boolean isReadPasswordFromStdin() {
+		return readPasswordFromStdin;
+	}
+
+	/**
+	 * @param readPasswordFromStdin the readPasswordFromStdin to set
+	 */
+	public void setReadPasswordFromStdin(boolean readPasswordFromStdin) {
+		this.readPasswordFromStdin = readPasswordFromStdin;
+	}
+
+	/**
+	 * @return the targets
+	 */
+	public List<String> getTargets() {
+		return targets;
+	}
+
+	/**
+	 * @param targets the targets to set
+	 */
+	public void setTargets(List<String> targets) {
+		this.targets = targets;
 	}
 	
 }
