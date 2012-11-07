@@ -8,7 +8,6 @@ public class VomsProxyClientsTest {
 
 	public static void main(String[] args) {
 
-		// new VomsProxyInfo(args);
-		new VomsProxyInit(args);
+
 	}
 }
