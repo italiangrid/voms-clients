@@ -44,17 +44,17 @@ public class VomsProxyInit {
 
 		cliOptions = new Options();
 
-		List<VomsCliOption> list_options = new ArrayList<VomsCliOption>();
-		list_options.addAll(Arrays.asList(VomsClientsCommonOptions.values()));
-		list_options.addAll(Arrays.asList(VomsProxyInitOptions.values()));
+		List<VomsCliOption> listOptions = new ArrayList<VomsCliOption>();
+		listOptions.addAll(Arrays.asList(VomsClientsCommonOptions.values()));
+		listOptions.addAll(Arrays.asList(VomsProxyInitOptions.values()));
 
 
-		for (VomsCliOption option_element : list_options) {
+		for (VomsCliOption optionElement : listOptions) {
 
-			Option option = new Option(option_element.getOpt(), option_element.getLongOpt(), option_element.hasArg(),
-					option_element.getDescription());
+			Option option = new Option(optionElement.getOpt(), optionElement.getLongOpt(), optionElement.hasArg(),
+					optionElement.getDescription());
 
-			option.setArgName(option_element.getArgDescription());
+			option.setArgName(optionElement.getArgDescription());
 
 			cliOptions.addOption(option);
 		}
