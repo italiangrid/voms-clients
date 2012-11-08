@@ -1,4 +1,4 @@
-package org.italiangrid.vomsclients.options;
+package org.italiangrid.voms.clients.options;
 
 /**
  * Common interface for the different client options sets.

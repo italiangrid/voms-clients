@@ -28,6 +28,6 @@ fi
 VOMSCLIENTS_CP=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 
 # the class implementing voms-proxy-destroy
-VOMSPROXYDESTROY_CLASS="org.italiangrid.vomsclients.VomsProxyDestroy"
+VOMSPROXYDESTROY_CLASS="org.italiangrid.voms.clients.VomsProxyDestroy"
 
 java -DeffectiveUserId=$EUID -cp $VOMSCLIENTS_CP $VOMSPROXYDESTROY_CLASS "$@"

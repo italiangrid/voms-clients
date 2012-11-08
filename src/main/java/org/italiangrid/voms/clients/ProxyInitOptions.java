@@ -5,39 +5,37 @@ import java.util.List;
 import eu.emi.security.authn.x509.proxy.ProxyType;
 
 /**
- * This class represents the options given to drive the {@link ProxyInitBehaviour} when
- * creating a VOMS proxy. 
+ * This class represents the options given to drive the
+ * {@link ProxyInitBehaviour} when creating a VOMS proxy.
  * 
  * @author Andrea Ceccanti
- *
+ * 
  */
 public class ProxyInitOptions {
 
 	private String certFile;
 	private String keyFile;
 	private String generatedProxyFile;
-		
+
 	private String lifetimeString;
-	
+
 	private String policyFile;
-	
+
 	private String policyLanguage;
-	
+
 	private int pathLenConstraint;
-	
+
 	private ProxyType proxyType;
-	
+
 	private int timeoutInSeconds;
-	
+
 	private boolean verifyAC = true;
-	
+
 	private boolean readPasswordFromStdin = false;
-	
+
 	private List<String> vomsCommands;
-	
+
 	private List<String> targets;
-	
-	
 
 	/**
 	 * @return the certFile
@@ -47,7 +45,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param certFile the certFile to set
+	 * @param certFile
+	 *            the certFile to set
 	 */
 	public void setCertFile(String certFile) {
 		this.certFile = certFile;
@@ -61,7 +60,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param keyFile the keyFile to set
+	 * @param keyFile
+	 *            the keyFile to set
 	 */
 	public void setKeyFile(String keyFile) {
 		this.keyFile = keyFile;
@@ -75,7 +75,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param generatedProxyFile the generatedProxyFile to set
+	 * @param generatedProxyFile
+	 *            the generatedProxyFile to set
 	 */
 	public void setGeneratedProxyFile(String generatedProxyFile) {
 		this.generatedProxyFile = generatedProxyFile;
@@ -89,7 +90,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param lifetimeString the lifetimeString to set
+	 * @param lifetimeString
+	 *            the lifetimeString to set
 	 */
 	public void setLifetimeString(String lifetimeString) {
 		this.lifetimeString = lifetimeString;
@@ -103,7 +105,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param policyFile the policyFile to set
+	 * @param policyFile
+	 *            the policyFile to set
 	 */
 	public void setPolicyFile(String policyFile) {
 		this.policyFile = policyFile;
@@ -117,7 +120,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param policyLanguage the policyLanguage to set
+	 * @param policyLanguage
+	 *            the policyLanguage to set
 	 */
 	public void setPolicyLanguage(String policyLanguage) {
 		this.policyLanguage = policyLanguage;
@@ -131,7 +135,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param pathLenConstraint the pathLenConstraint to set
+	 * @param pathLenConstraint
+	 *            the pathLenConstraint to set
 	 */
 	public void setPathLenConstraint(int pathLenConstraint) {
 		this.pathLenConstraint = pathLenConstraint;
@@ -145,7 +150,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param proxyType the proxyType to set
+	 * @param proxyType
+	 *            the proxyType to set
 	 */
 	public void setProxyType(ProxyType proxyType) {
 		this.proxyType = proxyType;
@@ -159,7 +165,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param timeoutInSeconds the timeoutInSeconds to set
+	 * @param timeoutInSeconds
+	 *            the timeoutInSeconds to set
 	 */
 	public void setTimeoutInSeconds(int timeoutInSeconds) {
 		this.timeoutInSeconds = timeoutInSeconds;
@@ -173,7 +180,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param verifyAC the verifyAC to set
+	 * @param verifyAC
+	 *            the verifyAC to set
 	 */
 	public void setVerifyAC(boolean verifyAC) {
 		this.verifyAC = verifyAC;
@@ -187,7 +195,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param vomsCommands the vomsCommands to set
+	 * @param vomsCommands
+	 *            the vomsCommands to set
 	 */
 	public void setVomsCommands(List<String> vomsCommands) {
 		this.vomsCommands = vomsCommands;
@@ -201,7 +210,8 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param readPasswordFromStdin the readPasswordFromStdin to set
+	 * @param readPasswordFromStdin
+	 *            the readPasswordFromStdin to set
 	 */
 	public void setReadPasswordFromStdin(boolean readPasswordFromStdin) {
 		this.readPasswordFromStdin = readPasswordFromStdin;
@@ -215,10 +225,11 @@ public class ProxyInitOptions {
 	}
 
 	/**
-	 * @param targets the targets to set
+	 * @param targets
+	 *            the targets to set
 	 */
 	public void setTargets(List<String> targets) {
 		this.targets = targets;
 	}
-	
+
 }

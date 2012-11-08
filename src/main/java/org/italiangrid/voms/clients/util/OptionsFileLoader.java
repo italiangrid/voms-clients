@@ -16,55 +16,57 @@ import org.apache.commons.io.IOUtils;
  * Util class for loading options from a file.
  * 
  * @author valerioventuri
- *
+ * 
  */
 public class OptionsFileLoader {
 
-  /**
-   * Load options from a file, adding them to an array of arguments.
-   * 
-   * @param oldArgs the arguments array
-   * @param optionFileName the file containing the options
-   * @return an arguments array containing also the new options
-   */
-  public static String[] loadOptions(String[] oldArgs, String optionFileName) {
-    
-    File optionFile = new File(optionFileName);
-    
-    StringWriter stringWriter = new StringWriter();
-    
-    try {
+	/**
+	 * Load options from a file, adding them to an array of arguments.
+	 * 
+	 * @param oldArgs
+	 *            the arguments array
+	 * @param optionFileName
+	 *            the file containing the options
+	 * @return an arguments array containing also the new options
+	 */
+	public static String[] loadOptions(String[] oldArgs, String optionFileName) {
 
-      InputStream inputStream = new FileInputStream(optionFile);
-      
-      IOUtils.copy(inputStream, stringWriter);
-      
-    } catch (FileNotFoundException e) {
-    
-      System.err.println(e.getMessage());
-    
-    } catch (IOException e) {
+		File optionFile = new File(optionFileName);
 
-      System.err.println(e.getMessage());
-    }
+		StringWriter stringWriter = new StringWriter();
 
-    String string = stringWriter.toString();
-    
-    StringTokenizer stringTokenizer = new StringTokenizer(string);
-    
-    List<String> otherArgs = new ArrayList<String>();
-    
-    while(stringTokenizer.hasMoreTokens()) {
-      
-      otherArgs.add(stringTokenizer.nextToken());
-    }
+		try {
 
-    for(String arg : oldArgs) {
-      
-      otherArgs.add(arg);
-    }
-    
-    return otherArgs.toArray(new String[0]);
-  }
+			InputStream inputStream = new FileInputStream(optionFile);
+
+			IOUtils.copy(inputStream, stringWriter);
+
+		} catch (FileNotFoundException e) {
+
+			System.err.println(e.getMessage());
+
+		} catch (IOException e) {
+
+			System.err.println(e.getMessage());
+		}
+
+		String string = stringWriter.toString();
+
+		StringTokenizer stringTokenizer = new StringTokenizer(string);
+
+		List<String> otherArgs = new ArrayList<String>();
+
+		while (stringTokenizer.hasMoreTokens()) {
+
+			otherArgs.add(stringTokenizer.nextToken());
+		}
+
+		for (String arg : oldArgs) {
+
+			otherArgs.add(arg);
+		}
+
+		return otherArgs.toArray(new String[0]);
+	}
 
 }

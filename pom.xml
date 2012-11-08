@@ -9,6 +9,10 @@
 
   <properties>
 
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    
+    <!-- Version properties -->
     <commons-io.version>2.0.1</commons-io.version>
     <commons-cli.version>1.2</commons-cli.version>
     <slf4j.version>1.7.1</slf4j.version>
@@ -20,6 +24,15 @@
   </properties>
 
   <developers>
+    <developer>
+      <id>aceccanti</id>
+      <name>Andrea Ceccanti</name>
+      <email>andrea.ceccanti@cnaf.infn.it</email>
+      <organization>INFN CNAF</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
     <developer>
       <id>dandreotti</id>
       <name>Daniele Andreotti</name>
@@ -47,8 +60,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
       </plugin>
 

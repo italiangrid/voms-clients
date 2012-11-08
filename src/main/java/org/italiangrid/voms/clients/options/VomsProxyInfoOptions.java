@@ -1,5 +1,4 @@
-package org.italiangrid.vomsclients.options;
-
+package org.italiangrid.voms.clients.options;
 
 /**
  * VomsProxyInfo client command-line options
@@ -9,33 +8,38 @@ package org.italiangrid.vomsclients.options;
 
 public enum VomsProxyInfoOptions implements VomsCliOption {
 
-
 	/*
-	 * Options formats: with or without argument and with or without short-option<br>
+	 * Options formats: with or without argument and with or without
+	 * short-option<br>
 	 * 
 	 * A short-option is represented by a single char
 	 */
 
-
-	PROXY_FILENAME("out", "Non standard location of new proxy cert", "proxyfile"),
+	PROXY_FILENAME("out", "Non standard location of new proxy cert",
+			"proxyfile"),
 
 	SKIP_AC("dont_verify_ac", "Skips AC verification"),
 
 	PROXY_EXISTS('e', "exists", "Returns 0 if valid proxy exists, 1 otherwise"),
 
-	AC_EXISTS("acexists", "Returns 0 if AC exists corresponding to voname, 1 otherwise", "voname"),
+	AC_EXISTS("acexists",
+			"Returns 0 if AC exists corresponding to voname, 1 otherwise",
+			"voname"),
 
 	OPTIONS_FILE("conf", "Read options from <file>", "file"),
 
 	PRINT_INCLUDED_FILE("include", "Print included file", "file"),
 
-	PRINT_CHAIN("chain", "Prints information about the whol proxy chain (CA excluded)"),
+	PRINT_CHAIN("chain",
+			"Prints information about the whol proxy chain (CA excluded)"),
 
-	PRINT_SUBJECT("subject", "Prints Distinguished name (DN) of proxy subject", "proxyfile"),
+	PRINT_SUBJECT("subject", "Prints Distinguished name (DN) of proxy subject",
+			"proxyfile"),
 
 	PRINT_ISSUER("issuer", "Prints the DN of proxy issuer (certificate signer)"),
 
-	PRINT_IDENTITY("identity", "Prints the DN of the identity represented by the proxy"),
+	PRINT_IDENTITY("identity",
+			"Prints the DN of the identity represented by the proxy"),
 
 	PRINT_TYPE("type", "Prints the Type of proxy (full or limited)"),
 
@@ -53,9 +57,11 @@ public enum VomsProxyInfoOptions implements VomsCliOption {
 
 	PRINT_FQAN("fqan", "Prints attribute in FQAN format"),
 
-	PRINT_ACSUBJECT("acsubject", "Prints the distinguished name (DN) of AC subject"),
+	PRINT_ACSUBJECT("acsubject",
+			"Prints the distinguished name (DN) of AC subject"),
 
-	PRINT_ACISSUER("acissuer", "Prints the DN of AC issuer (certificate signer)"),
+	PRINT_ACISSUER("acissuer",
+			"Prints the DN of AC issuer (certificate signer)"),
 
 	PRINT_ACTIMELEFT("actimeleft", "Prints time (in seconds) until AC expires"),
 
@@ -65,13 +71,17 @@ public enum VomsProxyInfoOptions implements VomsCliOption {
 
 	PRINT_KEYUSAGE('k', "keyusage", "Prints content of KeyUsage extension"),
 
-	PROXY_TIME_VALIDITY("valid", "[option to -exists] time requirement for proxy to be valid", "H:M"),
+	PROXY_TIME_VALIDITY("valid",
+			"[option to -exists] time requirement for proxy to be valid", "H:M"),
 
-	PROXY_HOURS_VALIDITY("hours",
-			"[option to -exists] time requirement for proxy to be valid (deprecated, use -valid instead)", "H"),
+	PROXY_HOURS_VALIDITY(
+			"hours",
+			"[option to -exists] time requirement for proxy to be valid (deprecated, use -valid instead)",
+			"H"),
 
-	PROXY_STRENGTH_VALIDITY('b', "bits", "[option to -exists] strength requirement for proxy to be valid", "B");
-
+	PROXY_STRENGTH_VALIDITY('b', "bits",
+			"[option to -exists] strength requirement for proxy to be valid",
+			"B");
 
 	private final String opt;
 	private final String longOpt;
@@ -95,7 +105,8 @@ public enum VomsProxyInfoOptions implements VomsCliOption {
 		this.argDescription = "";
 	}
 
-	private VomsProxyInfoOptions(String longOpt, String description, String argDescription) {
+	private VomsProxyInfoOptions(String longOpt, String description,
+			String argDescription) {
 		this.opt = null;
 		this.longOpt = longOpt;
 		this.description = description;
@@ -103,14 +114,14 @@ public enum VomsProxyInfoOptions implements VomsCliOption {
 		this.argDescription = argDescription;
 	}
 
-	private VomsProxyInfoOptions(char opt, String longOpt, String description, String argDescription) {
+	private VomsProxyInfoOptions(char opt, String longOpt, String description,
+			String argDescription) {
 		this.opt = Character.toString(opt);
 		this.longOpt = longOpt;
 		this.description = description;
 		this.hasArg = true;
 		this.argDescription = argDescription;
 	}
-
 
 	public String getName() {
 		return longOpt;

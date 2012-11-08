@@ -28,6 +28,6 @@ fi
 VOMSCLIENTS_CP=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 
 # the class implementing voms-proxy-info
-VOMSPROXYINFO_CLASS="org.italiangrid.vomsclients.VomsProxyInfo"
+VOMSPROXYINFO_CLASS="org.italiangrid.voms.clients.VomsProxyInfo"
 
 java -DeffectiveUserId=$EUID -cp $VOMSCLIENTS_CP $VOMSPROXYINFO_CLASS "$@"

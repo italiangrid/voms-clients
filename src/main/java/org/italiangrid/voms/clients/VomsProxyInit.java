@@ -1,4 +1,4 @@
-package org.italiangrid.vomsclients;
+package org.italiangrid.voms.clients;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +11,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.italiangrid.vomsclients.options.VomsCliOption;
-import org.italiangrid.vomsclients.options.VomsClientsCommonOptions;
-import org.italiangrid.vomsclients.options.VomsProxyInitOptions;
+import org.italiangrid.voms.clients.options.VomsCliOption;
+import org.italiangrid.voms.clients.options.VomsClientsCommonOptions;
+import org.italiangrid.voms.clients.options.VomsProxyInitOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +27,14 @@ import org.slf4j.LoggerFactory;
 
 public class VomsProxyInit {
 
-	private static final Logger log = LoggerFactory.getLogger(VomsProxyInit.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(VomsProxyInit.class);
 
 	/** The CLI options **/
 	private static Options cliOptions;
 
 	/** The CLI options parser **/
 	private static CommandLineParser cliParser = new GnuParser();
-
 
 	/**
 	 * Initializes command-line options
@@ -48,10 +48,10 @@ public class VomsProxyInit {
 		listOptions.addAll(Arrays.asList(VomsClientsCommonOptions.values()));
 		listOptions.addAll(Arrays.asList(VomsProxyInitOptions.values()));
 
-
 		for (VomsCliOption optionElement : listOptions) {
 
-			Option option = new Option(optionElement.getOpt(), optionElement.getLongOpt(), optionElement.hasArg(),
+			Option option = new Option(optionElement.getOpt(),
+					optionElement.getLongOpt(), optionElement.hasArg(),
 					optionElement.getDescription());
 
 			option.setArgName(optionElement.getArgDescription());
@@ -71,10 +71,10 @@ public class VomsProxyInit {
 		String footer = "";
 
 		HelpFormatter helpFormatter = new HelpFormatter();
-		helpFormatter.printHelp(lineWidth, "java -cp ... org.italiangrid.vomsclients.VomsProxyInit", header, cliOptions,
-				footer);
+		helpFormatter.printHelp(lineWidth,
+				"java -cp ... org.italiangrid.voms.clients.VomsProxyInit",
+				header, cliOptions, footer);
 	}
-
 
 	public static void main(String[] args) {
 
@@ -88,10 +88,10 @@ public class VomsProxyInit {
 				System.exit(0);
 			}
 
-
 		} catch (ParseException e) {
 			log.error(e.getMessage(), e.getCause());
-			System.err.println("Error parsing command line arguments: " + e.getMessage());
+			System.err.println("Error parsing command line arguments: "
+					+ e.getMessage());
 			usage();
 			System.exit(1);
 		}

@@ -1,5 +1,4 @@
-package org.italiangrid.vomsclients.options;
-
+package org.italiangrid.voms.clients.options;
 
 /**
  * Common VOMS clients command-line options
@@ -7,12 +6,11 @@ package org.italiangrid.vomsclients.options;
  * @author Daniele Andreotti
  */
 
-
 public enum VomsClientsCommonOptions implements VomsCliOption {
 
-
 	/*
-	 * Options formats: with or without argument and with or without short-option<br>
+	 * Options formats: with or without argument and with or without
+	 * short-option<br>
 	 * 
 	 * A short-option is represented by a single char
 	 */
@@ -24,7 +22,6 @@ public enum VomsClientsCommonOptions implements VomsCliOption {
 	VERSION("version", "Displays version"),
 
 	DEBUG("debug", "Enables extra debug output");
-
 
 	private final String opt;
 	private final String longOpt;
@@ -40,7 +37,8 @@ public enum VomsClientsCommonOptions implements VomsCliOption {
 		this.argDescription = "";
 	}
 
-	private VomsClientsCommonOptions(char opt, String longOpt, String description) {
+	private VomsClientsCommonOptions(char opt, String longOpt,
+			String description) {
 		this.opt = Character.toString(opt);
 		this.longOpt = longOpt;
 		this.description = description;
@@ -48,7 +46,8 @@ public enum VomsClientsCommonOptions implements VomsCliOption {
 		this.argDescription = "";
 	}
 
-	private VomsClientsCommonOptions(String longOpt, String description, String argDescription) {
+	private VomsClientsCommonOptions(String longOpt, String description,
+			String argDescription) {
 		this.opt = null;
 		this.longOpt = longOpt;
 		this.description = description;
@@ -56,14 +55,14 @@ public enum VomsClientsCommonOptions implements VomsCliOption {
 		this.argDescription = argDescription;
 	}
 
-	private VomsClientsCommonOptions(char opt, String longOpt, String description, String argDescription) {
+	private VomsClientsCommonOptions(char opt, String longOpt,
+			String description, String argDescription) {
 		this.opt = Character.toString(opt);
 		this.longOpt = longOpt;
 		this.description = description;
 		this.hasArg = true;
 		this.argDescription = argDescription;
 	}
-
 
 	public String getName() {
 		return longOpt;
