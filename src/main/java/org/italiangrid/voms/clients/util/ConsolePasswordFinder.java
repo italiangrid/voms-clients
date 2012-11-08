@@ -1,4 +1,4 @@
-package org.italiangrid.voms.clients.impl;
+package org.italiangrid.voms.clients.util;
 
 import java.io.Console;
 

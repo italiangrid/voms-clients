@@ -23,12 +23,12 @@ public enum VomsProxyInitOptions implements VomsCliOption {
 
 	LIMITED_PROXY("limited", "Creates a limited proxy"),
 
-	PROXY_AC_VALIDITY(
+	AC_VALIDITY(
 			"valid",
 			"Proxy and AC are valid for h hours and m minutes (defaults to 12:00)",
 			"h:m"),
 
-	PROXY_VALIDITY("hours", "Proxy is valid for H hours (default:12)", "H"),
+	PROXY_LIFETIME_IN_HOURS("hours", "Proxy is valid for H hours (default:12)", "H"),
 
 	KEY_LENGTH('b', "bits", "Number of bits in key {512|1024|2048|4096}"),
 
@@ -43,17 +43,17 @@ public enum VomsProxyInitOptions implements VomsCliOption {
 	PROXY_FILENAME("out", "Non standard location of new proxy cert",
 			"proxyfile"),
 
-	VOMS_SERVER(
+	VOMS_COMMAND(
 			"voms",
 			"Specify voms server. :command is optional,and is used to ask for specific attributes (e.g: roles)",
 			"voms<:command>"),
 
-	ATTRIBUTES_ORDER("order", "Specify ordering of attributes", "group<:role>"),
+	FQANS_ORDERING("order", "Specify ordering of attributes", "group<:role>"),
 
-	AC_SERVER("target", "Targets the AC against a specific hostname",
+	TARGET_HOSTNAME("target", "Targets the AC against a specific hostname",
 			"hostname"),
 
-	VOMS_PSEUDOCERT(
+	AC_LIFETIME(
 			"vomslife",
 			"Try to get a VOMS pseudocert valid for h hours and m minutes (default to value of '-valid').",
 			"h:m"),
@@ -72,7 +72,7 @@ public enum VomsProxyInitOptions implements VomsCliOption {
 
 	POLICY_LANGUAGE("pl", "OID string for the policy language", "hostname"),
 
-	PATH_LENGTH(
+	PATHLEN_CONSTRAINT(
 			"path_length",
 			"Allow a chain of at most l proxies to be generated from this ones",
 			"l"),
@@ -84,7 +84,7 @@ public enum VomsProxyInitOptions implements VomsCliOption {
 	PROXY_NOREGEN('n', "noregen",
 			"Use existing proxy certificate to connect to server and sign the new proxy"),
 
-	SPLIT_OUTPUT('s', "separate",
+	SAVE_AC_IN_FILE('s', "separate",
 			"Saves the informations returned by the server on file <file>",
 			"file"),
 
@@ -92,20 +92,20 @@ public enum VomsProxyInitOptions implements VomsCliOption {
 
 	FAIL_ON_WARN('f', "failonwarn", "Treat warnings as errors"),
 
-	SHOW_ATTRIBUTES("list", "Show all available attributes"),
+	LIST_ALL_ATTRIBUTES("list", "Show all available attributes"),
 
-	RFC_TYPE_PROXY('r', "rfc",
+	RFC_PROXY('r', "rfc",
 			"Creates RFC 3820 compliant proxy (synonymous with '-proxyver 4')"),
 
-	GT2_TYPE_PROXY("old",
+	LEGAGY_PROXY("old",
 			"Creates GT2 compliant proxy (synonymous with '-proxyver 2')"),
 
 	REQUEST_TIMEOUT("timeout", "Timeout for server connections, in seconds",
 			"num"),
 
-	AC_FILE("includeac", "Get AC from file", "file"),
+	INCLUDE_AC_FROM_FILE("includeac", "Get AC from file", "file"),
 
-	SKIP_AC("dont_verify_ac", "Skips AC verification");
+	SKIP_AC_VERIFICATION("dont_verify_ac", "Skips AC verification");
 
 	private final String opt;
 	private final String longOpt;
@@ -113,38 +113,31 @@ public enum VomsProxyInitOptions implements VomsCliOption {
 	private final boolean hasArg;
 	private final String argDescription;
 
-	private VomsProxyInitOptions(String longOpt, String description) {
-		this.opt = null;
-		this.longOpt = longOpt;
+	private VomsProxyInitOptions(String shortOpt, String longOption, String description, boolean hasArg, String argDescription){
+		this.opt = shortOpt;
+		this.longOpt = longOption;
 		this.description = description;
-		this.hasArg = false;
-		this.argDescription = "";
+		this.hasArg = hasArg;
+		this.argDescription = argDescription;
+	}
+	
+	
+	private VomsProxyInitOptions(String longOpt, String description) {
+		this(null, longOpt, description, false, null);
 	}
 
 	private VomsProxyInitOptions(char opt, String longOpt, String description) {
-		this.opt = Character.toString(opt);
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = false;
-		this.argDescription = "";
+		this(Character.toString(opt),longOpt,description, false, null);
 	}
 
 	private VomsProxyInitOptions(String longOpt, String description,
 			String argDescription) {
-		this.opt = null;
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = true;
-		this.argDescription = argDescription;
+		this(null,longOpt, description, true, argDescription);
 	}
 
 	private VomsProxyInitOptions(char opt, String longOpt, String description,
 			String argDescription) {
-		this.opt = Character.toString(opt);
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = true;
-		this.argDescription = argDescription;
+		this(Character.toString(opt), longOpt, description, true, argDescription);
 	}
 
 	public String getName() {

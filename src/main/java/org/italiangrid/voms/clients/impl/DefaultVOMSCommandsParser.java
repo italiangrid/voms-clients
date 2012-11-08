@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultVOMSCommandsParser implements VOMSCommandsParser {
+import org.italiangrid.voms.clients.strategies.VOMSCommandsParsingStrategy;
+
+public class DefaultVOMSCommandsParser implements VOMSCommandsParsingStrategy {
 
 	public static final String COMMAND_SEPARATOR = ":";
 	public static final String ALL_COMMAND_STRING = "all";

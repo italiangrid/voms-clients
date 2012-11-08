@@ -1,23 +1,28 @@
 package org.italiangrid.voms.clients;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 
 import eu.emi.security.authn.x509.proxy.ProxyType;
 
 /**
- * This class represents the options given to drive the
- * {@link ProxyInitBehaviour} when creating a VOMS proxy.
+ * This class represents the parameters that drive the
+ * {@link ProxyInitStrategy} when creating a VOMS proxy.
  * 
  * @author Andrea Ceccanti
  * 
  */
-public class ProxyInitOptions {
+public class ProxyInitParams {
 
+	public static final int DEFAULT_PROXY_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12); 
+	public static final int DEFAULT_AC_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12);
+	
 	private String certFile;
 	private String keyFile;
+	
 	private String generatedProxyFile;
-
-	private String lifetimeString;
 
 	private String policyFile;
 
@@ -25,17 +30,23 @@ public class ProxyInitOptions {
 
 	private int pathLenConstraint;
 
-	private ProxyType proxyType;
+	private ProxyType proxyType = ProxyType.LEGACY;
 
 	private int timeoutInSeconds;
 
 	private boolean verifyAC = true;
 
 	private boolean readPasswordFromStdin = false;
+	
+	private boolean limited = false;
 
 	private List<String> vomsCommands;
 
 	private List<String> targets;
+	
+	private int proxyLifetimeInSeconds = DEFAULT_PROXY_LIFETIME;
+	
+	private int acLifetimeInSeconds = DEFAULT_AC_LIFETIME;
 
 	/**
 	 * @return the certFile
@@ -82,20 +93,7 @@ public class ProxyInitOptions {
 		this.generatedProxyFile = generatedProxyFile;
 	}
 
-	/**
-	 * @return the lifetimeString
-	 */
-	public String getLifetimeString() {
-		return lifetimeString;
-	}
-
-	/**
-	 * @param lifetimeString
-	 *            the lifetimeString to set
-	 */
-	public void setLifetimeString(String lifetimeString) {
-		this.lifetimeString = lifetimeString;
-	}
+	
 
 	/**
 	 * @return the policyFile
@@ -232,4 +230,45 @@ public class ProxyInitOptions {
 		this.targets = targets;
 	}
 
+	/**
+	 * @return the limited
+	 */
+	public boolean isLimited() {
+		return limited;
+	}
+
+	/**
+	 * @param limited the limited to set
+	 */
+	public void setLimited(boolean limited) {
+		this.limited = limited;
+	}
+
+	/**
+	 * @return the proxyLifetimeInSeconds
+	 */
+	public int getProxyLifetimeInSeconds() {
+		return proxyLifetimeInSeconds;
+	}
+
+	/**
+	 * @param proxyLifetimeInSeconds the proxyLifetimeInSeconds to set
+	 */
+	public void setProxyLifetimeInSeconds(int proxyLifetimeInSeconds) {
+		this.proxyLifetimeInSeconds = proxyLifetimeInSeconds;
+	}
+
+	/**
+	 * @return the acLifetimeInSeconds
+	 */
+	public int getAcLifetimeInSeconds() {
+		return acLifetimeInSeconds;
+	}
+
+	/**
+	 * @param acLifetimeInSeconds the acLifetimeInSeconds to set
+	 */
+	public void setAcLifetimeInSeconds(int acLifetimeInSeconds) {
+		this.acLifetimeInSeconds = acLifetimeInSeconds;
+	}
 }
