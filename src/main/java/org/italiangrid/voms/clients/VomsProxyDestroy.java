@@ -1,14 +1,20 @@
 package org.italiangrid.voms.clients;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.italiangrid.voms.clients.options.VomsCliOption;
+import org.italiangrid.voms.clients.options.VomsProxyDestroyOptions;
 import org.italiangrid.voms.clients.util.OptionsFileLoader;
+import org.italiangrid.voms.clients.util.UsageProvider;
 import org.italiangrid.voms.clients.util.VersionProvider;
 import org.italiangrid.voms.credential.ProxyPathBuilder;
 import org.italiangrid.voms.credential.impl.DefaultProxyPathBuilder;
@@ -75,13 +81,22 @@ public class VomsProxyDestroy {
 
 	private void initOptions() {
 
-		options.addOption("h", "help", false, "Displays usage");
-		options.addOption("v", "version", false, "Displays version");
-		options.addOption("debug", false, "Enables extra debug output");
-		options.addOption("f", "file", true, "Specifies proxy file name");
-		options.addOption("dry", false, "Only go in dryrun mode");
-		options.addOption("c", "conf", true, "Load options from file <file>");
-		options.addOption("q", "quiet", false, "Quiet mode, minimal output");
+    List<VomsCliOption> listOptions = new ArrayList<VomsCliOption>();
+    listOptions.addAll(Arrays.asList(VomsProxyDestroyOptions.values()));
+
+    for (VomsCliOption optionElement : listOptions) {
+
+      Option option = new Option(optionElement.getOpt(), optionElement.getLongOpt(), 
+          optionElement.hasArg(), optionElement.getDescription());
+
+      option.setDescription(optionElement.getArgDescription());
+      
+      options.addOption(optionElement.getOpt(),
+          optionElement.getLongOpt(),
+          optionElement.hasArg(),
+          optionElement.getDescription());
+    }
+	
 	}
 
 	private void parseOptions(String[] args) {
@@ -96,15 +111,15 @@ public class VomsProxyDestroy {
 
 				String optionFile = commandLine.getOptionValue("conf");
 
-				String[] reloadedArgs = OptionsFileLoader.loadOptions(args,
-						optionFile);
+				String[] reloadedArgs = OptionsFileLoader.loadOptions(args,	
+				    optionFile);
 
 				commandLine = commandLineParser.parse(options, reloadedArgs);
 			}
 
 			if (commandLine.hasOption("help")) {
 
-				displaysUsage();
+			  UsageProvider.displayUsage("voms-proxy-destroy", options);
 
 				System.exit(0);
 			}
@@ -128,7 +143,7 @@ public class VomsProxyDestroy {
 
 			System.err.println("voms-proxy-destroy: " + e.getMessage());
 
-			displaysUsage();
+		   UsageProvider.displayUsage("voms-proxy-destroy", options);
 
 			System.exit(1);
 		}
@@ -167,12 +182,6 @@ public class VomsProxyDestroy {
 		}
 
 		file.delete();
-	}
-
-	private void displaysUsage() {
-
-		HelpFormatter helpFormatter = new HelpFormatter();
-		helpFormatter.printHelp("VomsProxyDestroy", options);
 	}
 
 }
