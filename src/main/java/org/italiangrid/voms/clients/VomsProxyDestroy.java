@@ -17,8 +17,6 @@ import org.italiangrid.voms.clients.util.OptionsFileLoader;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
 import org.italiangrid.voms.clients.util.UsageProvider;
 import org.italiangrid.voms.clients.util.VersionProvider;
-import org.italiangrid.voms.credential.ProxyPathBuilder;
-import org.italiangrid.voms.credential.impl.DefaultProxyPathBuilder;
 
 /**
  * Class implementing voms-proxy-destroy.
