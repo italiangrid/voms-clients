@@ -15,8 +15,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -53,11 +51,10 @@ public class VomsProxyInit {
 
 	/** The parsed command line **/
 	private static CommandLine commandLine = null;
-	
+
 	/** The implementation of the VOMS proxy init behaviour **/
 	private static ProxyInitStrategy proxyInitBehaviour = new DefaultVOMSProxyInitBehaviour();
-	
-	
+
 	/**
 	 * Initializes command-line options
 	 */
@@ -92,135 +89,139 @@ public class VomsProxyInit {
 		String footer = "";
 
 		HelpFormatter helpFormatter = new HelpFormatter();
-		helpFormatter.printHelp(lineWidth,
-				"voms-proxy-init [options]",
-				header, cliOptions, footer);
+		helpFormatter.printHelp(lineWidth, "voms-proxy-init [options]", header,
+				cliOptions, footer);
 	}
 
 	/**
-	 * Checks the command line to see whether the display of this  CLI
+	 * Checks the command line to see whether the display of this CLI
+	 * 
 	 * @param line
 	 */
-	private static void displayHelpIfRequested(CommandLine line){
-		
-		if (line.hasOption(VomsClientsCommonOptions.HELP.getName()) || 
-				line.hasOption(VomsClientsCommonOptions.USAGE.getName())) {
+	private static void displayHelpIfRequested(CommandLine line) {
+
+		if (line.hasOption(VomsClientsCommonOptions.HELP.getLongOpt())
+				|| line.hasOption(VomsClientsCommonOptions.USAGE.getLongOpt())) {
 			usage();
 			System.exit(0);
 		}
-		
+
 	}
-	
-	private static boolean commandLineHasOption(VomsCliOption option){
-		
+
+	private static boolean commandLineHasOption(VomsCliOption option) {
+
 		return commandLine.hasOption(option.getLongOpt());
 	}
-	
-	
-	private static String getOptionValue(VomsCliOption option){
-		
+
+	private static String getOptionValue(VomsCliOption option) {
+
 		if (commandLineHasOption(option))
 			return commandLine.getOptionValue(option.getLongOpt());
 		return null;
 	}
-	
-	private static List<String> getOptionValues(VomsCliOption option){
-		
-		if (commandLineHasOption(option)){
-			
+
+	private static List<String> getOptionValues(VomsCliOption option) {
+
+		if (commandLineHasOption(option)) {
+
 			String[] values = commandLine.getOptionValues(option.getLongOpt());
 			return Arrays.asList(values);
 		}
-			
+
 		return null;
 	}
-	
-	
-	private static int parseACLifeTimeString(String acLifetimeProperty, VomsCliOption option){
-		
+
+	private static int parseACLifeTimeString(String acLifetimeProperty,
+			VomsCliOption option) {
+
 		try {
-			
+
 			SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
-		
+
 			Calendar c = Calendar.getInstance();
 			Date d;
-		
+
 			d = sdf.parse(acLifetimeProperty.trim());
 			c.setTime(d);
-			
-			long timeIntevalInSeconds = TimeUnit.HOURS.toSeconds(c.get(Calendar.HOUR_OF_DAY))+
-					TimeUnit.MINUTES.toSeconds(c.get(Calendar.MINUTE));
-		
+
+			long timeIntevalInSeconds = TimeUnit.HOURS.toSeconds(c
+					.get(Calendar.HOUR_OF_DAY))
+					+ TimeUnit.MINUTES.toSeconds(c.get(Calendar.MINUTE));
+
 			return (int) timeIntevalInSeconds;
-			
+
 		} catch (java.text.ParseException e) {
-			throw new VOMSError("Invalid format for the time interval option '"+
-					option.getLongOpt()+
-					"'. It should follow the hh:mm pattern.");
-			
+			throw new VOMSError("Invalid format for the time interval option '"
+					+ option.getLongOpt()
+					+ "'. It should follow the hh:mm pattern.");
+
 		}
 	}
-	
-	private static ProxyInitParams getProxyInitParamsFromCommandLine(CommandLine line){
-		
+
+	private static ProxyInitParams getProxyInitParamsFromCommandLine(
+			CommandLine line) {
+
 		ProxyInitParams params = new ProxyInitParams();
-		
+
 		if (commandLineHasOption(ENABLE_STDIN_PWD))
 			params.setReadPasswordFromStdin(true);
-		
+
 		if (commandLineHasOption(LIMITED_PROXY))
 			params.setLimited(true);
-		
+
 		if (commandLineHasOption(CERT_LOCATION))
 			params.setCertFile(getOptionValue(CERT_LOCATION));
-		
+
 		if (commandLineHasOption(KEY_LOCATION))
 			params.setKeyFile(getOptionValue(KEY_LOCATION));
-		
+
 		if (commandLineHasOption(AC_VALIDITY))
-			params.setAcLifetimeInSeconds(parseACLifeTimeString(getOptionValue(AC_VALIDITY), AC_VALIDITY));
-		
+			params.setAcLifetimeInSeconds(parseACLifeTimeString(
+					getOptionValue(AC_VALIDITY), AC_VALIDITY));
+
 		if (commandLineHasOption(AC_LIFETIME))
-			params.setAcLifetimeInSeconds(parseACLifeTimeString(getOptionValue(AC_LIFETIME), AC_LIFETIME));
-		
+			params.setAcLifetimeInSeconds(parseACLifeTimeString(
+					getOptionValue(AC_LIFETIME), AC_LIFETIME));
+
 		if (commandLineHasOption(VOMS_COMMAND))
 			params.setVomsCommands(getOptionValues(VOMS_COMMAND));
-		
+
 		// Add missing options
 		return params;
-		
+
 	}
-	
-	/** 
+
+	/**
 	 * Parses cli options
-	 * @throws ParseException 
+	 * 
+	 * @throws ParseException
 	 */
-	private static void parseOptions(String[] args) throws ParseException{
-		
+	private static void parseOptions(String[] args) throws ParseException {
+
 		commandLine = cliParser.parse(cliOptions, args);
 
 		displayHelpIfRequested(commandLine);
-		
+
 		ProxyInitParams params = getProxyInitParamsFromCommandLine(commandLine);
-		
-		try{
-			
+
+		try {
+
 			proxyInitBehaviour.initProxy(params);
-		
-		}catch(Throwable t){
-		
-			System.err.println("Error: "+t.getMessage());
+
+		} catch (Throwable t) {
+
+			System.err.println("Error: " + t.getMessage());
 		}
-		
+
 	}
+
 	public static void main(String[] args) {
 
 		initOptions();
 
 		try {
-			
+
 			parseOptions(args);
-			
 
 		} catch (ParseException e) {
 			log.error(e.getMessage(), e.getCause());
