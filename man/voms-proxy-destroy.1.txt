@@ -2,47 +2,41 @@ VOMS-PROXY-DESTROY(1)
 =====================
 :doctype: manpage
 
-
 NAME
 ----
 voms-proxy-destroy - destroys a VOMS proxy
 
-
 SYNOPSIS
 --------
-voms-proxy-destroy [options]
+voms-proxy-destroy
 
 
 DESCRIPTION
 -----------
-The voms-proxy-destroy is intended to be used after a proxy is no longer useful, to destroy it.
+The voms-proxy-destroy command is intended to be used after a proxy is no longer useful, to destroy it.
 
 
 OPTIONS
 -------
-Options  may be specified indifferently with either a "-" or "--" prefix. 
-The options from -help to -out are present for compatibility with grid-proxy-init, 
-and have the exact same meaning. The meaning of the other ones is the following.
+Options  may be specified indifferently with either a "-" or "--" prefix.
 
-*-help* Displays usage
+*-h*, *-help* Displays usage
 
-*-version* Displays version
+*-v*, *-version* Displays version
 
 *-debug* Enables extra debug output
 
-*-q* Quiet mode, minimal output
+*-q*, *--quiet* Quiet mode, minimal output
 
-*-file* <proxyfile> The name of the file containing the proxy, in case it is in a non-standard place.
+*-f*, *-file* <proxyfile> The name of the file containing the proxy, in case it is in a non-standard place.
 
 *-dry* Doesn't actually destroy the proxy.
 
-*-conf* <file> Read options from file.
-
+*-c*, *-conf* <file> Read options from file.
 
 BUGS
 ----
-EGEE Bug Tracking Tool: https://savannah.cern.ch/projects/jra1mdw/
-
+https://savannah.cern.ch/bugs/?group=jra1mdw
 
 AUTHOR
 ------
@@ -52,17 +46,9 @@ Daniele Andreotti <daniele.andreotti@cnaf.infn.it>
 
 Valerio Venturi <valerio.venturi@cnaf.infn.it>
 
-
 SEE ALSO
 --------
 voms-proxy-init(1), voms-proxy-info(1)
-
-EDT Auth Home page: http://grid-auth.infn.it
-
-CVSweb: http://datagrid.in2p3.fr/cgi-bin/cvsweb.cgi/Auth/voms
-
-RPM repository: http://datagrid.in2p3.fr/distribution/autobuild/i386-rh7.3
-
 
 COPYING
 -------

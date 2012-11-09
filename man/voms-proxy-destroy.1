@@ -31,30 +31,30 @@
 voms-proxy-destroy \- destroys a VOMS proxy
 .SH "SYNOPSIS"
 .sp
-voms\-proxy\-destroy [options]
+voms\-proxy\-destroy
 .SH "DESCRIPTION"
 .sp
-The voms\-proxy\-destroy is intended to be used after a proxy is no longer useful, to destroy it\&.
+The voms\-proxy\-destroy command is intended to be used after a proxy is no longer useful, to destroy it\&.
 .SH "OPTIONS"
 .sp
-Options may be specified indifferently with either a "\-" or "\-\-" prefix\&. The options from \-help to \-out are present for compatibility with grid\-proxy\-init, and have the exact same meaning\&. The meaning of the other ones is the following\&.
+Options may be specified indifferently with either a "\-" or "\-\-" prefix\&.
 .sp
-\fB\-help\fR Displays usage
+\fB\-h\fR, \fB\-help\fR Displays usage
 .sp
-\fB\-version\fR Displays version
+\fB\-v\fR, \fB\-version\fR Displays version
 .sp
 \fB\-debug\fR Enables extra debug output
 .sp
-\fB\-q\fR Quiet mode, minimal output
+\fB\-q\fR, \fB\-\-quiet\fR Quiet mode, minimal output
 .sp
-\fB\-file\fR <proxyfile> The name of the file containing the proxy, in case it is in a non\-standard place\&.
+\fB\-f\fR, \fB\-file\fR <proxyfile> The name of the file containing the proxy, in case it is in a non\-standard place\&.
 .sp
 \fB\-dry\fR Doesn\(cqt actually destroy the proxy\&.
 .sp
-\fB\-conf\fR <file> Read options from file\&.
+\fB\-c\fR, \fB\-conf\fR <file> Read options from file\&.
 .SH "BUGS"
 .sp
-EGEE Bug Tracking Tool: https://savannah\&.cern\&.ch/projects/jra1mdw/
+https://savannah\&.cern\&.ch/bugs/?group=jra1mdw
 .SH "AUTHOR"
 .sp
 Andrea Ceccanti <andrea\&.ceccanti@cnaf\&.infn\&.it>
@@ -65,12 +65,6 @@ Valerio Venturi <valerio\&.venturi@cnaf\&.infn\&.it>
 .SH "SEE ALSO"
 .sp
 voms\-proxy\-init(1), voms\-proxy\-info(1)
-.sp
-EDT Auth Home page: http://grid\-auth\&.infn\&.it
-.sp
-CVSweb: http://datagrid\&.in2p3\&.fr/cgi\-bin/cvsweb\&.cgi/Auth/voms
-.sp
-RPM repository: http://datagrid\&.in2p3\&.fr/distribution/autobuild/i386\-rh7\&.3
 .SH "COPYING"
 .sp
 Copyright (c) Members of the EGEE Collaboration\&. 2004\&. See the beneficiaries list for details on the copyright holders\&.
