@@ -1,0 +1,128 @@
+'\" t
+.\"     Title: voms-proxy-info
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.77.1 <http://docbook.sf.net/>
+.\"      Date: 11/09/2012
+.\"    Manual: \ \&
+.\"    Source: \ \&
+.\"  Language: English
+.\"
+.TH "VOMS\-PROXY\-INFO" "1" "11/09/2012" "\ \&" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+voms-proxy-info \- prints informations about a proxy with VOMS extensions
+.SH "SYNOPSIS"
+.sp
+voms\-proxy\-info [options]
+.SH "DESCRIPTION"
+.sp
+The voms\-proxy\-info command prints information about a proxy, including information about the VOMS extension\&.
+.SH "OPTIONS"
+.sp
+Options may be specified indifferently with either a "\-" or "\-\-" prefix\&. The options from \-help to \-out are present for compatibility with grid\-proxy\-init, and have the exact same meaning\&. The meaning of the other ones is the following\&.
+.sp
+\fB\-help\fR
+.sp
+\fB\-usage\fR Displays usage\&.
+.sp
+\fB\-version\fR Displays version\&.
+.sp
+\fB\-debug\fR Enables extra debug output\&. This is for bug reports only\&. Users must not rely on the extra output printed by this option\&.
+.sp
+\fB\-file\fR <proxyfile> The name of the file containing the proxy, in case it is in a non\-standard place\&.
+.sp
+\fB\-chain\fR Prints informations about the proxy\(cqs certificate chain\&.
+.sp
+\fB\-subject\fR Prints the DN of the proxy\(cqs subject\&.
+.sp
+\fB\-issuer\fR Prints the DN of the proxy\(cqs issuer\&.
+.sp
+\fB\-identity\fR Prints the DN of the iodentity represented by the proxy\&. This is synonimous
+.sp
+\fB\-type\fR Print the proxy\(cqs type (limited or not)
+.sp
+\fB\-strength\fR Prints the proxy\(cqs strength\&. I\&.e\&. the number of bits in the key\&.
+.sp
+\fB\-valid\fR Prints validity times\&.
+.sp
+\fB\-timeleft\fR Prints how much time is left (in seconds) instead of the end time of the proxy\&. This option implies \-valid
+.sp
+\fB\-all\fR Prints everything\&.
+.sp
+\fB\-fqan\fR Prints the VOMS attributes in the FQAN format\&. Default
+.sp
+\fB\-exists\fR \-bits <N> \-hours <H> Verifies if the proxy is valid for at least other H hours and has a key of at least N bits\&.
+.sp
+\fB\-acexists\fR <voname> Verifies if an AC for the VO specified is present in the proxy\&.
+.sp
+\fB\-conf\fR <file> Read options from file\&.
+.sp
+\fB\-text\fR Prints the certificate to standard output\&.
+.sp
+\fB\-path\fR Prints the full path name of the proxy file\&.
+.sp
+\fB\-vo\fR Prints the names of the VOs whose AC are present in the proxy
+.sp
+\fB\-acsubject\fR Prints the subject of the owners of the ACs in the proxy\&.
+.sp
+\fB\-acissuer\fR Prints the issuer of the owners of the ACs in the proxy\&.
+.sp
+\fB\-actimeleft\fR Prints how much time is left (in seconds) instead of the end time of the AC\&.
+.sp
+\fB\-serial\fR Prints the serial number of each AC present in the proxy\&.
+.sp
+\fB\-dont\-verify\-ac\fR Skips the AC verification step\&. Warning! Data printed when this option is specified may not be reliable\&.
+.sp
+\fB\-targets\fR Prints the list of hosts to which the AC has been targeted\&.
+.sp
+\fB\-included\-file\fR In case the proxy included a user\-specified file, this option prints it to screen\&.
+.sp
+\fB\-uri\fR Prints the URI of the serve which issued this AC\&.
+.sp
+\fB\-keyusage\fR Print the content of the KeyUsage extension of the certificate\&.
+.SH "BUGS"
+.sp
+EGEE Bug Tracking Tool: https://savannah\&.cern\&.ch/projects/jra1mdw/
+.SH "AUTHOR"
+.sp
+Andrea Ceccanti <andrea\&.ceccanti@cnaf\&.infn\&.it>
+.sp
+Daniele Andreotti <daniele\&.andreotti@cnaf\&.infn\&.it>
+.sp
+Valerio Venturi <valerio\&.venturi@cnaf\&.infn\&.it>
+.SH "SEE ALSO"
+.sp
+voms\-proxy\-init(1), voms\-proxy\-info(1)
+.sp
+EDT Auth Home page: http://grid\-auth\&.infn\&.it
+.sp
+CVSweb: http://datagrid\&.in2p3\&.fr/cgi\-bin/cvsweb\&.cgi/Auth/voms
+.sp
+RPM repository: http://datagrid\&.in2p3\&.fr/distribution/autobuild/i386\-rh7\&.3
+.SH "COPYING"
+.sp
+Copyright (c) Members of the EGEE Collaboration\&. 2004\&. See the beneficiaries list for details on the copyright holders\&.
+.sp
+Licensed under the Apache License, Version 2\&.0 (the "License"); you may not use this file except in compliance with the License\&. You may obtain a copy of the License at
+.sp
+www\&.apache\&.org/licenses/LICENSE\-2\&.0: http://www\&.apache\&.org/licenses/LICENSE\-2\&.0
+.sp
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or im\- plied\&. See the License for the specific language governing permissions and limitations under the License\&.

@@ -1,0 +1,76 @@
+VOMS-PROXY-DESTROY(1)
+=====================
+:doctype: manpage
+
+
+NAME
+----
+voms-proxy-destroy - destroys a VOMS proxy
+
+
+SYNOPSIS
+--------
+voms-proxy-destroy [options]
+
+
+DESCRIPTION
+-----------
+The voms-proxy-destroy is intended to be used after a proxy is no longer useful, to destroy it.
+
+
+OPTIONS
+-------
+Options  may be specified indifferently with either a "-" or "--" prefix. 
+The options from -help to -out are present for compatibility with grid-proxy-init, 
+and have the exact same meaning. The meaning of the other ones is the following.
+
+*-help* Displays usage
+
+*-version* Displays version
+
+*-debug* Enables extra debug output
+
+*-q* Quiet mode, minimal output
+
+*-file* <proxyfile> The name of the file containing the proxy, in case it is in a non-standard place.
+
+*-dry* Doesn't actually destroy the proxy.
+
+*-conf* <file> Read options from file.
+
+
+BUGS
+----
+EGEE Bug Tracking Tool: https://savannah.cern.ch/projects/jra1mdw/
+
+
+AUTHOR
+------
+Andrea Ceccanti <andrea.ceccanti@cnaf.infn.it>
+
+Daniele Andreotti <daniele.andreotti@cnaf.infn.it>
+
+Valerio Venturi <valerio.venturi@cnaf.infn.it>
+
+
+SEE ALSO
+--------
+voms-proxy-init(1), voms-proxy-info(1)
+
+EDT Auth Home page: http://grid-auth.infn.it
+
+CVSweb: http://datagrid.in2p3.fr/cgi-bin/cvsweb.cgi/Auth/voms
+
+RPM repository: http://datagrid.in2p3.fr/distribution/autobuild/i386-rh7.3
+
+
+COPYING
+-------
+Copyright (c) Members of the EGEE Collaboration. 2004. See the beneficiaries list for details on the copyright holders.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+www.apache.org/licenses/LICENSE-2.0: http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either  express  or  im-
+plied. See the License for the specific language governing permissions and limitations under the License.

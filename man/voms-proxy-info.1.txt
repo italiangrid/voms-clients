@@ -1,0 +1,123 @@
+VOMS-PROXY-INFO(1)
+==================
+:doctype: manpage
+
+
+NAME
+----
+voms-proxy-info - prints informations about a proxy with VOMS extensions
+
+
+SYNOPSIS
+--------
+voms-proxy-info [options]
+
+
+DESCRIPTION
+-----------
+The voms-proxy-info command prints information about a proxy, including information about the VOMS extension.
+
+
+OPTIONS
+-------
+Options  may be specified indifferently with either a "-" or "--" prefix. 
+The options from -help to -out are present for compatibility with grid-proxy-init, 
+and have the exact same meaning. The meaning of the other ones is the following.
+
+*-help*
+
+*-usage* Displays usage.
+
+*-version* Displays version.
+
+*-debug* Enables extra debug output. This is for bug reports only. Users must not rely on the extra output printed by this option.
+
+*-file* <proxyfile> The name of the file containing the proxy, in case it is in a non-standard place.
+
+*-chain* Prints informations about the proxy's certificate chain.
+
+*-subject* Prints the DN of the proxy's subject.
+
+*-issuer* Prints the DN of the proxy's issuer.
+
+*-identity* Prints the DN of the iodentity represented by the proxy. This is synonimous
+
+*-type* Print the proxy's type (limited or not)
+
+*-strength* Prints the proxy's strength. I.e. the number of bits in the key.
+
+*-valid* Prints validity times.
+
+*-timeleft* Prints how much time is left (in seconds) instead of the end time of the proxy. This option implies -valid
+
+*-all* Prints everything.
+
+*-fqan* Prints the VOMS attributes in the FQAN format. Default
+
+*-exists* -bits <N> -hours <H> Verifies if the proxy is valid for at least other H hours and has a key of at least N bits.
+
+*-acexists* <voname> Verifies if an AC for the VO specified is present in the proxy.
+
+*-conf* <file> Read options from file.
+
+*-text* Prints the certificate to standard output.
+
+*-path* Prints the full path name of the proxy file.
+
+*-vo* Prints the names of the VOs whose AC are present in the proxy
+
+*-acsubject* Prints the subject of the owners of the ACs in the proxy.
+
+*-acissuer* Prints the issuer of the owners of the ACs in the proxy.
+
+*-actimeleft* Prints how much time is left (in seconds) instead of the end time of the AC.
+
+*-serial* Prints the serial number of each AC present in the proxy.
+
+*-dont-verify-ac* Skips the AC verification step. Warning! Data printed when this option is specified may not be reliable.
+
+*-targets* Prints the list of hosts to which the AC has been targeted.
+
+*-included-file* In case the proxy included a user-specified file, this option prints it to screen.
+
+*-uri* Prints the URI of the serve which issued this AC.
+
+*-keyusage* Print the content of the KeyUsage extension of the certificate.
+
+
+BUGS
+----
+EGEE Bug Tracking Tool: https://savannah.cern.ch/projects/jra1mdw/
+
+
+AUTHOR
+------
+Andrea Ceccanti <andrea.ceccanti@cnaf.infn.it>
+
+Daniele Andreotti <daniele.andreotti@cnaf.infn.it>
+
+Valerio Venturi <valerio.venturi@cnaf.infn.it>
+
+
+SEE ALSO
+--------
+voms-proxy-init(1), voms-proxy-info(1)
+
+EDT Auth Home page: http://grid-auth.infn.it
+
+CVSweb: http://datagrid.in2p3.fr/cgi-bin/cvsweb.cgi/Auth/voms
+
+RPM repository: http://datagrid.in2p3.fr/distribution/autobuild/i386-rh7.3
+
+
+COPYING
+-------
+Copyright (c) Members of the EGEE Collaboration. 2004. See the beneficiaries list for details on the copyright holders.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+www.apache.org/licenses/LICENSE-2.0: http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either  express  or  im-
+plied. See the License for the specific language governing permissions and limitations under the License.
+
