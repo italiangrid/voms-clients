@@ -2,78 +2,89 @@ package org.italiangrid.voms.clients.options;
 
 public enum VomsProxyDestroyOptions implements VomsCliOption {
 
-  HELP('h', "help", "Displays usage"),
+	/*
+	 * Options formats: with or without argument and with or without
+	 * short-option<br>
+	 * 
+	 * A short-option is represented by a single char
+	 */
 
-  USAGE('u', "usage", "Displays version"),
+	HELP('h', "help", "Displays usage"),
 
-  VERSION('v', "version", "Displays version"),
+	USAGE('u', "usage", "Displays version"),
 
-  DEBUG('d', "debug", "Enables extra debug output"),
-  
-  QUIET('q', "quiet", "Quiet mode, minimal output"),
-  
-  FILE('f', "file", "Specifies proxy file name"),
-  
-  DRY("dry", "Only go in dryrun mode"),
-  
-  CONF('c', "conf", "Load options from file <arg>");
+	VERSION('v', "version", "Displays version"),
 
-  private final String opt;
-  private final String longOpt;
-  private final String description;
-  private final boolean hasArg;
-  private final String argDescription;
-  
-  private VomsProxyDestroyOptions(String longOpt, String description) {
-    this.opt = null;
-    this.longOpt = longOpt;
-    this.description = description;
-    this.hasArg = false;
-    this.argDescription = "";
-  }
+	DEBUG('d', "debug", "Enables extra debug output"),
 
-  private VomsProxyDestroyOptions(char opt, String longOpt, String description) {
-    this.opt = Character.toString(opt);
-    this.longOpt = longOpt;
-    this.description = description;
-    this.hasArg = false;
-    this.argDescription = "";
-  }
+	QUIET('q', "quiet", "Quiet mode, minimal output"),
 
-  private VomsProxyDestroyOptions(String longOpt, String description, String argDescription) {
-    this.opt = null;
-    this.longOpt = longOpt;
-    this.description = description;
-    this.hasArg = true;
-    this.argDescription = argDescription;
-  }
+	FILE('f', "file", "Specifies proxy file name", "proxyfile"),
 
-  private VomsProxyDestroyOptions(char opt, String longOpt, String description, String argDescription) {
-    this.opt = Character.toString(opt);
-    this.longOpt = longOpt;
-    this.description = description;
-    this.hasArg = true;
-    this.argDescription = argDescription;
-  }
+	DRY("dry", "Only go in dryrun mode"),
 
-  public String getOpt() {
-    return opt;
-  }
+	CONF('c', "conf", "Load options from file <file>", "file");
 
-  public String getLongOpt() {
-    return longOpt;
-  }
+	private final String shortOption;
+	private final String longOption;
+	private final String description;
+	private final boolean hasArg;
+	private final String argDescription;
 
-  public String getDescription() {
-    return description;
-  }
+	private VomsProxyDestroyOptions(String shortOption, String longOption,
+			String description, boolean hasArg, String argDescription) {
+		this.shortOption = shortOption;
+		this.longOption = longOption;
+		this.description = description;
+		this.hasArg = hasArg;
+		this.argDescription = argDescription;
+	}
 
-  public boolean hasArg() {
-    return hasArg;
-  }
+	private VomsProxyDestroyOptions(String longOption, String description) {
+		this(null, longOption, description, false, null);
 
-  public String getArgDescription() {
-    return argDescription;
-  }
+	}
+
+	private VomsProxyDestroyOptions(char shortOption, String longOption,
+			String description) {
+		this(Character.toString(shortOption), longOption, description, false,
+				null);
+	}
+
+	private VomsProxyDestroyOptions(String longOption, String description,
+			String argDescription) {
+		this(null, longOption, description, true, argDescription);
+	}
+
+	private VomsProxyDestroyOptions(char shortOption, String longOption,
+			String description, String argDescription) {
+		this(Character.toString(shortOption), longOption, description, true,
+				argDescription);
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public boolean hasArg() {
+		return hasArg;
+	}
+
+	@Override
+	public String getOpt() {
+		return shortOption;
+	}
+
+	@Override
+	public String getLongOpt() {
+		return longOption;
+	}
+
+	@Override
+	public String getArgDescription() {
+		return argDescription;
+	}
 
 }

@@ -15,10 +15,10 @@ public enum VomsProxyInfoOptions implements VomsCliOption {
 	 * A short-option is represented by a single char
 	 */
 
-	PROXY_FILENAME("out", "Non standard location of new proxy cert",
+	PROXY_FILENAME("file", "Non standard location of new proxy cert",
 			"proxyfile"),
 
-	SKIP_AC("dont_verify_ac", "Skips AC verification"),
+	SKIP_AC_VERIFICATION("dont_verify_ac", "Skips AC verification"),
 
 	PROXY_EXISTS('e', "exists", "Returns 0 if valid proxy exists, 1 otherwise"),
 
@@ -33,8 +33,7 @@ public enum VomsProxyInfoOptions implements VomsCliOption {
 	PRINT_CHAIN("chain",
 			"Prints information about the whol proxy chain (CA excluded)"),
 
-	PRINT_SUBJECT("subject", "Prints Distinguished name (DN) of proxy subject",
-			"proxyfile"),
+	PRINT_SUBJECT("subject", "Prints Distinguished name (DN) of proxy subject"),
 
 	PRINT_ISSUER("issuer", "Prints the DN of proxy issuer (certificate signer)"),
 
@@ -83,66 +82,64 @@ public enum VomsProxyInfoOptions implements VomsCliOption {
 			"[option to -exists] strength requirement for proxy to be valid",
 			"B");
 
-	private final String opt;
-	private final String longOpt;
+	private final String shortOption;
+	private final String longOption;
 	private final String description;
 	private final boolean hasArg;
 	private final String argDescription;
 
-	private VomsProxyInfoOptions(String longOpt, String description) {
-		this.opt = null;
-		this.longOpt = longOpt;
+	private VomsProxyInfoOptions(String shortOption, String longOption,
+			String description, boolean hasArg, String argDescription) {
+		this.shortOption = shortOption;
+		this.longOption = longOption;
 		this.description = description;
-		this.hasArg = false;
-		this.argDescription = "";
-	}
-
-	private VomsProxyInfoOptions(char opt, String longOpt, String description) {
-		this.opt = Character.toString(opt);
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = false;
-		this.argDescription = "";
-	}
-
-	private VomsProxyInfoOptions(String longOpt, String description,
-			String argDescription) {
-		this.opt = null;
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = true;
+		this.hasArg = hasArg;
 		this.argDescription = argDescription;
 	}
 
-	private VomsProxyInfoOptions(char opt, String longOpt, String description,
+	private VomsProxyInfoOptions(String longOption, String description) {
+		this(null, longOption, description, false, null);
+
+	}
+
+	private VomsProxyInfoOptions(char shortOption, String longOption,
+			String description) {
+		this(Character.toString(shortOption), longOption, description, false,
+				null);
+	}
+
+	private VomsProxyInfoOptions(String longOption, String description,
 			String argDescription) {
-		this.opt = Character.toString(opt);
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = true;
-		this.argDescription = argDescription;
+		this(null, longOption, description, true, argDescription);
 	}
 
-	public String getName() {
-		return longOpt;
+	private VomsProxyInfoOptions(char shortOption, String longOption,
+			String description, String argDescription) {
+		this(Character.toString(shortOption), longOption, description, true,
+				argDescription);
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public boolean hasArg() {
 		return hasArg;
 	}
 
+	@Override
 	public String getOpt() {
-		return opt;
+		return shortOption;
 	}
 
+	@Override
 	public String getLongOpt() {
-		return longOpt;
+		return longOption;
 	}
 
+	@Override
 	public String getArgDescription() {
 		return argDescription;
 	}

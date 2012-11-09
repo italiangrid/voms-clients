@@ -23,67 +23,64 @@ public enum VomsClientsCommonOptions implements VomsCliOption {
 
 	DEBUG("debug", "Enables extra debug output");
 
-	private final String opt;
-	private final String longOpt;
+	private final String shortOption;
+	private final String longOption;
 	private final String description;
 	private final boolean hasArg;
 	private final String argDescription;
 
-	private VomsClientsCommonOptions(String longOpt, String description) {
-		this.opt = null;
-		this.longOpt = longOpt;
+	private VomsClientsCommonOptions(String shortOption, String longOption,
+			String description, boolean hasArg, String argDescription) {
+		this.shortOption = shortOption;
+		this.longOption = longOption;
 		this.description = description;
-		this.hasArg = false;
-		this.argDescription = "";
+		this.hasArg = hasArg;
+		this.argDescription = argDescription;
 	}
 
-	private VomsClientsCommonOptions(char opt, String longOpt,
+	private VomsClientsCommonOptions(String longOption, String description) {
+		this(null, longOption, description, false, null);
+
+	}
+
+	private VomsClientsCommonOptions(char shortOption, String longOption,
 			String description) {
-		this.opt = Character.toString(opt);
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = false;
-		this.argDescription = "";
+		this(Character.toString(shortOption), longOption, description, false,
+				null);
 	}
 
-	private VomsClientsCommonOptions(String longOpt, String description,
+	private VomsClientsCommonOptions(String longOption, String description,
 			String argDescription) {
-		this.opt = null;
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = true;
-		this.argDescription = argDescription;
+		this(null, longOption, description, true, argDescription);
 	}
 
-	private VomsClientsCommonOptions(char opt, String longOpt,
+	private VomsClientsCommonOptions(char shortOption, String longOption,
 			String description, String argDescription) {
-		this.opt = Character.toString(opt);
-		this.longOpt = longOpt;
-		this.description = description;
-		this.hasArg = true;
-		this.argDescription = argDescription;
+		this(Character.toString(shortOption), longOption, description, true,
+				argDescription);
 	}
 
-	public String getName() {
-		return longOpt;
-	}
-
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public boolean hasArg() {
 		return hasArg;
 	}
 
+	@Override
 	public String getOpt() {
-		return opt;
+		return shortOption;
 	}
 
+	@Override
 	public String getLongOpt() {
-		return longOpt;
+		return longOption;
 	}
 
+	@Override
 	public String getArgDescription() {
 
 		return argDescription;
