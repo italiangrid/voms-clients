@@ -88,12 +88,9 @@ public class VomsProxyDestroy {
       Option option = new Option(optionElement.getOpt(), optionElement.getLongOpt(), 
           optionElement.hasArg(), optionElement.getDescription());
 
-      option.setDescription(optionElement.getArgDescription());
+      option.setArgName(optionElement.getArgDescription());
       
-      options.addOption(optionElement.getOpt(),
-          optionElement.getLongOpt(),
-          optionElement.hasArg(),
-          optionElement.getDescription());
+      options.addOption(option);
     }
 	
 	}
