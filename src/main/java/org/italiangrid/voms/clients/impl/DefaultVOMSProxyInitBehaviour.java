@@ -9,16 +9,17 @@ import java.util.Map;
 import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.openssl.PasswordFinder;
 import org.italiangrid.voms.VOMSError;
+import org.italiangrid.voms.ac.ValidationResultListener;
 import org.italiangrid.voms.clients.ProxyInitParams;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 import org.italiangrid.voms.clients.strategies.VOMSCommandsParsingStrategy;
 import org.italiangrid.voms.clients.util.PasswordFinders;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
 import org.italiangrid.voms.credential.CredentialsUtils;
-import org.italiangrid.voms.credential.UserCredentials;
+import org.italiangrid.voms.credential.LoadCredentialsStrategy;
 import org.italiangrid.voms.request.VOMSACService;
+import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
-import org.italiangrid.voms.request.impl.DefaultVOMSACService;
 
 import eu.emi.security.authn.x509.X509Credential;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
@@ -34,13 +35,28 @@ import eu.emi.security.authn.x509.proxy.ProxyGenerator;
 public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 	private VOMSCommandsParsingStrategy commandsParser;
+	private ValidationResultListener validationResultListener;
+	private VOMSRequestListener requestListener;
+	private ProxyCreationListener proxyCreationListener;
+	private VOMSServerInfoStoreListener serverInfoStoreListener;
 
-	public DefaultVOMSProxyInitBehaviour() {
-		this(new DefaultVOMSCommandsParser());
-	}
+	private LoadCredentialsStrategy loadCredStrategy;
 
-	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser) {
+	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser,
+			ValidationResultListener validationListener,
+			VOMSRequestListener requestListener,
+			LoadCredentialsStrategy loadCredentialStrategy,
+			ProxyCreationListener pxCreationListener,
+			VOMSServerInfoStoreListener serverInfoStoreListener)
+			{
+		
 		this.commandsParser = commandsParser;
+		this.validationResultListener = validationListener;
+		this.requestListener = requestListener;
+		this.proxyCreationListener = pxCreationListener;
+		this.serverInfoStoreListener = serverInfoStoreListener;
+		this.loadCredStrategy = loadCredentialStrategy;
+		
 	}
 
 	public void initProxy(ProxyInitParams params) {
@@ -78,6 +94,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			
 			ProxyCertificate cert = ProxyGenerator.generate(certOptions, credential.getKey());
 			CredentialsUtils.saveCredentials(new FileOutputStream(proxyFilePath), cert.getCredential());
+			proxyCreationListener.proxyCreated(proxyFilePath, cert);
 			
 		} catch (Throwable t) {
 			
@@ -108,14 +125,17 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			request.setTargets(params.getTargets());
 			request.setLifetime(params.getAcLifetimeInSeconds());
 
-			VOMSACService acService = new DefaultVOMSACService();
+			VOMSACService acService = new BaseVOMSACService(requestListener, serverInfoStoreListener);
 
 			AttributeCertificate ac = acService.getVOMSAttributeCertificate(
 					cred, request);
 
-			acs.add(ac);
+			if (ac != null)
+				acs.add(ac);
 		}
 
+		if (!vomsCommandsMap.keySet().isEmpty() && acs.isEmpty())
+			throw new VOMSError("Unable to satisfy user request!");
 		return acs;
 	}
 
@@ -129,7 +149,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			// FIXME: Require explictly the console password finder?
 			pf = PasswordFinders.getDefault();
 
-		return UserCredentials.loadCredentials(pf);
+		return loadCredStrategy.loadCredentials(pf);
 	}
 
 }

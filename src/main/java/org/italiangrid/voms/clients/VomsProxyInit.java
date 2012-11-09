@@ -6,6 +6,7 @@ import static org.italiangrid.voms.clients.options.VomsProxyInitOptions.CERT_LOC
 import static org.italiangrid.voms.clients.options.VomsProxyInitOptions.ENABLE_STDIN_PWD;
 import static org.italiangrid.voms.clients.options.VomsProxyInitOptions.KEY_LOCATION;
 import static org.italiangrid.voms.clients.options.VomsProxyInitOptions.LIMITED_PROXY;
+import static org.italiangrid.voms.clients.options.VomsProxyInitOptions.QUIET_MODE;
 import static org.italiangrid.voms.clients.options.VomsProxyInitOptions.VOMS_COMMAND;
 
 import java.text.SimpleDateFormat;
@@ -13,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -22,14 +25,30 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.StringUtils;
+import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.VOMSError;
+import org.italiangrid.voms.ac.VOMSValidationResult;
+import org.italiangrid.voms.ac.ValidationResultListener;
+import org.italiangrid.voms.clients.impl.DefaultVOMSCommandsParser;
 import org.italiangrid.voms.clients.impl.DefaultVOMSProxyInitBehaviour;
+import org.italiangrid.voms.clients.impl.ProxyCreationListener;
+import org.italiangrid.voms.clients.impl.VOMSRequestListener;
 import org.italiangrid.voms.clients.options.VomsCliOption;
 import org.italiangrid.voms.clients.options.VomsClientsCommonOptions;
 import org.italiangrid.voms.clients.options.VomsProxyInitOptions;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
+import org.italiangrid.voms.credential.LoadCredentialsEventListener;
+import org.italiangrid.voms.credential.LoadCredentialsStrategy;
+import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
+import org.italiangrid.voms.request.VOMSACRequest;
+import org.italiangrid.voms.request.VOMSServerInfo;
+import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.emi.security.authn.x509.proxy.ProxyCertificate;
+import eu.emi.security.authn.x509.proxy.ProxyCertificateOptions;
 
 /**
  * 
@@ -38,27 +57,157 @@ import org.slf4j.LoggerFactory;
  * @author Daniele Andreotti
  * 
  */
-public class VomsProxyInit {
+public class VomsProxyInit implements 
+	ValidationResultListener,
+	LoadCredentialsEventListener,
+	VOMSRequestListener,
+	ProxyCreationListener,
+	VOMSServerInfoStoreListener{
+
+	private enum MessageLevel{
+		TRACE,
+		INFO,
+		WARNING,
+		ERROR
+	}
+	
+	private static final EnumSet<MessageLevel> DEFAULT_LEVEL = EnumSet.range(MessageLevel.INFO, MessageLevel.ERROR);
+
+	// TODO: move to where all CLIs can benefit
+	public static final String DEFAULT_TMP_PATH = "/tmp";
 
 	private static final Logger log = LoggerFactory
-			.getLogger(VomsProxyInit.class);
+		.getLogger(VomsProxyInit.class);
 
+	private static final EnumSet<MessageLevel> QUIET_LEVELS = EnumSet.of(MessageLevel.ERROR, MessageLevel.WARNING);
+
+	private static final EnumSet<MessageLevel> VERBOSE_LEVELS = EnumSet.allOf(MessageLevel.class);
+
+	public static void main(String[] args) {
+		new VomsProxyInit(args);	
+	}
+	private EnumSet<MessageLevel> actualMessageLevel = DEFAULT_LEVEL;
+	
 	/** The CLI options **/
-	private static Options cliOptions;
-
+	private Options cliOptions;
+	
 	/** The CLI options parser **/
-	private static CommandLineParser cliParser = new GnuParser();
-
+	private CommandLineParser cliParser = new GnuParser();
 	/** The parsed command line **/
-	private static CommandLine commandLine = null;
-
+	private CommandLine commandLine = null;
+	private boolean isQuiet = false;
+	
+	private boolean isVerbose = false;
+	
 	/** The implementation of the VOMS proxy init behaviour **/
-	private static ProxyInitStrategy proxyInitBehaviour = new DefaultVOMSProxyInitBehaviour();
+	private ProxyInitStrategy proxyInitBehaviour;
 
+	public VomsProxyInit(String[] args) {
+		
+		initOptions();
+
+		try {
+
+			parseOptions(args);
+
+		} catch (ParseException e) {
+			log.error(e.getMessage(), e.getCause());
+			System.err.println("Error parsing command line arguments: "
+					+ e.getMessage());
+			usage();
+			System.exit(1);
+		}
+	}
+
+	private boolean commandLineHasOption(VomsCliOption option) {
+
+		return commandLine.hasOption(option.getLongOpt());
+	}
+
+	/**
+	 * Checks the command line to see whether the display of this CLI
+	 * 
+	 * @param line
+	 */
+	private void displayHelpIfRequested(CommandLine line) {
+
+		if (line.hasOption(VomsClientsCommonOptions.HELP.getLongOpt())
+				|| line.hasOption(VomsClientsCommonOptions.USAGE.getLongOpt())) {
+			usage();
+			System.exit(0);
+		}
+
+	}
+
+	private String getOptionValue(VomsCliOption option) {
+
+		if (commandLineHasOption(option))
+			return commandLine.getOptionValue(option.getLongOpt());
+		return null;
+	}
+
+	private List<String> getOptionValues(VomsCliOption option) {
+
+		if (commandLineHasOption(option)) {
+
+			String[] values = commandLine.getOptionValues(option.getLongOpt());
+			return Arrays.asList(values);
+		}
+
+		return null;
+	}
+
+	private ProxyInitStrategy getProxyInitBehaviour(){
+		
+		String home = System.getProperty("user.home");
+		LoadCredentialsStrategy loadCredStrategy = new DefaultLoadCredentialsStrategy(home, DEFAULT_TMP_PATH, this);
+		
+		return new DefaultVOMSProxyInitBehaviour(new DefaultVOMSCommandsParser(), 
+				this, 
+				this, 
+				loadCredStrategy, 
+				this, 
+				this);
+	}
+
+	private ProxyInitParams getProxyInitParamsFromCommandLine(
+			CommandLine line) {
+
+		ProxyInitParams params = new ProxyInitParams();
+
+		
+		
+		if (commandLineHasOption(ENABLE_STDIN_PWD))
+			params.setReadPasswordFromStdin(true);
+
+		if (commandLineHasOption(LIMITED_PROXY))
+			params.setLimited(true);
+
+		if (commandLineHasOption(CERT_LOCATION))
+			params.setCertFile(getOptionValue(CERT_LOCATION));
+
+		if (commandLineHasOption(KEY_LOCATION))
+			params.setKeyFile(getOptionValue(KEY_LOCATION));
+
+		if (commandLineHasOption(AC_VALIDITY))
+			params.setAcLifetimeInSeconds(parseACLifeTimeString(
+					getOptionValue(AC_VALIDITY), AC_VALIDITY));
+
+		if (commandLineHasOption(AC_LIFETIME))
+			params.setAcLifetimeInSeconds(parseACLifeTimeString(
+					getOptionValue(AC_LIFETIME), AC_LIFETIME));
+
+		if (commandLineHasOption(VOMS_COMMAND))
+			params.setVomsCommands(getOptionValues(VOMS_COMMAND));
+
+		
+		return params;
+
+	}
 	/**
 	 * Initializes command-line options
 	 */
-	private static void initOptions() {
+	private void initOptions() {
 
 		cliOptions = new Options();
 
@@ -79,59 +228,70 @@ public class VomsProxyInit {
 
 	}
 
-	/**
-	 * Prints usage information
-	 */
-	private static void usage() {
-
-		int lineWidth = 120;
-		String header = "options:";
-		String footer = "";
-
-		HelpFormatter helpFormatter = new HelpFormatter();
-		helpFormatter.printHelp(lineWidth, "voms-proxy-init [options]", header,
-				cliOptions, footer);
+	@Override
+	public void loadCredentialNotification(LoadCredentialOutcome outcome,
+			Throwable error, String... locations) {
+		
+		if (outcome.equals(LoadCredentialOutcome.FAILURE))
+			logMessage(MessageLevel.TRACE, "Credentials couldn't be loaded [%s]: %s\n", 
+					StringUtils.join(locations,","),
+					error.getMessage());
+		else
+			logMessage(MessageLevel.TRACE, "Credentials loaded successfully [%s]\n", 
+					StringUtils.join(locations,","));
 	}
 
-	/**
-	 * Checks the command line to see whether the display of this CLI
-	 * 
-	 * @param line
-	 */
-	private static void displayHelpIfRequested(CommandLine line) {
-
-		if (line.hasOption(VomsClientsCommonOptions.HELP.getLongOpt())
-				|| line.hasOption(VomsClientsCommonOptions.USAGE.getLongOpt())) {
-			usage();
-			System.exit(0);
+	
+	protected void logMessage(MessageLevel level, String fmt, Object...args){
+		
+		if (actualMessageLevel.contains(level)){
+			if (level.equals(MessageLevel.ERROR))
+				System.err.format(fmt, args);
+			else
+				System.out.format(fmt, args);
 		}
-
+	}
+	
+	
+	@Override
+	public void notifyFailure(VOMSACRequest request, VOMSServerInfo endpoint,
+			Throwable error) {
+		if (endpoint != null)
+			logMessage(MessageLevel.ERROR, "Error contacting %s:%d for VO %s: %s\n", endpoint.getURL().getHost(), 
+					endpoint.getURL().getPort(),  
+					endpoint.getVoName(),
+					error.getMessage());
+		else
+			logMessage(MessageLevel.ERROR, "None of the contacted servers for %s were capable of returning a valid AC for the user.\n", 
+					request.getVoName());
+	}
+	
+	@Override
+	public void notifyStart(VOMSACRequest request, VOMSServerInfo si) {
+		
+		logMessage(MessageLevel.INFO, "Contacting %s:%d [%s] \"%s\"...", si.getURL().getHost(), 
+				si.getURL().getPort(), si.getVOMSServerDN(), si.getVoName());
 	}
 
-	private static boolean commandLineHasOption(VomsCliOption option) {
-
-		return commandLine.hasOption(option.getLongOpt());
+	
+	
+	@Override
+	public void notifySuccess(VOMSACRequest request, VOMSServerInfo endpoint) {
+		
+		logMessage(MessageLevel.INFO, "Done\n");
 	}
 
-	private static String getOptionValue(VomsCliOption option) {
-
-		if (commandLineHasOption(option))
-			return commandLine.getOptionValue(option.getLongOpt());
-		return null;
+	@Override
+	public void notifyValidationResult(VOMSValidationResult result,
+			VOMSAttribute attributes) {
+		
+		if (!result.isValid()){
+			logMessage(MessageLevel.ERROR, "AC validation error: %s\n", StringUtils.join(result.getValidationErrors(), ", "));
+		}else
+			logMessage(MessageLevel.TRACE, "AC validation succeded. Valid attributes: %s\n", attributes.toString());
 	}
 
-	private static List<String> getOptionValues(VomsCliOption option) {
-
-		if (commandLineHasOption(option)) {
-
-			String[] values = commandLine.getOptionValues(option.getLongOpt());
-			return Arrays.asList(values);
-		}
-
-		return null;
-	}
-
-	private static int parseACLifeTimeString(String acLifetimeProperty,
+	private int parseACLifeTimeString(String acLifetimeProperty,
 			VomsCliOption option) {
 
 		try {
@@ -158,77 +318,88 @@ public class VomsProxyInit {
 		}
 	}
 
-	private static ProxyInitParams getProxyInitParamsFromCommandLine(
-			CommandLine line) {
-
-		ProxyInitParams params = new ProxyInitParams();
-
-		if (commandLineHasOption(ENABLE_STDIN_PWD))
-			params.setReadPasswordFromStdin(true);
-
-		if (commandLineHasOption(LIMITED_PROXY))
-			params.setLimited(true);
-
-		if (commandLineHasOption(CERT_LOCATION))
-			params.setCertFile(getOptionValue(CERT_LOCATION));
-
-		if (commandLineHasOption(KEY_LOCATION))
-			params.setKeyFile(getOptionValue(KEY_LOCATION));
-
-		if (commandLineHasOption(AC_VALIDITY))
-			params.setAcLifetimeInSeconds(parseACLifeTimeString(
-					getOptionValue(AC_VALIDITY), AC_VALIDITY));
-
-		if (commandLineHasOption(AC_LIFETIME))
-			params.setAcLifetimeInSeconds(parseACLifeTimeString(
-					getOptionValue(AC_LIFETIME), AC_LIFETIME));
-
-		if (commandLineHasOption(VOMS_COMMAND))
-			params.setVomsCommands(getOptionValues(VOMS_COMMAND));
-
-		// Add missing options
-		return params;
-
-	}
-
 	/**
 	 * Parses cli options
 	 * 
 	 * @throws ParseException
 	 */
-	private static void parseOptions(String[] args) throws ParseException {
+	private void parseOptions(String[] args) throws ParseException {
 
 		commandLine = cliParser.parse(cliOptions, args);
 
+		setVerbosityFromCommandLine(commandLine);
 		displayHelpIfRequested(commandLine);
 
 		ProxyInitParams params = getProxyInitParamsFromCommandLine(commandLine);
 
 		try {
 
+			proxyInitBehaviour = getProxyInitBehaviour();
 			proxyInitBehaviour.initProxy(params);
 
 		} catch (Throwable t) {
-
-			System.err.println("Error: " + t.getMessage());
+			if (t.getMessage() != null)
+				logMessage(MessageLevel.ERROR, "%s\n", t.getMessage());
+			else{
+				System.err.println("Error: "+t.getClass().getSimpleName());
+				t.printStackTrace(System.err);
+			}
 		}
 
 	}
 
-	public static void main(String[] args) {
+	@Override
+	public void proxyCreated(String proxyPath, ProxyCertificate cert) {
+		logMessage(MessageLevel.INFO, "Creating proxy in %s...Done\n\n", proxyPath);
+		logMessage(MessageLevel.INFO, "Your proxy is valid until %s", cert.getCredential().getCertificateChain()[0].getNotAfter());
+	}
+	
+	private void setVerbosityFromCommandLine(CommandLine line){
+		
+		if (commandLineHasOption(VomsClientsCommonOptions.DEBUG))
+			isVerbose = true;
+		
+		if (commandLineHasOption(QUIET_MODE))
+			isQuiet = true;
+			
+		if (isVerbose && isQuiet)
+			throw new VOMSError("Try to understand us: this command cannot be verbose and quiet at the same time!");
+		
+		if (isVerbose)
+			actualMessageLevel = VERBOSE_LEVELS;
+		
+		if (isQuiet)
+			actualMessageLevel = QUIET_LEVELS;
+	}
 
-		initOptions();
+	/**
+	 * Prints usage information
+	 */
+	private void usage() {
 
-		try {
+		int lineWidth = 120;
+		String header = "options:";
+		String footer = "";
 
-			parseOptions(args);
+		HelpFormatter helpFormatter = new HelpFormatter();
+		helpFormatter.printHelp(lineWidth, "voms-proxy-init [options]", header,
+				cliOptions, footer);
+	}
 
-		} catch (ParseException e) {
-			log.error(e.getMessage(), e.getCause());
-			System.err.println("Error parsing command line arguments: "
-					+ e.getMessage());
-			usage();
-			System.exit(1);
-		}
+	@Override
+	public void notifyUnknownVO(VOMSACRequest request) {
+		logMessage(MessageLevel.ERROR, 
+				"VOMS Server for VO %s is not configured on this host! Check your vomses configuration.\n", 
+				request.getVoName());
+	}
+
+	@Override
+	public void serverInfoLoaded(String vomsesPath, VOMSServerInfo info) {
+		if (vomsesPath != null)
+			logMessage(MessageLevel.TRACE, "Loaded vomses information '%s' from %s.\n", info, vomsesPath);
+		else
+			logMessage(MessageLevel.TRACE, "Loaded vomses information '%s'\n", info);
 	}
 }
+
+

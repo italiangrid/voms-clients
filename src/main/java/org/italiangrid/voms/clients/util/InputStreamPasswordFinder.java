@@ -14,8 +14,11 @@ public class InputStreamPasswordFinder implements PasswordFinder {
 
 	InputStream is;
 	PrintStream os;
+	
+	String promptMessage;
 
-	public InputStreamPasswordFinder(InputStream is, OutputStream os) {
+	public InputStreamPasswordFinder(String prompt, InputStream is, OutputStream os) {
+		this.promptMessage = prompt;
 		this.is = is;
 		this.os = new PrintStream(os);
 	}
@@ -23,7 +26,7 @@ public class InputStreamPasswordFinder implements PasswordFinder {
 	public char[] getPassword() {
 		try {
 
-			os.print("Enter private key password:");
+			os.print(promptMessage);
 			os.flush();
 			
 			BufferedReader reader = new BufferedReader(

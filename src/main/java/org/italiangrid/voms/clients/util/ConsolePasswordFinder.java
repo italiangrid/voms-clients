@@ -12,8 +12,10 @@ import org.italiangrid.voms.VOMSError;
  */
 public class ConsolePasswordFinder implements PasswordFinder {
 
-	public ConsolePasswordFinder() {
-
+	private String promptMessage;
+	
+	public ConsolePasswordFinder(String prompt) {
+		this.promptMessage = prompt;
 	}
 
 	public char[] getPassword() {
@@ -23,7 +25,7 @@ public class ConsolePasswordFinder implements PasswordFinder {
 			throw new VOMSError(
 					"Error obtaining password from console: no console found for this JVM!");
 
-		return console.readPassword("Enter private key password:");
+		return console.readPassword(promptMessage);
 	}
 
 }
