@@ -13,6 +13,7 @@ import org.italiangrid.voms.clients.options.v2.CommonOptions;
 import org.italiangrid.voms.clients.options.v2.ProxyInitOptions;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 import org.italiangrid.voms.clients.util.LifetimeIntervalParser;
+import org.italiangrid.voms.clients.util.MessageLogger.MessageLevel;
 import org.italiangrid.voms.credential.LoadCredentialsStrategy;
 import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 
@@ -35,14 +36,14 @@ public class VomsProxyInit extends AbstractCLI {
 	/** The implementation of the VOMS proxy init behaviour **/
 	private ProxyInitStrategy proxyInitBehaviour;
 
-	private ProxyInitListenerHelper listenerHelper = new ProxyInitListenerHelper(this);
+	private ProxyInitListenerHelper listenerHelper; 
 
 	public VomsProxyInit(String[] args) {
 		super(COMMAND_NAME);
 		
 		initOptions();		
 		parseOptionsFromCommandLine(args);
-		
+		listenerHelper = new ProxyInitListenerHelper(logger);
 		doInit();
 	}
 	
@@ -56,10 +57,9 @@ public class VomsProxyInit extends AbstractCLI {
 
 		} catch (Throwable t) {
 			if (t.getMessage() != null)
-				logMessage(MessageLevel.ERROR, "%s\n", t.getMessage());
+				logger.error("%s\n", t.getMessage());
 			else{
-				System.err.println("Error: "+t.getClass().getSimpleName());
-				t.printStackTrace(System.err);
+				logger.error(t, "Error: %s\n", t.getClass().getSimpleName());
 			}
 		}
 	}

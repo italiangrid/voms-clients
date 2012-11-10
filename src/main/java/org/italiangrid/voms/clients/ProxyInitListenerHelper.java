@@ -4,9 +4,10 @@ import org.apache.commons.lang.StringUtils;
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.ac.VOMSValidationResult;
 import org.italiangrid.voms.ac.ValidationResultListener;
-import org.italiangrid.voms.clients.AbstractCLI.MessageLevel;
 import org.italiangrid.voms.clients.impl.ProxyCreationListener;
 import org.italiangrid.voms.clients.impl.VOMSRequestListener;
+import org.italiangrid.voms.clients.util.MessageLogger;
+import org.italiangrid.voms.clients.util.MessageLogger.MessageLevel;
 import org.italiangrid.voms.credential.LoadCredentialsEventListener;
 import org.italiangrid.voms.request.VOMSACRequest;
 import org.italiangrid.voms.request.VOMSServerInfo;
@@ -21,10 +22,11 @@ public class ProxyInitListenerHelper implements
 	ProxyCreationListener,
 	VOMSServerInfoStoreListener{
 
-	AbstractCLI cli;
+	MessageLogger logger;
 	
-	public ProxyInitListenerHelper(AbstractCLI cli) {
-		this.cli = cli;
+	
+	public ProxyInitListenerHelper(MessageLogger logger) {
+		this.logger = logger;
 	}
 
 	@Override
@@ -100,6 +102,6 @@ public class ProxyInitListenerHelper implements
 	}
 	
 	private final void logMessage(MessageLevel level, String fmt, Object... args) {
-		cli.logMessage(level, fmt, args);
+		logger.formatMessage(level, fmt, args);
 	}
 }

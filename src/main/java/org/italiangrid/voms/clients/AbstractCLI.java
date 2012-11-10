@@ -1,7 +1,6 @@
 package org.italiangrid.voms.clients;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -14,33 +13,32 @@ import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.clients.options.v2.CLIOption;
 import org.italiangrid.voms.clients.options.v2.CommonOptions;
 import org.italiangrid.voms.clients.options.v2.ProxyInitOptions;
+import org.italiangrid.voms.clients.util.MessageLogger;
 import org.italiangrid.voms.clients.util.VersionProvider;
 
 public abstract class AbstractCLI {
-
-	protected enum MessageLevel{
-			TRACE,
-			INFO,
-			WARNING,
-			ERROR
-		}
-
-	protected static final EnumSet<MessageLevel> DEFAULT_LEVEL = EnumSet.range(MessageLevel.INFO, MessageLevel.ERROR);
-	protected static final EnumSet<MessageLevel> QUIET_LEVELS = EnumSet.of(MessageLevel.ERROR, MessageLevel.WARNING);
-	protected static final EnumSet<MessageLevel> VERBOSE_LEVELS = EnumSet.allOf(MessageLevel.class);
 	
 	public static final String DEFAULT_TMP_PATH = "/tmp";
 
-	EnumSet<MessageLevel> actualMessageLevel = DEFAULT_LEVEL;
 	/** The CLI options **/
 	protected Options cliOptions;
+	
 	/** The CLI options parser **/
 	protected CommandLineParser cliParser = new GnuParser();
+	
 	/** The parsed command line **/
 	protected CommandLine commandLine = null;
 	
+	/** The name of this command **/
 	protected String commandName;
+	
+	/** The logger used to print messages **/
+	protected MessageLogger logger;
+	
+	/** Be quiet when logging **/
 	boolean isQuiet = false;
+	
+	/** Be verbose when logging **/
 	boolean isVerbose = false;
 	
 	protected AbstractCLI(String commandName) {
@@ -88,15 +86,7 @@ public abstract class AbstractCLI {
 			cliOptions.addOption(o.getOption());
 	}
 
-	public final void logMessage(MessageLevel level, String fmt, Object...args) {
-		
-		if (actualMessageLevel.contains(level)){
-			if (level.equals(MessageLevel.ERROR))
-				System.err.format(fmt, args);
-			else
-				System.out.format(fmt, args);
-		}
-	}
+
 
 	protected final boolean commandLineHasOption(CLIOption option) {
 	
@@ -154,9 +144,9 @@ public abstract class AbstractCLI {
 			throw new VOMSError("Try to understand us: this command cannot be verbose and quiet at the same time!");
 		
 		if (isVerbose)
-			actualMessageLevel = VERBOSE_LEVELS;
+			logger = new MessageLogger(MessageLogger.VERBOSE);
 		
 		if (isQuiet)
-			actualMessageLevel = QUIET_LEVELS;
+			logger = new MessageLogger(MessageLogger.QUIET);
 	}
 }
