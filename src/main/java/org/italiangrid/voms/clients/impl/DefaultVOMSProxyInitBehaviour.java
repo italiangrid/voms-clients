@@ -16,7 +16,9 @@ import org.italiangrid.voms.clients.strategies.VOMSCommandsParsingStrategy;
 import org.italiangrid.voms.clients.util.PasswordFinders;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
 import org.italiangrid.voms.credential.CredentialsUtils;
+import org.italiangrid.voms.credential.LoadCredentialsEventListener;
 import org.italiangrid.voms.credential.LoadCredentialsStrategy;
+import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
@@ -39,15 +41,14 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	private VOMSRequestListener requestListener;
 	private ProxyCreationListener proxyCreationListener;
 	private VOMSServerInfoStoreListener serverInfoStoreListener;
-
-	private LoadCredentialsStrategy loadCredStrategy;
-
+	private LoadCredentialsEventListener loadCredentialsEventListener;
+	
 	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser,
 			ValidationResultListener validationListener,
 			VOMSRequestListener requestListener,
-			LoadCredentialsStrategy loadCredentialStrategy,
 			ProxyCreationListener pxCreationListener,
-			VOMSServerInfoStoreListener serverInfoStoreListener)
+			VOMSServerInfoStoreListener serverInfoStoreListener,
+			LoadCredentialsEventListener loadCredEventListener)
 			{
 		
 		this.commandsParser = commandsParser;
@@ -55,12 +56,20 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.requestListener = requestListener;
 		this.proxyCreationListener = pxCreationListener;
 		this.serverInfoStoreListener = serverInfoStoreListener;
-		this.loadCredStrategy = loadCredentialStrategy;
-		
+		this.loadCredentialsEventListener = loadCredEventListener;
 	}
 
+	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, InitListenerAdapter listenerAdapter){
+		this.commandsParser = commandsParser;
+		this.validationResultListener = listenerAdapter;
+		this.requestListener = listenerAdapter;
+		this.proxyCreationListener = listenerAdapter;
+		this.serverInfoStoreListener = listenerAdapter;
+		this.loadCredentialsEventListener = listenerAdapter;
+	}
+	
 	public void initProxy(ProxyInitParams params) {
-
+		
 		X509Credential cred = lookupCredential(params);
 		if (cred == null)
 			throw new VOMSError("No credentials found!");
@@ -139,6 +148,22 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		return acs;
 	}
 
+	
+	private LoadCredentialsStrategy strategyFromParams(ProxyInitParams params){
+		
+		if (params.isNoRegen())
+			return new LoadProxyCredential(loadCredentialsEventListener);
+		
+		if (params.getCertFile()!=null && params.getKeyFile()!=null)
+			return new LoadUserCredential(loadCredentialsEventListener, params.getCertFile(), params.getKeyFile());
+		
+		
+		return new DefaultLoadCredentialsStrategy(System.getProperty(DefaultLoadCredentialsStrategy.HOME_PROPERTY),
+					DefaultLoadCredentialsStrategy.TMPDIR_PROPERTY,
+					loadCredentialsEventListener);
+		
+	}
+	
 	private X509Credential lookupCredential(ProxyInitParams params) {
 
 		PasswordFinder pf = null;
@@ -146,9 +171,10 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		if (params.isReadPasswordFromStdin())
 			pf = PasswordFinders.getInputStreamPasswordFinder(System.in, System.out);
 		else
-			// FIXME: Require explictly the console password finder?
 			pf = PasswordFinders.getDefault();
-
+		
+		LoadCredentialsStrategy loadCredStrategy = strategyFromParams(params);
+		
 		return loadCredStrategy.loadCredentials(pf);
 	}
 

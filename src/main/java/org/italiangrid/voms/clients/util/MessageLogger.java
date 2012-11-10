@@ -27,8 +27,8 @@ public class MessageLogger {
 			EnumSet<MessageLevel> filter, MessageLevel defaultLevel) {
 		outputStream = out;
 		errorStream = err;
-		defaultMessageLevel = defaultLevel;
 		levelFilter = filter;
+		defaultMessageLevel = defaultLevel;
 	}
 	
 	public MessageLogger() {
@@ -36,17 +36,21 @@ public class MessageLogger {
 	}
 	
 	public MessageLogger(EnumSet<MessageLevel> filter) {
-		this(System.out, System.err, DEFAULT, MessageLevel.INFO);
+		this(System.out, System.err, filter, MessageLevel.INFO);
 	}
 	
 	public final void formatMessage(MessageLevel level, String fmt, Object...args) {
 		
+		PrintStream s = streamFromLevel(level);
+		
 		if (levelFilter.contains(level)){
-			if (level.equals(MessageLevel.ERROR))
-				errorStream.format(fmt, args);
+			
+			if (args == null || args.length == 0)
+				s.println(fmt);
 			else
-				outputStream.format(fmt, args);
+				s.format(fmt, args);
 		}
+			
 	}
 	
 	
@@ -58,23 +62,27 @@ public class MessageLogger {
 	}
 	
 	
-	private void formatMessage(MessageLevel level, Throwable t, String fmt, Object...args) {
+	private void formatMessage(MessageLevel level, String msg, Throwable t) {
 		
-		PrintStream s = streamFromLevel(level);
+		if (msg!= null){
+			if (t.getMessage()!=null)
+				formatMessage(level,"%s - %s\n",msg, t.getMessage());
+			else
+				formatMessage(level,"%s - %s\n",msg, t.getClass().getName());
+		}else{
+			if (t.getMessage()!=null)
+				formatMessage(level,"%s\n",t.getMessage());
+			else
+				formatMessage(level,"%s\n",t.getClass().getName());
+		}
 		
-		s.format(fmt, args);
-		
-		if ( t != null)
-			t.printStackTrace(s);
+		if (levelFilter.contains(MessageLevel.TRACE))
+			t.printStackTrace(streamFromLevel(level));
 	}
 	
 	public final void printMessage(MessageLevel level, String msg){
-		if (levelFilter.contains(level)){
-			if (level.equals(MessageLevel.ERROR))
-				errorStream.println(msg);
-			else
-				outputStream.println(msg);
-		}
+		
+		formatMessage(level, "%s\n", msg);
 	}
 	
 	public final void formatMessage(String fmt, Object...args){
@@ -89,12 +97,20 @@ public class MessageLogger {
 		formatMessage(MessageLevel.TRACE, fmt, args);
 	}
 	
-	public final void error(Throwable t, String fmt, Object... args){
-		formatMessage(MessageLevel.ERROR, t, fmt, args);
+	public final void error(String msg, Throwable t){
+		formatMessage(MessageLevel.ERROR, msg, t);
 	}
 	
-	public final void warning(Throwable t, String fmt, Object... args){
-		formatMessage(MessageLevel.WARNING, t, fmt, args);
+	public final void warning(String msg, Throwable t){
+		formatMessage(MessageLevel.WARNING, msg, t);
+	}
+	
+	public final void info(String msg, Throwable t){
+		formatMessage(MessageLevel.INFO, msg, t);
+	}
+	
+	public final void trace(String msg, Throwable t){
+		formatMessage(MessageLevel.TRACE, msg, t);
 	}
 	
 	public final void error(String fmt, Object... args){
@@ -110,4 +126,21 @@ public class MessageLogger {
 	}
 	
 	
+	public final void error(Throwable t){
+		formatMessage(MessageLevel.ERROR, null, t);
+	}
+	
+	public final void warning(Throwable t){
+		formatMessage(MessageLevel.WARNING, null, t);
+	}
+	
+	public final void info(Throwable t){
+		formatMessage(MessageLevel.INFO, null, t);
+	}
+	
+	public final void trace(Throwable t){
+		formatMessage(MessageLevel.TRACE, null, t);
+	}
 }
+
+

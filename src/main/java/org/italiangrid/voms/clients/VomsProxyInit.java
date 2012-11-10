@@ -44,41 +44,14 @@ public class VomsProxyInit extends AbstractCLI {
 		initOptions();		
 		parseOptionsFromCommandLine(args);
 		listenerHelper = new ProxyInitListenerHelper(logger);
-		doInit();
-	}
-	
-	protected void doInit(){
-		ProxyInitParams params = getProxyInitParamsFromCommandLine(commandLine);
-
-		try {
-
-			proxyInitBehaviour = getProxyInitBehaviour();
-			proxyInitBehaviour.initProxy(params);
-
-		} catch (Throwable t) {
-			if (t.getMessage() != null)
-				logger.error("%s\n", t.getMessage());
-			else{
-				logger.error(t, "Error: %s\n", t.getClass().getSimpleName());
-			}
-		}
+		execute();
 	}
 
 	private ProxyInitStrategy getProxyInitBehaviour(){
 		
-		String home = System.getProperty("user.home");
-		LoadCredentialsStrategy loadCredStrategy = new DefaultLoadCredentialsStrategy(home, 
-				DEFAULT_TMP_PATH, 
-				listenerHelper);
-		
 		return new DefaultVOMSProxyInitBehaviour(new DefaultVOMSCommandsParser(), 
-				listenerHelper, 
-				listenerHelper, 
-				loadCredStrategy, 
-				listenerHelper, 
 				listenerHelper);
 	}
-	
 	
 	private ProxyInitParams getProxyInitParamsFromCommandLine(
 			CommandLine line) {
@@ -108,6 +81,9 @@ public class VomsProxyInit extends AbstractCLI {
 
 		if (commandLineHasOption(ProxyInitOptions.VOMS_COMMAND))
 			params.setVomsCommands(getOptionValues(ProxyInitOptions.VOMS_COMMAND));
+		
+		if (commandLineHasOption(ProxyInitOptions.PROXY_NOREGEN))
+			params.setNoRegen(true);
 
 		return params;
 
@@ -134,6 +110,20 @@ public class VomsProxyInit extends AbstractCLI {
 			throw new VOMSError("Invalid format for the time interval option '"
 					+ option.getLongOptionName()
 					+ "'. It should follow the hh:mm pattern.");
+		}
+	}
+
+	@Override
+	protected void execute() {
+		ProxyInitParams params = getProxyInitParamsFromCommandLine(commandLine);
+
+		try {
+
+			proxyInitBehaviour = getProxyInitBehaviour();
+			proxyInitBehaviour.initProxy(params);
+
+		} catch (Throwable t) {
+			logger.error(t);
 		}
 	}
 }

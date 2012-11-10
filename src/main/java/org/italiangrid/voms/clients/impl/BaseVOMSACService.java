@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.x509.AttributeCertificate;
+import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.request.VOMSACRequest;
 import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSResponse;
@@ -34,11 +35,8 @@ public class BaseVOMSACService implements VOMSACService {
 
 		Set<VOMSServerInfo> vomsServerInfos = getVOMSServerInfos(request);
 		
-		if (vomsServerInfos.isEmpty()){
-			requestListener.notifyUnknownVO(request);
-			return null;
-		}
-		
+		if (vomsServerInfos.isEmpty())
+			throw new VOMSError("VOMS server for VO "+request.getVoName()+" is not known! Check your vomses configuration.");
 		
 		VOMSResponse response = null;
 

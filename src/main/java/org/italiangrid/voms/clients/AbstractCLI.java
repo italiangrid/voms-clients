@@ -148,5 +148,10 @@ public abstract class AbstractCLI {
 		
 		if (isQuiet)
 			logger = new MessageLogger(MessageLogger.QUIET);
+		
+		if (!isVerbose && !isQuiet)
+			logger = new MessageLogger();
 	}
+	
+	protected abstract void execute();
 }

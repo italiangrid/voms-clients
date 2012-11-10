@@ -47,6 +47,8 @@ public class ProxyInitParams {
 	private int proxyLifetimeInSeconds = DEFAULT_PROXY_LIFETIME;
 	
 	private int acLifetimeInSeconds = DEFAULT_AC_LIFETIME;
+	
+	private boolean noRegen = false;
 
 	/**
 	 * @return the certFile
@@ -270,5 +272,19 @@ public class ProxyInitParams {
 	 */
 	public void setAcLifetimeInSeconds(int acLifetimeInSeconds) {
 		this.acLifetimeInSeconds = acLifetimeInSeconds;
+	}
+
+	/**
+	 * @return the noRegen
+	 */
+	public boolean isNoRegen() {
+		return noRegen;
+	}
+
+	/**
+	 * @param noRegen the noRegen to set
+	 */
+	public void setNoRegen(boolean noRegen) {
+		this.noRegen = noRegen;
 	}
 }
