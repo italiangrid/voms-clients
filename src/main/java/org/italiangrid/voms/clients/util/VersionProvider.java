@@ -37,10 +37,7 @@ public class VersionProvider {
 		}
 
 		String version = properties.getProperty("version");
-
-		System.out.println(command);
-		System.out.println("Version: " + version);
-
+		System.out.format("%s v. %s\n", command, version);
 	}
 
 }

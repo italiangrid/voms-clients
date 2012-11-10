@@ -7,7 +7,7 @@ package org.italiangrid.voms.clients.options;
  */
 
 public enum VomsProxyInitOptions implements VomsCliOption {
-
+	
 	/*
 	 * Options formats: with or without argument and with or without
 	 * short-option<br>
@@ -164,4 +164,5 @@ public enum VomsProxyInitOptions implements VomsCliOption {
 		return hasArg;
 	}
 
+	
 }
