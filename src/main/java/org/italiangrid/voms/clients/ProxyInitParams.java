@@ -22,6 +22,8 @@ public class ProxyInitParams {
 	private String certFile;
 	private String keyFile;
 	
+	private String trustAnchorsDir;
+	
 	private String generatedProxyFile;
 
 	private String policyFile;
@@ -175,7 +177,7 @@ public class ProxyInitParams {
 	/**
 	 * @return the verifyAC
 	 */
-	public boolean isVerifyAC() {
+	public boolean verifyAC() {
 		return verifyAC;
 	}
 
@@ -286,5 +288,13 @@ public class ProxyInitParams {
 	 */
 	public void setNoRegen(boolean noRegen) {
 		this.noRegen = noRegen;
+	}
+
+	public String getTrustAnchorsDir() {
+		return trustAnchorsDir;
+	}
+
+	public void setTrustAnchorsDir(String trustAnchorsDir) {
+		this.trustAnchorsDir = trustAnchorsDir;
 	}
 }

@@ -9,7 +9,10 @@ import java.util.Map;
 import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.openssl.PasswordFinder;
 import org.italiangrid.voms.VOMSError;
+import org.italiangrid.voms.VOMSValidators;
+import org.italiangrid.voms.ac.VOMSACValidator;
 import org.italiangrid.voms.ac.ValidationResultListener;
+import org.italiangrid.voms.ac.impl.DefaultVOMSValidator;
 import org.italiangrid.voms.clients.ProxyInitParams;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 import org.italiangrid.voms.clients.strategies.VOMSCommandsParsingStrategy;
@@ -22,8 +25,15 @@ import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
+import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
+import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 
+import eu.emi.security.authn.x509.NamespaceCheckingMode;
+import eu.emi.security.authn.x509.ValidationErrorListener;
+import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509Credential;
+import eu.emi.security.authn.x509.helpers.pkipath.AbstractValidator;
+import eu.emi.security.authn.x509.impl.OpensslCertChainValidator;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyCertificateOptions;
 import eu.emi.security.authn.x509.proxy.ProxyGenerator;
@@ -42,13 +52,19 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	private ProxyCreationListener proxyCreationListener;
 	private VOMSServerInfoStoreListener serverInfoStoreListener;
 	private LoadCredentialsEventListener loadCredentialsEventListener;
+	private ValidationErrorListener certChainValidationErrorListener;
+	private VOMSTrustStoreStatusListener vomsTrustStoreListener;
+	
+	private AbstractValidator certChainValidator;
 	
 	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser,
 			ValidationResultListener validationListener,
 			VOMSRequestListener requestListener,
 			ProxyCreationListener pxCreationListener,
 			VOMSServerInfoStoreListener serverInfoStoreListener,
-			LoadCredentialsEventListener loadCredEventListener)
+			LoadCredentialsEventListener loadCredEventListener,
+			ValidationErrorListener certChainListener,
+			VOMSTrustStoreStatusListener vomsTSListener)
 			{
 		
 		this.commandsParser = commandsParser;
@@ -57,6 +73,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.proxyCreationListener = pxCreationListener;
 		this.serverInfoStoreListener = serverInfoStoreListener;
 		this.loadCredentialsEventListener = loadCredEventListener;
+		this.certChainValidationErrorListener = certChainListener;
+		this.vomsTrustStoreListener = vomsTSListener;
 	}
 
 	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, InitListenerAdapter listenerAdapter){
@@ -66,6 +84,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.proxyCreationListener = listenerAdapter;
 		this.serverInfoStoreListener = listenerAdapter;
 		this.loadCredentialsEventListener = listenerAdapter;
+		this.certChainValidationErrorListener = listenerAdapter;
+		this.vomsTrustStoreListener = listenerAdapter;
 	}
 	
 	public void initProxy(ProxyInitParams params) {
@@ -74,14 +94,50 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		if (cred == null)
 			throw new VOMSError("No credentials found!");
 
+		certChainValidator = getCertChainValidator(params);
+		
+		ValidationResult result = certChainValidator.validate(cred.getCertificateChain());
+		
+		if (!result.isValid())
+			throw new VOMSError("User credential is not valid!");
+		
 		List<AttributeCertificate> acs = getAttributeCertificates(params, cred);
 
+		if (params.verifyAC())
+			verifyACs(params, acs);
+		
 		createProxy(params, cred, acs);
-
 	}
 	
+	private AbstractValidator getCertChainValidator(ProxyInitParams params){
+		
+		String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
+		NamespaceCheckingMode nsCheckMode = NamespaceCheckingMode.EUGRIDPMA_AND_GLOBUS_REQUIRE;
+		
+		if (params.getTrustAnchorsDir()!=null)
+			trustAnchorsDir = params.getTrustAnchorsDir();
+		
+		AbstractValidator validator = new OpensslCertChainValidator(trustAnchorsDir, 
+					nsCheckMode,
+					0);
+		
+		validator.addValidationListener(certChainValidationErrorListener);
+		
+		return validator;
+	}
 	
-	private void createProxy(ProxyInitParams params,
+	private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
+		
+		AbstractValidator certChainValidator = getCertChainValidator(params);
+		VOMSACValidator acValidator = VOMSValidators.newValidator(
+				new DefaultVOMSTrustStore(vomsTrustStoreListener), 
+				certChainValidator, 
+				validationResultListener);
+		
+		acValidator.validateACs(acs);
+	}
+
+	private void  createProxy(ProxyInitParams params,
 			X509Credential credential, List<AttributeCertificate> acs) {
 		
 		String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
@@ -104,7 +160,6 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			ProxyCertificate cert = ProxyGenerator.generate(certOptions, credential.getKey());
 			CredentialsUtils.saveCredentials(new FileOutputStream(proxyFilePath), cert.getCredential());
 			proxyCreationListener.proxyCreated(proxyFilePath, cert);
-			
 		} catch (Throwable t) {
 			
 			throw new VOMSError("Error creating proxy certificate: "+t.getMessage(), t);

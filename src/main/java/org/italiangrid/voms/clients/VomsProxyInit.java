@@ -8,6 +8,7 @@ import org.apache.commons.cli.CommandLine;
 import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.clients.impl.DefaultVOMSCommandsParser;
 import org.italiangrid.voms.clients.impl.DefaultVOMSProxyInitBehaviour;
+import org.italiangrid.voms.clients.impl.ProxyInitListenerHelper;
 import org.italiangrid.voms.clients.options.v2.CLIOption;
 import org.italiangrid.voms.clients.options.v2.CommonOptions;
 import org.italiangrid.voms.clients.options.v2.ProxyInitOptions;

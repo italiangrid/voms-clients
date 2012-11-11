@@ -1,15 +1,20 @@
-package org.italiangrid.voms.clients;
+package org.italiangrid.voms.clients.impl;
 
+import java.io.File;
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.ac.VOMSValidationResult;
-import org.italiangrid.voms.clients.impl.InitListenerAdapter;
 import org.italiangrid.voms.clients.util.MessageLogger;
+import org.italiangrid.voms.error.VOMSValidationErrorMessage;
 import org.italiangrid.voms.request.VOMSACRequest;
 import org.italiangrid.voms.request.VOMSServerInfo;
+import org.italiangrid.voms.store.LSCInfo;
 
+import eu.emi.security.authn.x509.ValidationError;
+import eu.emi.security.authn.x509.impl.X500NameUtils;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 
 public class ProxyInitListenerHelper implements InitListenerAdapter {
@@ -18,18 +23,6 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	public ProxyInitListenerHelper(MessageLogger logger) {
 		this.logger = logger;
-	}
-
-	@Override
-	public void loadCredentialNotification(LoadCredentialOutcome outcome,
-			Throwable error, String... locations) {
-
-		if (outcome.equals(LoadCredentialOutcome.FAILURE))
-			logger.trace("Credentials couldn't be loaded [%s]: %s\n",
-					StringUtils.join(locations, ","), error.getMessage());
-		else
-			logger.trace("Credentials loaded successfully [%s]\n",
-					StringUtils.join(locations, ","));
 	}
 
 	@Override
@@ -61,17 +54,18 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 			VOMSAttribute attributes) {
 
 		if (!result.isValid()) {
-			logger.error("AC validation error: %s\n",
-					StringUtils.join(result.getValidationErrors(), ", "));
+			logger.error("\nWARNING: VOMS AC validation failed for the following reasons:");
+			for (VOMSValidationErrorMessage m: result.getValidationErrors())
+				logger.error("\t%s\n",m.getMessage());
 		} else
-			logger.trace("AC validation succeded. Valid attributes: %s\n",
+			logger.trace("VOMS AC validation succeded. Valid attributes: %s\n",
 					attributes.toString());
 	}
 
 	@Override
 	public void proxyCreated(String proxyPath, ProxyCertificate cert) {
-		logger.info("Creating proxy in %s...Done\n\n", proxyPath);
-		logger.info("Your proxy is valid until %s", cert.getCredential()
+		logger.info("\nCreating proxy in %s...Done\n\n", proxyPath);
+		logger.info("Your proxy is valid until %s\n", cert.getCredential()
 				.getCertificateChain()[0].getNotAfter());
 	}
 
@@ -95,4 +89,58 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 		logger.info("No valid VOMSES information found locally while looking in: "+searchedPaths);
 	}
 
+	@Override
+	public boolean onValidationError(ValidationError error) {
+		logger.warning("Certificate validation error: %s\n",error.getMessage());
+		return false;
+	}
+
+	@Override
+	public void notifyCertficateLookupEvent(String dir) {
+		logger.trace("Looking for VOMS AA certificates in %s...\n", dir);
+		
+	}
+
+	@Override
+	public void notifyCertificateLoadEvent(X509Certificate cert, File file) {
+		String certSubject = X500NameUtils.getReadableForm(cert.getSubjectX500Principal());
+		logger.trace("Loaded VOMS AA certificate with subject %s from file %s\n", certSubject, file.getAbsolutePath());
+	}
+
+	@Override
+	public void notifyLSCLoadEvent(LSCInfo info, File file) {
+		logger.trace("Loaded LSC information from file %s: %s\n", file.getAbsolutePath(), info.toString());
+		
+	}
+
+	@Override
+	public void notifyLSCLookupEvent(String dir) {
+		logger.trace("Looking for LSC information in %s...",dir);
+	}
+
+
+
+	@Override
+	public void notifyCredentialLookup(String... locations) {
+		logger.trace("Looking for user credentials in [%s]...", StringUtils.join(locations, ","));
+		
+	}
+
+
+
+	@Override
+	public void notifyLoadCredentialSuccess(String... locations) {
+		logger.trace("Credentials loaded successfully [%s]\n",
+				StringUtils.join(locations, ","));
+	}
+
+
+
+	@Override
+	public void notifyLoadCredentialFailure(Throwable error, String... locations) {
+		
+		logger.trace("Credentials couldn't be loaded [%s]: %s\n",
+				StringUtils.join(locations, ","), error.getMessage());
+		
+	}
 }
