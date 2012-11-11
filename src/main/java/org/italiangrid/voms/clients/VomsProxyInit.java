@@ -83,6 +83,9 @@ public class VomsProxyInit extends AbstractCLI {
 		if (commandLineHasOption(ProxyInitOptions.VOMS_COMMAND))
 			params.setVomsCommands(getOptionValues(ProxyInitOptions.VOMS_COMMAND));
 		
+		if (commandLineHasOption(ProxyInitOptions.VERIFY_CERT))
+			params.setValidateUserCredential(true);
+		
 		if (commandLineHasOption(ProxyInitOptions.PROXY_NOREGEN))
 			params.setNoRegen(true);
 

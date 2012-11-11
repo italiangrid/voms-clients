@@ -28,7 +28,6 @@ import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 
-import eu.emi.security.authn.x509.NamespaceCheckingMode;
 import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509Credential;
@@ -47,6 +46,9 @@ import eu.emi.security.authn.x509.proxy.ProxyGenerator;
 public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 	private VOMSCommandsParsingStrategy commandsParser;
+	private AbstractValidator certChainValidator;
+	
+	
 	private ValidationResultListener validationResultListener;
 	private VOMSRequestListener requestListener;
 	private ProxyCreationListener proxyCreationListener;
@@ -55,7 +57,6 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	private ValidationErrorListener certChainValidationErrorListener;
 	private VOMSTrustStoreStatusListener vomsTrustStoreListener;
 	
-	private AbstractValidator certChainValidator;
 	
 	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser,
 			ValidationResultListener validationListener,
@@ -88,18 +89,26 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.vomsTrustStoreListener = listenerAdapter;
 	}
 	
+	
+	
+	protected void validateUserCredential(ProxyInitParams params, X509Credential cred){
+		
+		ValidationResult result = certChainValidator.validate(cred.getCertificateChain());
+		if (!result.isValid())
+			throw new VOMSError("User credential is not valid!");
+		
+	}
+	
 	public void initProxy(ProxyInitParams params) {
 		
 		X509Credential cred = lookupCredential(params);
 		if (cred == null)
 			throw new VOMSError("No credentials found!");
 
-		certChainValidator = getCertChainValidator(params);
+		initCertChainValidator(params);
 		
-		ValidationResult result = certChainValidator.validate(cred.getCertificateChain());
-		
-		if (!result.isValid())
-			throw new VOMSError("User credential is not valid!");
+		if (params.validateUserCredential())
+			validateUserCredential(params, cred);
 		
 		List<AttributeCertificate> acs = getAttributeCertificates(params, cred);
 
@@ -109,26 +118,23 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		createProxy(params, cred, acs);
 	}
 	
-	private AbstractValidator getCertChainValidator(ProxyInitParams params){
+	private void initCertChainValidator(ProxyInitParams params){
 		
-		String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
-		NamespaceCheckingMode nsCheckMode = NamespaceCheckingMode.EUGRIDPMA_AND_GLOBUS_REQUIRE;
+		if (certChainValidator == null){
+			String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
 		
-		if (params.getTrustAnchorsDir()!=null)
-			trustAnchorsDir = params.getTrustAnchorsDir();
+			if (params.getTrustAnchorsDir()!=null)
+				trustAnchorsDir = params.getTrustAnchorsDir();
 		
-		AbstractValidator validator = new OpensslCertChainValidator(trustAnchorsDir, 
-					nsCheckMode,
-					0);
+			AbstractValidator validator = new OpensslCertChainValidator(trustAnchorsDir);
 		
-		validator.addValidationListener(certChainValidationErrorListener);
-		
-		return validator;
+			validator.addValidationListener(certChainValidationErrorListener);
+			certChainValidator = validator;
+		}
 	}
 	
 	private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
 		
-		AbstractValidator certChainValidator = getCertChainValidator(params);
 		VOMSACValidator acValidator = VOMSValidators.newValidator(
 				new DefaultVOMSTrustStore(vomsTrustStoreListener), 
 				certChainValidator, 
@@ -224,7 +230,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		PasswordFinder pf = null;
 
 		if (params.isReadPasswordFromStdin())
-			pf = PasswordFinders.getInputStreamPasswordFinder(System.in, System.out);
+			pf = PasswordFinders.getNoPromptInputStreamPasswordFinder(System.in, System.out);
 		else
 			pf = PasswordFinders.getDefault();
 		

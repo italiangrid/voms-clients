@@ -26,8 +26,10 @@ public class InputStreamPasswordFinder implements PasswordFinder {
 	public char[] getPassword() {
 		try {
 
-			os.print(promptMessage);
-			os.flush();
+			if (promptMessage!= null){
+				os.print(promptMessage);
+				os.flush();
+			}
 			
 			BufferedReader reader = new BufferedReader(
 					new InputStreamReader(is));

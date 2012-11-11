@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.x509.AttributeCertificate;
+import org.glite.voms.contact.VOMSErrorMessage;
 import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.request.VOMSACRequest;
 import org.italiangrid.voms.request.VOMSACService;
@@ -29,6 +30,55 @@ public class BaseVOMSACService implements VOMSACService {
 	}
 
 	
+	protected AttributeCertificate getACFromResponse(VOMSACRequest request, VOMSResponse response){
+		byte[] acBytes = response.getAC();
+
+		ASN1InputStream asn1InputStream = new ASN1InputStream(acBytes);
+
+		AttributeCertificate attributeCertificate = null;
+
+		try {
+
+			attributeCertificate = AttributeCertificate
+					.getInstance(asn1InputStream.readObject());
+
+			asn1InputStream.close();
+			return attributeCertificate;
+
+		} catch (IOException e) {
+
+			requestListener.notifyFailure(request, null, e);
+			return null;
+		}
+	}
+	
+	
+	protected VOMSResponse doRESTRequest(VOMSACRequest request, VOMSServerInfo serverInfo, X509Credential credential){
+		
+		RESTProtocol restProtocol = new RESTProtocol(serverInfo);
+		return restProtocol.doRequest(credential, request);
+		
+	}
+	
+	protected VOMSResponse doLegacyRequest(VOMSACRequest request, VOMSServerInfo serverInfo, X509Credential credential){
+		
+		LegacyProtocol legacyProtocol = new LegacyProtocol(serverInfo);
+		return legacyProtocol.doRequest(credential, request);
+		
+	}
+	
+	protected void handleErrorsInResponse(VOMSResponse response){
+		
+		if (response.hasErrors())
+			requestListener.notifyErrorsInReponse(response.errorMessages());		
+		
+	}
+	
+	protected void handleWarningsInResponse(VOMSResponse response){
+		if (response.hasWarnings())
+			requestListener.notifyWarningsInResponse(response.warningMessages());
+	}
+	
 	@Override
 	public AttributeCertificate getVOMSAttributeCertificate(
 			X509Credential credential, VOMSACRequest request) {
@@ -44,15 +94,10 @@ public class BaseVOMSACService implements VOMSACService {
 
 			requestListener.notifyStart(request,  vomsServerInfo);
 			
-			RESTProtocol restProtocol = new RESTProtocol(vomsServerInfo);
-			response = restProtocol.doRequest(credential, request);
+			response = doRESTRequest(request, vomsServerInfo, credential);
 
-			if (response == null) {
-
-				LegacyProtocol legacyProtocol = new LegacyProtocol(
-						vomsServerInfo);
-				response = legacyProtocol.doRequest(credential, request);
-			}
+			if (response == null)
+				response = doLegacyRequest(request, vomsServerInfo, credential);
 
 			if (response != null){
 				requestListener.notifySuccess(request, vomsServerInfo);
@@ -60,35 +105,17 @@ public class BaseVOMSACService implements VOMSACService {
 			}
 			
 			requestListener.notifyFailure(request, vomsServerInfo, null);
-
 		}
 
 		if (response == null) {
-
 			requestListener.notifyFailure(request, null, null);
 			return null;
 		}
-
-		byte[] acBytes = response.getAC();
-
-		ASN1InputStream asn1InputStream = new ASN1InputStream(acBytes);
-
-		AttributeCertificate attributeCertificate = null;
-
-		try {
-
-			attributeCertificate = AttributeCertificate
-					.getInstance(asn1InputStream.readObject());
-
-			asn1InputStream.close();
-
-		} catch (IOException e) {
-
-			requestListener.notifyFailure(request, null, e);
-			return null;
-		}
-				
-		return attributeCertificate;
+		
+		handleErrorsInResponse(response);
+		handleWarningsInResponse(response);
+		
+		return getACFromResponse(request, response);
 	}
 
 	private Set<VOMSServerInfo> getVOMSServerInfos(VOMSACRequest request) {

@@ -5,9 +5,12 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.glite.voms.contact.VOMSErrorMessage;
+import org.glite.voms.contact.VOMSWarningMessage;
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.ac.VOMSValidationResult;
 import org.italiangrid.voms.clients.util.MessageLogger;
+import org.italiangrid.voms.clients.util.MessageLogger.MessageLevel;
 import org.italiangrid.voms.clients.util.VOMSAttributesPrinter;
 import org.italiangrid.voms.error.VOMSValidationErrorMessage;
 import org.italiangrid.voms.request.VOMSACRequest;
@@ -60,7 +63,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 				logger.error("\t%s\n",m.getMessage());
 		} else{
 			logger.trace("VOMS AC validation succeded.\n");
-			VOMSAttributesPrinter.printVOMSAttributes(logger.getOutputStream(), attributes);
+			VOMSAttributesPrinter.printVOMSAttributes(logger, MessageLevel.TRACE, attributes);
 		}
 	}
 
@@ -117,7 +120,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	@Override
 	public void notifyLSCLookupEvent(String dir) {
-		logger.trace("Looking for LSC information in %s...",dir);
+		logger.trace("Looking for LSC information in %s...\n",dir);
 	}
 
 
@@ -143,6 +146,20 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 		
 		logger.trace("Credentials couldn't be loaded [%s]: %s\n",
 				StringUtils.join(locations, ","), error.getMessage());
+		
+	}
+
+	@Override
+	public void notifyErrorsInReponse(VOMSErrorMessage[] errors) {
+		
+		for (VOMSErrorMessage e: errors)
+			logger.error("ERROR: VOMS server error %d: %s\n", e.getCode(), e.getMessage());
+	}
+
+	@Override
+	public void notifyWarningsInResponse(VOMSWarningMessage[] warnings) {
+		for (VOMSWarningMessage e: warnings)
+			logger.error("WARNING: VOMS server warning %d: %s\n", e.getCode(), e.getMessage());
 		
 	}
 }

@@ -23,5 +23,9 @@ public class PasswordFinders {
 	public static PasswordFinder getInputStreamPasswordFinder(InputStream is, OutputStream os) {
 		return new InputStreamPasswordFinder(PROMPT_MESSAGE, is, os);
 	}
+	
+	public static PasswordFinder getNoPromptInputStreamPasswordFinder(InputStream is, OutputStream os) {
+		return new InputStreamPasswordFinder(null, is, os);
+	}
 
 }

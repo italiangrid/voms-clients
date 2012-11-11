@@ -50,6 +50,8 @@ public class ProxyInitParams {
 	
 	private int acLifetimeInSeconds = DEFAULT_AC_LIFETIME;
 	
+	private boolean validateUserCredential = false;
+	
 	private boolean noRegen = false;
 
 	/**
@@ -297,4 +299,13 @@ public class ProxyInitParams {
 	public void setTrustAnchorsDir(String trustAnchorsDir) {
 		this.trustAnchorsDir = trustAnchorsDir;
 	}
+
+	public boolean validateUserCredential() {
+		return validateUserCredential;
+	}
+
+	public void setValidateUserCredential(boolean validateUserCredential) {
+		this.validateUserCredential = validateUserCredential;
+	}
+	
 }

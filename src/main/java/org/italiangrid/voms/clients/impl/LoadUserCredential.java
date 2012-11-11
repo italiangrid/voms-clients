@@ -2,11 +2,11 @@ package org.italiangrid.voms.clients.impl;
 
 import org.bouncycastle.openssl.PasswordFinder;
 import org.italiangrid.voms.credential.LoadCredentialsEventListener;
-import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
+import org.italiangrid.voms.credential.impl.AbstractLoadCredentialsStrategy;
 
 import eu.emi.security.authn.x509.X509Credential;
 
-public class LoadUserCredential extends DefaultLoadCredentialsStrategy {
+public class LoadUserCredential extends AbstractLoadCredentialsStrategy {
 
 	String certFile;
 	String keyFile;
@@ -33,16 +33,6 @@ public class LoadUserCredential extends DefaultLoadCredentialsStrategy {
 		if (certFile != null && keyFile != null)
 			return loadPEMCredential(keyFile, certFile, passwordFinder);
 		
-		X509Credential cred = loadPEMCredentialFromEnv(passwordFinder);
-		
-		if (cred == null)
-			cred = loadPKCS12CredentialFromEnv(passwordFinder);
-		
-		if (cred == null)
-			cred = loadPEMCredentialsFromGlobusDir(passwordFinder);
-		
-		if (cred == null)
-			cred = loadPKCS12CredentialsFromGlobusDir(passwordFinder);
 		return null;
 	}
 
