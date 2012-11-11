@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.ac.VOMSValidationResult;
 import org.italiangrid.voms.clients.util.MessageLogger;
+import org.italiangrid.voms.clients.util.VOMSAttributesPrinter;
 import org.italiangrid.voms.error.VOMSValidationErrorMessage;
 import org.italiangrid.voms.request.VOMSACRequest;
 import org.italiangrid.voms.request.VOMSServerInfo;
@@ -57,9 +58,10 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 			logger.error("\nWARNING: VOMS AC validation failed for the following reasons:");
 			for (VOMSValidationErrorMessage m: result.getValidationErrors())
 				logger.error("\t%s\n",m.getMessage());
-		} else
-			logger.trace("VOMS AC validation succeded. Valid attributes: %s\n",
-					attributes.toString());
+		} else{
+			logger.trace("VOMS AC validation succeded.\n");
+			VOMSAttributesPrinter.printVOMSAttributes(logger.getOutputStream(), attributes);
+		}
 	}
 
 	@Override
@@ -122,7 +124,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	@Override
 	public void notifyCredentialLookup(String... locations) {
-		logger.trace("Looking for user credentials in [%s]...", StringUtils.join(locations, ","));
+		logger.trace("Looking for user credentials in [%s]...\n", StringUtils.join(locations, ","));
 		
 	}
 

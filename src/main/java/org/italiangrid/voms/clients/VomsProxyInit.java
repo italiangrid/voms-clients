@@ -13,7 +13,7 @@ import org.italiangrid.voms.clients.options.v2.CLIOption;
 import org.italiangrid.voms.clients.options.v2.CommonOptions;
 import org.italiangrid.voms.clients.options.v2.ProxyInitOptions;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
-import org.italiangrid.voms.clients.util.LifetimeIntervalParser;
+import org.italiangrid.voms.clients.util.TimeUtils;
 import org.italiangrid.voms.clients.util.MessageLogger.MessageLevel;
 import org.italiangrid.voms.credential.LoadCredentialsStrategy;
 import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
@@ -105,7 +105,7 @@ public class VomsProxyInit extends AbstractCLI {
 
 		try {
 			
-			return LifetimeIntervalParser.parseLifetimeFromString(acLifetimeProperty);
+			return TimeUtils.parseLifetimeFromString(acLifetimeProperty);
 
 		} catch (java.text.ParseException e) {
 			throw new VOMSError("Invalid format for the time interval option '"

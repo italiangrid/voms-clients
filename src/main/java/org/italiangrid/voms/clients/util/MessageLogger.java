@@ -141,6 +141,14 @@ public class MessageLogger {
 	public final void trace(Throwable t){
 		formatMessage(MessageLevel.TRACE, null, t);
 	}
+
+	public PrintStream getOutputStream() {
+		return outputStream;
+	}
+
+	public PrintStream getErrorStream() {
+		return errorStream;
+	}
 }
 
 

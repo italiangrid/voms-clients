@@ -6,7 +6,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class LifetimeIntervalParser {
+import org.italiangrid.voms.VOMSAttribute;
+
+public class TimeUtils {
 
 	public static final int parseLifetimeFromString(String acLifetimeProperty)
 			throws ParseException {
@@ -27,6 +29,23 @@ public class LifetimeIntervalParser {
 
 	}
 	
-	private LifetimeIntervalParser() {}
+	public static String getACValidityAsString(VOMSAttribute attr){
+		
+		String validityString = "00:00";
+		
+		Date now = new Date();
+		
+		long timeDiff = attr.getNotAfter().getTime() - now.getTime();
+		
+		if (timeDiff > 0){
+			Date validity = new Date(timeDiff);
+			SimpleDateFormat df = new SimpleDateFormat("hh:mm");
+			validityString = df.format(validity);
+		}
+		
+		return validityString;
+	}
+	
+	private TimeUtils() {}
 
 }
