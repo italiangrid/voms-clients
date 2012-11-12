@@ -1,7 +1,15 @@
 package org.italiangrid.voms.clients;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -9,11 +17,13 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.IOUtils;
 import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.clients.options.v2.CLIOption;
 import org.italiangrid.voms.clients.options.v2.CommonOptions;
 import org.italiangrid.voms.clients.options.v2.ProxyInitOptions;
 import org.italiangrid.voms.clients.util.MessageLogger;
+import org.italiangrid.voms.clients.util.OptionsFileLoader;
 import org.italiangrid.voms.clients.util.VersionProvider;
 
 public abstract class AbstractCLI {
@@ -58,10 +68,15 @@ public abstract class AbstractCLI {
 	}
 	
 	protected final void parseOptionsFromCommandLine(String[] args){
-		try {
 
-			commandLine = cliParser.parse(cliOptions, args);
-			setVerbosityFromCommandLine();
+	  try {
+
+	    commandLine = cliParser.parse(cliOptions, args);
+	    if(commandLineHasOption(CommonOptions.CONF)) {
+	      parseOptionsFromFile(getOptionValue(CommonOptions.CONF));
+	    }
+		  
+	    setVerbosityFromCommandLine();
 			displayVersionIfRequested();
 			displayHelpIfRequested();
 
@@ -74,7 +89,23 @@ public abstract class AbstractCLI {
 		}
 	}
 	
-	protected final void displayVersion(){
+	/**
+	 * Parse options from a file. Reload commandLine that after calling 
+	 * this method contains both options coming from the command line and
+	 * from the file.
+	 * 
+	 * @param optionFileName the options file
+	 * @throws ParseException if there an error parsing the options
+	 */
+	private void parseOptionsFromFile(String optionFileName) throws ParseException {
+
+	  List<String> options= OptionsFileLoader.loadOptions(optionFileName);
+	  options.addAll(commandLine.getArgList());
+	  
+	  commandLine = cliParser.parse(cliOptions, options.toArray(new String[0]));
+	}
+
+  protected final void displayVersion(){
 		VersionProvider.displayVersionInfo(commandName);
 	}
 	
