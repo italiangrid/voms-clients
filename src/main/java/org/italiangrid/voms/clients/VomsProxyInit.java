@@ -14,9 +14,6 @@ import org.italiangrid.voms.clients.options.v2.CommonOptions;
 import org.italiangrid.voms.clients.options.v2.ProxyInitOptions;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 import org.italiangrid.voms.clients.util.TimeUtils;
-import org.italiangrid.voms.clients.util.MessageLogger.MessageLevel;
-import org.italiangrid.voms.credential.LoadCredentialsStrategy;
-import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 
 /**
  * 
