@@ -24,6 +24,7 @@ public class VomsProxyDestroy extends AbstractCLI {
   private static final String COMMAND_NAME = "voms-proxy-destroy";
 
   /**
+   * The listener.
    * 
    */
   private ProxyDestroyListenerHelper listenerHelper;
@@ -39,7 +40,6 @@ public class VomsProxyDestroy extends AbstractCLI {
 	}
 
 	/**
-	 * 
 	 * Constructor.
 	 * 
 	 * @param args an array of {@link String} containing command line options.
@@ -74,6 +74,13 @@ public class VomsProxyDestroy extends AbstractCLI {
 	  new DefaultProxyDestroyBehaviour(listenerHelper).destroyProxy(params);
 	}
 
+	/**
+	 * Get option values from a {@link CommandLine} object to build a {@link ProxyDestroyParams} object
+	 * containing the parameters for voms-proxy-destroy. 
+	 * 
+	 * @param commandLine
+	 * @return
+	 */
 	private ProxyDestroyParams getProxyDestroyParamsFromCommandLine(CommandLine commandLine) {
 	  
 	  ProxyDestroyParams params = new ProxyDestroyParams();
