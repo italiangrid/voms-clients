@@ -7,7 +7,8 @@ public enum CommonOptions implements CLIOption{
 	HELP("help"),
 	USAGE("usage"),
 	VERSION("version"),
-	DEBUG("debug");
+	DEBUG("debug"),
+	CONF("conf");
 	
 	private Option option;
 	

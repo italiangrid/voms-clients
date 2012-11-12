@@ -1,179 +1,99 @@
 package org.italiangrid.voms.clients;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.italiangrid.voms.clients.options.VomsCliOption;
-import org.italiangrid.voms.clients.options.VomsProxyDestroyOptions;
-import org.italiangrid.voms.clients.util.OptionsFileLoader;
-import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
-import org.italiangrid.voms.clients.util.UsageProvider;
-import org.italiangrid.voms.clients.util.VersionProvider;
+import org.italiangrid.voms.clients.impl.DefaultProxyDestroyBehaviour;
+import org.italiangrid.voms.clients.impl.ProxyDestroyListenerHelper;
+import org.italiangrid.voms.clients.options.v2.CLIOption;
+import org.italiangrid.voms.clients.options.v2.ProxyDestroyOptions;
 
 /**
- * Class implementing voms-proxy-destroy.
+ * This class implements the voms-proxy-destroy command-line client.
  * 
  * @author valerioventuri
  * 
  */
-public class VomsProxyDestroy {
+public class VomsProxyDestroy extends AbstractCLI {
 
+  /**
+   * The command name.
+   */
+  private static final String COMMAND_NAME = "voms-proxy-destroy";
+
+  /**
+   * The listener.
+   * 
+   */
+  private ProxyDestroyListenerHelper listenerHelper;
+  
 	/**
-	 * Commons CLI {@link Options} object for holding a set of command line
-	 * options.
+	 * The main.
 	 * 
-	 */
-	private Options options = new Options();
-
-	/**
-	 * Commons CLI {@link CommandLine} object for holding options after parsing,
-	 * and get them in the code.
-	 * 
-	 */
-	private CommandLine commandLine;
-
-	/**
-	 * Whether the command should produce extra output for debug purposes.
-	 * 
-	 */
-	private boolean debug;
-
-	/**
-	 * Whether the command should produce a minimal output.
-	 * 
-	 */
-	private boolean quiet;
-
-	/**
-	 * Whether the command should run in dry mode.
-	 * 
-	 */
-	private boolean dryRun;
-
-	/**
-	 * Name of the proxy certificate file.
-	 */
-	private String proxyFile;
-
-	/**
-	 * @param args
+	 * @param args an array of {@link String} containing commman line options.
 	 */
 	public static void main(String[] args) {
 
 		new VomsProxyDestroy(args);
 	}
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param args an array of {@link String} containing command line options.
+	 */
 	public VomsProxyDestroy(String[] args) {
-
+	  super(COMMAND_NAME);
+	  
 		initOptions();
-		parseOptions(args);
-		doDestroy();
+		parseOptionsFromCommandLine(args);
+	  listenerHelper = new ProxyDestroyListenerHelper(logger);
+		execute();
 	}
 
+	/**
+	 * Initialize options.
+	 * 
+	 */
 	private void initOptions() {
 
-    List<VomsCliOption> listOptions = new ArrayList<VomsCliOption>();
-    listOptions.addAll(Arrays.asList(VomsProxyDestroyOptions.values()));
+	  List<CLIOption> options = new ArrayList<CLIOption>();
+    
+    options.addAll(Arrays.asList(ProxyDestroyOptions.values()));
+    
+    initOptions(options);
+	}
 
-    for (VomsCliOption optionElement : listOptions) {
+	@Override
+	protected void execute() {
+	  
+	  ProxyDestroyParams params = getProxyDestroyParamsFromCommandLine(commandLine);
 
-      Option option = new Option(optionElement.getOpt(), optionElement.getLongOpt(), 
-          optionElement.hasArg(), optionElement.getDescription());
+	  new DefaultProxyDestroyBehaviour(listenerHelper).destroyProxy(params);
+	}
 
-      option.setArgName(optionElement.getArgDescription());
-      
-      options.addOption(option);
+	/**
+	 * Get option values from a {@link CommandLine} object to build a {@link ProxyDestroyParams} object
+	 * containing the parameters for voms-proxy-destroy. 
+	 * 
+	 * @param commandLine
+	 * @return
+	 */
+	private ProxyDestroyParams getProxyDestroyParamsFromCommandLine(CommandLine commandLine) {
+	  
+	  ProxyDestroyParams params = new ProxyDestroyParams();
+    
+    if (commandLineHasOption(ProxyDestroyOptions.DRY)) {
+      params.setDryRun(true);
     }
+
+    if (commandLineHasOption(ProxyDestroyOptions.FILE)) {
+      params.setProxyFile(getOptionValue(ProxyDestroyOptions.FILE));
+    }
+    
+    return params;
+	}
 	
-	}
-
-	private void parseOptions(String[] args) {
-
-		CommandLineParser commandLineParser = new GnuParser();
-
-		try {
-
-			commandLine = commandLineParser.parse(options, args);
-
-			if (commandLine.hasOption("conf")) {
-
-				String optionFile = commandLine.getOptionValue("conf");
-
-				String[] reloadedArgs = OptionsFileLoader.loadOptions(args,	
-				    optionFile);
-
-				commandLine = commandLineParser.parse(options, reloadedArgs);
-			}
-
-			if (commandLine.hasOption("help")) {
-
-			  UsageProvider.displayUsage("voms-proxy-destroy", options);
-
-				System.exit(0);
-			}
-
-			if (commandLine.hasOption("version")) {
-
-				VersionProvider.displayVersionInfo("voms-proxy-destoy");
-
-				System.exit(0);
-			}
-
-			debug = commandLine.hasOption("debug");
-
-			quiet = commandLine.hasOption("quiet");
-
-			dryRun = commandLine.hasOption("dry");
-
-			proxyFile = commandLine.getOptionValue("file");
-
-		} catch (ParseException e) {
-
-			System.err.println("voms-proxy-destroy: " + e.getMessage());
-
-		   UsageProvider.displayUsage("voms-proxy-destroy", options);
-
-			System.exit(1);
-		}
-
-	}
-
-	private void doDestroy() {
-
-		if (proxyFile == null) {
-
-			proxyFile = VOMSProxyPathBuilder.buildProxyPath();
-		}
-
-		File file = new File(proxyFile);
-
-		if (!file.exists()) {
-
-			if (!quiet) {
-
-				System.err
-						.println("\nProxy file doesn't exist or has bad permissions\n");
-			}
-
-			System.exit(1);
-		}
-
-		if (dryRun) {
-
-			System.out.println("Would remove " + proxyFile);
-
-			System.exit(0);
-		}
-
-		file.delete();
-	}
-
 }

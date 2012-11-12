@@ -20,53 +20,50 @@ import org.apache.commons.io.IOUtils;
  */
 public class OptionsFileLoader {
 
-	/**
-	 * Load options from a file, adding them to an array of arguments.
-	 * 
-	 * @param oldArgs
-	 *            the arguments array
-	 * @param optionFileName
-	 *            the file containing the options
-	 * @return an arguments array containing also the new options
-	 */
-	public static String[] loadOptions(String[] oldArgs, String optionFileName) {
+  /**
+   * Load options from a file, adding them to an array of arguments.
+   * 
+   * @param oldArgs
+   *          the arguments array
+   * @param optionFileName
+   *          the file containing the options
+   * @return an arguments array containing also the new options
+   */
+  public static List<String> loadOptions(String optionFileName) {
 
-		File optionFile = new File(optionFileName);
+    List<String> args = new ArrayList<String>();
 
-		StringWriter stringWriter = new StringWriter();
+    File optionFile = new File(optionFileName);
 
-		try {
+    StringWriter stringWriter = new StringWriter();
 
-			InputStream inputStream = new FileInputStream(optionFile);
+    try {
 
-			IOUtils.copy(inputStream, stringWriter);
+      InputStream inputStream = new FileInputStream(optionFile);
 
-		} catch (FileNotFoundException e) {
+      IOUtils.copy(inputStream, stringWriter);
 
-			System.err.println(e.getMessage());
+    } catch (FileNotFoundException e) {
 
-		} catch (IOException e) {
+      System.err.println("Error reading options file: " + e.getMessage());
+      System.exit(1);
 
-			System.err.println(e.getMessage());
-		}
+    } catch (IOException e) {
 
-		String string = stringWriter.toString();
+      System.err.println("Error reading options file: " + e.getMessage());
+      System.exit(1);
+    }
 
-		StringTokenizer stringTokenizer = new StringTokenizer(string);
+    String string = stringWriter.toString();
 
-		List<String> otherArgs = new ArrayList<String>();
+    StringTokenizer stringTokenizer = new StringTokenizer(string);
 
-		while (stringTokenizer.hasMoreTokens()) {
+    while (stringTokenizer.hasMoreTokens()) {
 
-			otherArgs.add(stringTokenizer.nextToken());
-		}
+      args.add(stringTokenizer.nextToken());
+    }
 
-		for (String arg : oldArgs) {
-
-			otherArgs.add(arg);
-		}
-
-		return otherArgs.toArray(new String[0]);
-	}
+    return args;
+  }
 
 }
