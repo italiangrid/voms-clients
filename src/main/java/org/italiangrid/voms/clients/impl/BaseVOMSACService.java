@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.x509.AttributeCertificate;
-import org.glite.voms.contact.VOMSErrorMessage;
 import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.request.VOMSACRequest;
 import org.italiangrid.voms.request.VOMSACService;
@@ -18,15 +17,22 @@ import org.italiangrid.voms.request.impl.LegacyProtocol;
 import org.italiangrid.voms.request.impl.RESTProtocol;
 
 import eu.emi.security.authn.x509.X509Credential;
+import eu.emi.security.authn.x509.helpers.pkipath.AbstractValidator;
 
 public class BaseVOMSACService implements VOMSACService {
 
 	private VOMSRequestListener requestListener;
 	private VOMSServerInfoStoreListener serverInfoStoreListener;
 	
-	public BaseVOMSACService(VOMSRequestListener listener, VOMSServerInfoStoreListener serverInfoStoreListener) {
+	private AbstractValidator validator;
+	
+	public BaseVOMSACService(AbstractValidator validator,
+			VOMSRequestListener listener, 
+			VOMSServerInfoStoreListener serverInfoStoreListener) {
+		
 		this.requestListener = listener;
 		this.serverInfoStoreListener = serverInfoStoreListener;
+		this.validator = validator;
 	}
 
 	
@@ -55,14 +61,14 @@ public class BaseVOMSACService implements VOMSACService {
 	
 	protected VOMSResponse doRESTRequest(VOMSACRequest request, VOMSServerInfo serverInfo, X509Credential credential){
 		
-		RESTProtocol restProtocol = new RESTProtocol(serverInfo);
+		RESTProtocol restProtocol = new RESTProtocol(serverInfo, validator);
 		return restProtocol.doRequest(credential, request);
 		
 	}
 	
 	protected VOMSResponse doLegacyRequest(VOMSACRequest request, VOMSServerInfo serverInfo, X509Credential credential){
 		
-		LegacyProtocol legacyProtocol = new LegacyProtocol(serverInfo);
+		LegacyProtocol legacyProtocol = new LegacyProtocol(serverInfo, validator);
 		return legacyProtocol.doRequest(credential, request);
 		
 	}

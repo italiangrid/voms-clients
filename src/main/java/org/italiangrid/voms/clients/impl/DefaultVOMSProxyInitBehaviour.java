@@ -27,7 +27,10 @@ import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
+import org.italiangrid.voms.util.CertificateValidatorBuilder;
 
+import eu.emi.security.authn.x509.CrlCheckingMode;
+import eu.emi.security.authn.x509.NamespaceCheckingMode;
 import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509Credential;
@@ -112,7 +115,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		List<AttributeCertificate> acs = getAttributeCertificates(params, cred);
 
-		if (params.verifyAC())
+		if (params.verifyAC() && !acs.isEmpty())
 			verifyACs(params, acs);
 		
 		createProxy(params, cred, acs);
@@ -122,14 +125,13 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		if (certChainValidator == null){
 			String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
-		
+			
+			
 			if (params.getTrustAnchorsDir()!=null)
 				trustAnchorsDir = params.getTrustAnchorsDir();
 		
-			AbstractValidator validator = new OpensslCertChainValidator(trustAnchorsDir);
-		
-			validator.addValidationListener(certChainValidationErrorListener);
-			certChainValidator = validator;
+			certChainValidator = CertificateValidatorBuilder.buildCertificateValidator(trustAnchorsDir, 
+					certChainValidationErrorListener);
 		}
 	}
 	
@@ -195,7 +197,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			request.setTargets(params.getTargets());
 			request.setLifetime(params.getAcLifetimeInSeconds());
 
-			VOMSACService acService = new BaseVOMSACService(requestListener, serverInfoStoreListener);
+			VOMSACService acService = new BaseVOMSACService(certChainValidator,
+					requestListener, 
+					serverInfoStoreListener);
 
 			AttributeCertificate ac = acService.getVOMSAttributeCertificate(
 					cred, request);
