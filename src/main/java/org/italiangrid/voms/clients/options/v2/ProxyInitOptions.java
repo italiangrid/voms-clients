@@ -14,7 +14,7 @@ public enum ProxyInitOptions implements CLIOption{
 	IGNORE_WARNINGS("ignorewarn"),
 	INCLUDE_AC_FROM_FILE("includeac"),
 	INCLUDE_FILE("include"),
-	KEY_LENGTH("bits"),
+	KEY_SIZE("bits"),
 	KEY_LOCATION("key"),
 	LEGAGY_PROXY("old"),
 	LIMITED_PROXY("limited"),

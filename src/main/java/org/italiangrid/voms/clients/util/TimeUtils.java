@@ -10,7 +10,25 @@ import org.italiangrid.voms.VOMSAttribute;
 
 public class TimeUtils {
 
-	public static final int parseLifetimeFromString(String acLifetimeProperty)
+	
+	public static final int parseLifetimeInHours(String lifetimeString) throws ParseException{
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("hh");
+		
+		Calendar c = Calendar.getInstance();
+		Date d;
+
+		d = sdf.parse(lifetimeString.trim());
+		c.setTime(d);
+
+		long timeIntevalInSeconds = TimeUnit.HOURS.toSeconds(c
+				.get(Calendar.HOUR_OF_DAY));
+
+		return (int) timeIntevalInSeconds;
+		
+	}
+	
+	public static final int parseLifetimeInHoursAndSeconds(String acLifetimeProperty)
 			throws ParseException {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");

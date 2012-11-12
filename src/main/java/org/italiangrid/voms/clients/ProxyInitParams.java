@@ -18,9 +18,12 @@ public class ProxyInitParams {
 
 	public static final int DEFAULT_PROXY_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12); 
 	public static final int DEFAULT_AC_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12);
+	public static final int DEFAULT_KEY_SIZE = 1024;
 	
 	private String certFile;
 	private String keyFile;
+	
+	private int keySize = DEFAULT_KEY_SIZE;
 	
 	private String trustAnchorsDir;
 	
@@ -45,6 +48,8 @@ public class ProxyInitParams {
 	private List<String> vomsCommands;
 
 	private List<String> targets;
+	
+	private List<String> fqanOrder;
 	
 	private int proxyLifetimeInSeconds = DEFAULT_PROXY_LIFETIME;
 	
@@ -306,6 +311,34 @@ public class ProxyInitParams {
 
 	public void setValidateUserCredential(boolean validateUserCredential) {
 		this.validateUserCredential = validateUserCredential;
+	}
+
+	/**
+	 * @return the keySize
+	 */
+	public int getKeySize() {
+		return keySize;
+	}
+
+	/**
+	 * @param keySize the keySize to set
+	 */
+	public void setKeySize(int keySize) {
+		this.keySize = keySize;
+	}
+
+	/**
+	 * @return the fqanOrder
+	 */
+	public List<String> getFqanOrder() {
+		return fqanOrder;
+	}
+
+	/**
+	 * @param fqanOrder the fqanOrder to set
+	 */
+	public void setFqanOrder(List<String> fqanOrder) {
+		this.fqanOrder = fqanOrder;
 	}
 	
 }

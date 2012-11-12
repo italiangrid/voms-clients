@@ -25,19 +25,16 @@ import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSRequestListener;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
-import org.italiangrid.voms.request.impl.DefaultVOMSACService;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
+import org.italiangrid.voms.request.impl.DefaultVOMSACService;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 import org.italiangrid.voms.util.CertificateValidatorBuilder;
 
-import eu.emi.security.authn.x509.CrlCheckingMode;
-import eu.emi.security.authn.x509.NamespaceCheckingMode;
 import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509Credential;
 import eu.emi.security.authn.x509.helpers.pkipath.AbstractValidator;
-import eu.emi.security.authn.x509.impl.OpensslCertChainValidator;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyCertificateOptions;
 import eu.emi.security.authn.x509.proxy.ProxyGenerator;
@@ -161,6 +158,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		certOptions.setLimited(params.isLimited());
 		certOptions.setLifetime(params.getProxyLifetimeInSeconds());
 		certOptions.setType(params.getProxyType());
+		certOptions.setKeyLength(params.getKeySize());
 		
 		if (acs != null && !acs.isEmpty())
 			certOptions.setAttributeCertificates(acs.toArray(new AttributeCertificate[acs.size()]));

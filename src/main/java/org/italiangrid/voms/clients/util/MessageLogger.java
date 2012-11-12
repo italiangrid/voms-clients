@@ -78,6 +78,7 @@ public class MessageLogger {
 		
 		if (levelFilter.contains(MessageLevel.TRACE))
 			t.printStackTrace(streamFromLevel(level));
+		
 	}
 	
 	public final void printMessage(MessageLevel level, String msg){
