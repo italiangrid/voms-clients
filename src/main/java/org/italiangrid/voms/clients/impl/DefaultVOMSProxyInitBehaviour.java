@@ -23,7 +23,9 @@ import org.italiangrid.voms.credential.LoadCredentialsEventListener;
 import org.italiangrid.voms.credential.LoadCredentialsStrategy;
 import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 import org.italiangrid.voms.request.VOMSACService;
+import org.italiangrid.voms.request.VOMSRequestListener;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
+import org.italiangrid.voms.request.impl.DefaultVOMSACService;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
@@ -197,7 +199,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			request.setTargets(params.getTargets());
 			request.setLifetime(params.getAcLifetimeInSeconds());
 
-			VOMSACService acService = new BaseVOMSACService(certChainValidator,
+			VOMSACService acService = new DefaultVOMSACService(certChainValidator,
 					requestListener, 
 					serverInfoStoreListener);
 

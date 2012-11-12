@@ -1,6 +1,6 @@
 package org.italiangrid.voms.clients.util;
 
-import org.italiangrid.voms.credential.ProxyPathBuilder;
+import org.italiangrid.voms.credential.ProxyNamingPolicy;
 import org.italiangrid.voms.credential.impl.DefaultProxyPathBuilder;
 
 public class VOMSProxyPathBuilder {
@@ -9,8 +9,8 @@ public class VOMSProxyPathBuilder {
 	
 	public static String buildProxyPath(){
 		
-		ProxyPathBuilder pathBuilder = new DefaultProxyPathBuilder();
-		return pathBuilder.buildProxyFilePath(TMP_PATH, EffectiveUserIdProvider.getEUID());
+		ProxyNamingPolicy pathBuilder = new DefaultProxyPathBuilder();
+		return pathBuilder.buildProxyFileName(TMP_PATH, EffectiveUserIdProvider.getEUID());
 		
 	}
 }
