@@ -2,6 +2,7 @@ package org.italiangrid.voms.clients.impl;
 
 import java.io.File;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.italiangrid.voms.VOMSAttribute;
@@ -116,13 +117,13 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	@Override
 	public void notifyCredentialLookup(String... locations) {
-		logger.trace("Looking for user credentials in [%s]...\n", locations.toString());
+		logger.trace("Looking for user credentials in [%s]...\n", Arrays.toString(locations));
 
 	}
 
 	@Override
 	public void notifyLoadCredentialSuccess(String... locations) {
-		logger.trace("Credentials loaded successfully [%s]\n",locations.toString());
+		logger.trace("Credentials loaded successfully [%s]\n", Arrays.toString(locations));
 	}
 
 	@Override
