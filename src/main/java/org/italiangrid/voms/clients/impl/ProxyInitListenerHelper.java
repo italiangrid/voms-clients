@@ -4,7 +4,6 @@ import java.io.File;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.ac.VOMSValidationResult;
 import org.italiangrid.voms.clients.util.MessageLogger;
@@ -117,15 +116,13 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	@Override
 	public void notifyCredentialLookup(String... locations) {
-		logger.trace("Looking for user credentials in [%s]...\n",
-				StringUtils.join(locations, ","));
+		logger.trace("Looking for user credentials in [%s]...\n", locations.toString());
 
 	}
 
 	@Override
 	public void notifyLoadCredentialSuccess(String... locations) {
-		logger.trace("Credentials loaded successfully [%s]\n",
-				StringUtils.join(locations, ","));
+		logger.trace("Credentials loaded successfully [%s]\n",locations.toString());
 	}
 
 	@Override
@@ -133,7 +130,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 			String... locations) {
 
 		logger.trace("Credentials couldn't be loaded [%s]: %s\n",
-				StringUtils.join(locations, ","), error.getMessage());
+				locations, error.getMessage());
 
 	}
 
