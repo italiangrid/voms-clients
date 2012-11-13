@@ -3,8 +3,11 @@ package org.italiangrid.voms.clients.impl;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.openssl.PasswordFinder;
@@ -174,6 +177,25 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		}
 	}
 
+	protected List<String> sortFQANsIfRequested(ProxyInitParams params, List<String> unsortedFQANs){
+		
+		if (params.getFqanOrder() != null && !params.getFqanOrder().isEmpty() && ! unsortedFQANs.isEmpty()){ 
+			List<String> result = new ArrayList<String>();
+			
+			for (String s: params.getFqanOrder()){
+				if (unsortedFQANs.contains(s))
+					result.add(s);
+			}
+			
+			for (String s: unsortedFQANs)
+				if (!result.contains(s))
+					result.add(s);
+			
+			return result;
+		}
+		
+		return unsortedFQANs;
+	}
 	
 	protected List<AttributeCertificate> getAttributeCertificates(
 			ProxyInitParams params, X509Credential cred) {
@@ -192,8 +214,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 			DefaultVOMSACRequest request = new DefaultVOMSACRequest();
 
+			List<String> fqans = vomsCommandsMap.get(vo);
 			request.setVoName(vo);
-			request.setRequestedFQANs(vomsCommandsMap.get(vo));
+			request.setRequestedFQANs(sortFQANsIfRequested(params, fqans));
 			request.setTargets(params.getTargets());
 			request.setLifetime(params.getAcLifetimeInSeconds());
 
