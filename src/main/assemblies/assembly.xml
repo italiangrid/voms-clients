@@ -12,21 +12,21 @@
 
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/lib</outputDirectory>
+      <outputDirectory>/share/java</outputDirectory>
     </dependencySet>
   </dependencySets>
 
   <fileSets>
     <fileSet>
       <directory>${project.build.directory}</directory>
-      <outputDirectory>/lib</outputDirectory>
+      <outputDirectory>/share/java</outputDirectory>
       <includes>
         <include>*.jar</include>
       </includes>
     </fileSet>
     <fileSet>
       <directory>man</directory>
-      <outputDirectory>/man</outputDirectory>
+      <outputDirectory>/share/man/man1</outputDirectory>
       <includes>
         <include>voms-proxy-init.1</include>
         <include>voms-proxy-info.1</include>

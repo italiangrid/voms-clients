@@ -20,7 +20,7 @@ if [ "x$VOMSCLIENT_LIBS" == "x" ]; then
 
   VOMSCLIENTS_HOME=`cd "$PRGDIR/.." ; pwd`
 
-  VOMSCLIENTS_LIBS=$VOMSCLIENTS_HOME/lib
+  VOMSCLIENTS_LIBS=$VOMSCLIENTS_HOME/share/java
 
 fi
 
