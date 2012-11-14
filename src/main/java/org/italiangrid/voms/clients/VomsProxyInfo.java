@@ -5,16 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.italiangrid.voms.clients.options.VomsCliOption;
-import org.italiangrid.voms.clients.options.VomsClientsCommonOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.italiangrid.voms.clients.ProxyInfoParams.PrintOption;
+import org.italiangrid.voms.clients.impl.DefaultVOMSProxyInfoBehaviour;
+import org.italiangrid.voms.clients.impl.ProxyInfoListenerAdapter;
+import org.italiangrid.voms.clients.impl.ProxyInfoListenerHelper;
+import org.italiangrid.voms.clients.options.v2.CLIOption;
+import org.italiangrid.voms.clients.options.v2.CommonOptions;
+import org.italiangrid.voms.clients.options.v2.ProxyInfoOptions;
+import org.italiangrid.voms.clients.strategies.ProxyInfoStrategy;
 
 /**
  * 
@@ -24,74 +22,138 @@ import org.slf4j.LoggerFactory;
  * 
  */
 
-public class VomsProxyInfo {
+public class VomsProxyInfo extends AbstractCLI {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(VomsProxyInfo.class);
+	private static final String COMMAND_NAME = "voms-proxy-info";
 
-	/** The CLI options **/
-	private static Options cliOptions;
+	/** The implementation of the VOMS proxy info behaviour **/
+	private ProxyInfoStrategy proxyInfoBehaviour;
 
-	/** The CLI options parser **/
-	private static CommandLineParser cliParser = new GnuParser();
+	private final ProxyInfoListenerAdapter listenerHelper;
+
+	protected VomsProxyInfo(String[] args) {
+		super(COMMAND_NAME);
+
+		initOptions();
+		parseOptionsFromCommandLine(args);
+
+		listenerHelper = new ProxyInfoListenerHelper(logger);
+
+		execute();
+	}
 
 	/**
 	 * Initializes command-line options
 	 */
 
-	private static void initOptions() {
+	private void initOptions() {
 
-		cliOptions = new Options();
+		List<CLIOption> options = new ArrayList<CLIOption>();
 
-		List<VomsCliOption> listOptions = new ArrayList<VomsCliOption>();
-		listOptions.addAll(Arrays.asList(VomsClientsCommonOptions.values()));
-		// listOptions.addAll(Arrays.asList(VomsProxyInfoOptions.values()));
+		options.addAll(Arrays.asList(CommonOptions.values()));
+		options.addAll(Arrays.asList(ProxyInfoOptions.values()));
 
-		for (VomsCliOption optionElement : listOptions) {
-
-			Option option = new Option(optionElement.getOpt(),
-					optionElement.getLongOpt(), optionElement.hasArg(),
-					optionElement.getDescription());
-
-			option.setArgName(optionElement.getArgDescription());
-
-			cliOptions.addOption(option);
-		}
+		initOptions(options);
 
 	}
 
-	/**
-	 * Prints usage information
-	 */
-	private static void usage() {
+	private ProxyInfoParams getProxyInfoParamsFromCommandLine(
+			CommandLine commandLine) {
 
-		int lineWidth = 120;
-		String header = "options:";
-		String footer = "";
+		ProxyInfoParams params = new ProxyInfoParams();
 
-		HelpFormatter helpFormatter = new HelpFormatter();
-		helpFormatter.printHelp(lineWidth,
-				"java -cp ... org.italiangrid.voms.clients.VomsProxyInfo",
-				header, cliOptions, footer);
+		if (commandLineHasOption(ProxyInfoOptions.PROXY_FILENAME))
+			params.setProxyFile(getOptionValue(ProxyInfoOptions.PROXY_FILENAME));
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_TEXT))
+			params.addPrintOption(PrintOption.TEXT);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_CHAIN))
+			params.addPrintOption(PrintOption.CHAIN);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_ALL_OPTIONS))
+			params.addPrintOption(PrintOption.ALL_OPTIONS);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_TYPE))
+			params.addPrintOption(PrintOption.TYPE);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_SUBJECT))
+			params.addPrintOption(PrintOption.SUBJECT);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_ISSUER))
+			params.addPrintOption(PrintOption.ISSUER);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_IDENTITY))
+			params.addPrintOption(PrintOption.IDENTITY);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_PROXY_PATH))
+			params.addPrintOption(PrintOption.PROXY_PATH);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_KEYSIZE))
+			params.addPrintOption(PrintOption.KEYSIZE);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_TIMELEFT))
+			params.addPrintOption(PrintOption.TIMELEFT);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_VONAME))
+			params.addPrintOption(PrintOption.VONAME);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_ACISSUER))
+			params.addPrintOption(PrintOption.ACISSUER);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_ACSUBJECT))
+			params.addPrintOption(PrintOption.ACSUBJECT);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_ACSERIAL))
+			params.addPrintOption(PrintOption.ACSERIAL);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_ACTIMELEFT))
+			params.addPrintOption(PrintOption.ACTIMELEFT);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_FQAN))
+			params.addPrintOption(PrintOption.FQAN);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_KEYUSAGE))
+			params.addPrintOption(PrintOption.KEYUSAGE);
+
+		if (commandLineHasOption(ProxyInfoOptions.PRINT_SERVER_URI))
+			params.addPrintOption(PrintOption.SERVER_URI);
+
+		if (commandLineHasOption(ProxyInfoOptions.PROXY_TIME_VALIDITY))
+			params.addPrintOption(PrintOption.PROXY_TIME_VALIDITY);
+
+		if (commandLineHasOption(ProxyInfoOptions.PROXY_HOURS_VALIDITY))
+			params.addPrintOption(PrintOption.PROXY_HOURS_VALIDITY);
+
+		if (commandLineHasOption(ProxyInfoOptions.PROXY_STRENGTH_VALIDITY))
+			params.setKeyLength(getOptionValue(ProxyInfoOptions.PROXY_STRENGTH_VALIDITY));
+
+		if (commandLineHasOption(ProxyInfoOptions.PROXY_EXISTS))
+			params.addPrintOption(PrintOption.PROXY_EXISTS);
+
+		if (commandLineHasOption(ProxyInfoOptions.AC_EXISTS))
+			params.setACVO(getOptionValue(ProxyInfoOptions.AC_EXISTS));
+
+		return params;
+	}
+
+	@Override
+	protected void execute() {
+		ProxyInfoParams params = getProxyInfoParamsFromCommandLine(commandLine);
+
+		try {
+
+			proxyInfoBehaviour = new DefaultVOMSProxyInfoBehaviour(
+					listenerHelper);
+			proxyInfoBehaviour.getProxyInfo(params);
+
+		} catch (Throwable t) {
+			logger.error(t);
+		}
+
 	}
 
 	public static void main(String[] args) {
-
-		initOptions();
-		try {
-			CommandLine line = cliParser.parse(cliOptions, args);
-
-			if (line.hasOption("help") || line.hasOption("usage")) {
-				usage();
-				System.exit(0);
-			}
-
-		} catch (ParseException e) {
-			log.error(e.getMessage(), e.getCause());
-			System.err.println("Error parsing command line arguments: "
-					+ e.getMessage());
-			usage();
-			System.exit(1);
-		}
+		new VomsProxyInfo(args);
 	}
 }
