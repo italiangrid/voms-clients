@@ -4,17 +4,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.italiangrid.voms.VOMSAttribute;
 
 public class TimeUtils {
 
-	
-	public static final int parseLifetimeInHours(String lifetimeString) throws ParseException{
-		
+	public static final int parseLifetimeInHours(String lifetimeString)
+			throws ParseException {
+
 		SimpleDateFormat sdf = new SimpleDateFormat("hh");
-		
+
 		Calendar c = Calendar.getInstance();
 		Date d;
 
@@ -25,11 +26,11 @@ public class TimeUtils {
 				.get(Calendar.HOUR_OF_DAY));
 
 		return (int) timeIntevalInSeconds;
-		
+
 	}
-	
-	public static final int parseLifetimeInHoursAndSeconds(String acLifetimeProperty)
-			throws ParseException {
+
+	public static final int parseLifetimeInHoursAndSeconds(
+			String acLifetimeProperty) throws ParseException {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
 
@@ -46,24 +47,26 @@ public class TimeUtils {
 		return (int) timeIntevalInSeconds;
 
 	}
-	
-	public static String getACValidityAsString(VOMSAttribute attr){
-		
+
+	public static String getACValidityAsString(VOMSAttribute attr) {
+
 		String validityString = "00:00";
-		
+
 		Date now = new Date();
-		
+
 		long timeDiff = attr.getNotAfter().getTime() - now.getTime();
-		
-		if (timeDiff > 0){
+
+		if (timeDiff > 0) {
 			Date validity = new Date(timeDiff);
-			SimpleDateFormat df = new SimpleDateFormat("hh:mm");
+			SimpleDateFormat df = new SimpleDateFormat("hh:mm:ss");
+			df.setTimeZone(TimeZone.getTimeZone("GMT"));
 			validityString = df.format(validity);
 		}
-		
+
 		return validityString;
 	}
-	
-	private TimeUtils() {}
+
+	private TimeUtils() {
+	}
 
 }
