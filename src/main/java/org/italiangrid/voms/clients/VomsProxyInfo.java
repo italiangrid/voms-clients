@@ -98,6 +98,9 @@ public class VomsProxyInfo extends AbstractCLI {
 		if (commandLineHasOption(ProxyInfoOptions.PRINT_VONAME))
 			params.addPrintOption(PrintOption.VONAME);
 
+		if (commandLineHasOption(ProxyInfoOptions.SKIP_AC_VERIFICATION))
+			params.addPrintOption(PrintOption.SKIP_AC);
+
 		if (commandLineHasOption(ProxyInfoOptions.PRINT_ACISSUER))
 			params.addPrintOption(PrintOption.ACISSUER);
 
@@ -119,20 +122,28 @@ public class VomsProxyInfo extends AbstractCLI {
 		if (commandLineHasOption(ProxyInfoOptions.PRINT_SERVER_URI))
 			params.addPrintOption(PrintOption.SERVER_URI);
 
-		if (commandLineHasOption(ProxyInfoOptions.PROXY_TIME_VALIDITY))
+		if (commandLineHasOption(ProxyInfoOptions.PROXY_TIME_VALIDITY)) {
+			params.setValidTime(getOptionValue(ProxyInfoOptions.PROXY_TIME_VALIDITY));
 			params.addPrintOption(PrintOption.PROXY_TIME_VALIDITY);
+		}
 
-		if (commandLineHasOption(ProxyInfoOptions.PROXY_HOURS_VALIDITY))
+		if (commandLineHasOption(ProxyInfoOptions.PROXY_HOURS_VALIDITY)) {
+			params.setValidHours(getOptionValue(ProxyInfoOptions.PROXY_HOURS_VALIDITY));
 			params.addPrintOption(PrintOption.PROXY_HOURS_VALIDITY);
+		}
 
-		if (commandLineHasOption(ProxyInfoOptions.PROXY_STRENGTH_VALIDITY))
+		if (commandLineHasOption(ProxyInfoOptions.PROXY_STRENGTH_VALIDITY)) {
 			params.setKeyLength(getOptionValue(ProxyInfoOptions.PROXY_STRENGTH_VALIDITY));
+			params.addPrintOption(PrintOption.PROXY_STRENGTH_VALIDITY);
+		}
 
 		if (commandLineHasOption(ProxyInfoOptions.PROXY_EXISTS))
 			params.addPrintOption(PrintOption.PROXY_EXISTS);
 
-		if (commandLineHasOption(ProxyInfoOptions.AC_EXISTS))
+		if (commandLineHasOption(ProxyInfoOptions.AC_EXISTS)) {
 			params.setACVO(getOptionValue(ProxyInfoOptions.AC_EXISTS));
+			params.addPrintOption(PrintOption.AC_EXISTS);
+		}
 
 		return params;
 	}
@@ -145,7 +156,10 @@ public class VomsProxyInfo extends AbstractCLI {
 
 			proxyInfoBehaviour = new DefaultVOMSProxyInfoBehaviour(
 					listenerHelper);
+
 			proxyInfoBehaviour.getProxyInfo(params);
+
+			System.exit(proxyInfoBehaviour.getExitCode());
 
 		} catch (Throwable t) {
 			logger.error(t);

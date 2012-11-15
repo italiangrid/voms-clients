@@ -18,6 +18,8 @@ public class ProxyInfoParams {
 
 		ISSUER,
 
+		SKIP_AC,
+
 		PROXY_EXISTS,
 
 		AC_EXISTS,
@@ -75,6 +77,10 @@ public class ProxyInfoParams {
 
 	private String keyLength;
 
+	private String validTime;
+
+	private String validHours;
+
 	public String getProxyFile() {
 		return proxyFile;
 	}
@@ -113,6 +119,22 @@ public class ProxyInfoParams {
 
 	public void setKeyLength(String keyLength) {
 		this.keyLength = keyLength;
+	}
+
+	public String getValidTime() {
+		return validTime;
+	}
+
+	public void setValidTime(String validTime) {
+		this.validTime = validTime;
+	}
+
+	public String getValidHours() {
+		return validHours;
+	}
+
+	public void setValidHours(String validHours) {
+		this.validHours = validHours;
 	}
 
 }
