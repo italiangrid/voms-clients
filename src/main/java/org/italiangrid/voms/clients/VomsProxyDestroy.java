@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.italiangrid.voms.clients.impl.DefaultProxyDestroyBehaviour;
 import org.italiangrid.voms.clients.impl.ProxyDestroyListenerHelper;
-import org.italiangrid.voms.clients.options.v2.CLIOption;
-import org.italiangrid.voms.clients.options.v2.ProxyDestroyOptions;
+import org.italiangrid.voms.clients.options.CLIOption;
+import org.italiangrid.voms.clients.options.ProxyDestroyOptions;
 
 /**
  * This class implements the voms-proxy-destroy command-line client.

@@ -324,7 +324,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 			setReturnCode(1);
 			e.printStackTrace();
 		}
-
+		System.out.println(returnCode);
 	}
 
 	private String getDNFormat(String DN) {

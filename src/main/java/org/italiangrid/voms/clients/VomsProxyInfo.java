@@ -9,9 +9,9 @@ import org.italiangrid.voms.clients.ProxyInfoParams.PrintOption;
 import org.italiangrid.voms.clients.impl.DefaultVOMSProxyInfoBehaviour;
 import org.italiangrid.voms.clients.impl.ProxyInfoListenerAdapter;
 import org.italiangrid.voms.clients.impl.ProxyInfoListenerHelper;
-import org.italiangrid.voms.clients.options.v2.CLIOption;
-import org.italiangrid.voms.clients.options.v2.CommonOptions;
-import org.italiangrid.voms.clients.options.v2.ProxyInfoOptions;
+import org.italiangrid.voms.clients.options.CLIOption;
+import org.italiangrid.voms.clients.options.CommonOptions;
+import org.italiangrid.voms.clients.options.ProxyInfoOptions;
 import org.italiangrid.voms.clients.strategies.ProxyInfoStrategy;
 
 /**

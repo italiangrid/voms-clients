@@ -1,4 +1,4 @@
-package org.italiangrid.voms.clients.options.v2;
+package org.italiangrid.voms.clients.options;
 
 import org.apache.commons.cli.Option;
 

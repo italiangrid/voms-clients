@@ -1,9 +1,9 @@
-package org.italiangrid.voms.clients.options.v2;
+package org.italiangrid.voms.clients.options;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.italiangrid.voms.clients.options.v2.VOMSCLIOptionBuilder.BundleKey;
+import org.italiangrid.voms.clients.options.VOMSCLIOptionBuilder.BundleKey;
 
 public enum CLIOptionsBundle {
 	common, proxyInit, proxyInfo, proxyDestroy;
