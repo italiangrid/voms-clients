@@ -88,6 +88,7 @@ public abstract class AbstractCLI {
 	 * @param optionFileName the options file
 	 * @throws ParseException if there an error parsing the options
 	 */
+	@SuppressWarnings("unchecked")
 	private void parseOptionsFromFile(String optionFileName) throws ParseException {
 
 	  List<String> options= OptionsFileLoader.loadOptions(optionFileName);

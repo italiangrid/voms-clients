@@ -1,9 +1,9 @@
 #!/bin/bash
 #set -x
 
-VOMSCLIENT_LIBS=${voms-clients.libs}
+VOMSCLIENTS_LIBS=${voms-clients.libs}
 
-if [ "x$VOMSCLIENT_LIBS" == "x" ]; then
+if [ "x$VOMSCLIENTS_LIBS" == "x" ]; then
 
   PRG="$0"
   while [ -h "$PRG" ]; do
@@ -30,4 +30,4 @@ VOMSCLIENTS_CP=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 # the class implementing voms-proxy-info
 VOMSPROXYINFO_CLASS="org.italiangrid.voms.clients.VomsProxyInfo"
 
-java -DeffectiveUserId=$EUID -cp $VOMSCLIENTS_CP $VOMSPROXYINFO_CLASS "$@"
+java -cp $VOMSCLIENTS_CP $VOMSPROXYINFO_CLASS "$@"

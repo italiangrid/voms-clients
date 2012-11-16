@@ -1,9 +1,9 @@
 #!/bin/bash
 #set -x
 
-VOMSCLIENT_LIBS=${voms-clients.libs}
+VOMSCLIENTS_LIBS=${voms-clients.libs}
 
-if [ "x$VOMSCLIENT_LIBS" == "x" ]; then
+if [ "x$VOMSCLIENTS_LIBS" == "x" ]; then
 
   PRG="$0"
   while [ -h "$PRG" ]; do
@@ -21,7 +21,6 @@ if [ "x$VOMSCLIENT_LIBS" == "x" ]; then
   VOMSCLIENTS_HOME=`cd "$PRGDIR/.." ; pwd`
 
   VOMSCLIENTS_LIBS=$VOMSCLIENTS_HOME/share/java
-
 fi
 
 # ':' separated list of jars, for the classpath
@@ -30,4 +29,4 @@ VOMSCLIENTS_CP=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 # the class implementing voms-proxy-init
 VOMSPROXYINIT_CLASS="org.italiangrid.voms.clients.VomsProxyInit"
 
-java -DeffectiveUserId=$EUID -cp $VOMSCLIENTS_CP $VOMSPROXYINIT_CLASS "$@"
+java -cp $VOMSCLIENTS_CP $VOMSPROXYINIT_CLASS "$@"
