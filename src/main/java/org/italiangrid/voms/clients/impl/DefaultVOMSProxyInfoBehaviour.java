@@ -17,22 +17,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.italiangrid.voms.VOMSAttribute;
-import org.italiangrid.voms.ac.VOMSACParser;
-import org.italiangrid.voms.ac.impl.DefaultVOMSACParser;
-import org.italiangrid.voms.ac.impl.DefaultVOMSValidator;
+import org.italiangrid.voms.VOMSValidators;
+import org.italiangrid.voms.ac.VOMSACValidator;
 import org.italiangrid.voms.clients.ProxyInfoParams;
 import org.italiangrid.voms.clients.ProxyInfoParams.PrintOption;
 import org.italiangrid.voms.clients.strategies.ProxyInfoStrategy;
 import org.italiangrid.voms.clients.util.MessageLogger;
 import org.italiangrid.voms.clients.util.TimeUtils;
-import org.italiangrid.voms.clients.util.VOMSACValidityChecker;
 import org.italiangrid.voms.clients.util.VOMSAttributesPrinter;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
-import org.italiangrid.voms.util.CertificateValidatorBuilder;
-import eu.emi.security.authn.x509.ValidationErrorListener;
-import eu.emi.security.authn.x509.helpers.pkipath.AbstractValidator;
 import eu.emi.security.authn.x509.helpers.proxy.ProxyHelper;
 import eu.emi.security.authn.x509.impl.CertificateUtils;
 import eu.emi.security.authn.x509.impl.FormatMode;
@@ -45,11 +39,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 	private final ProxyInfoListenerAdapter listener;
 
-	private final ValidationErrorListener certChainValidationErrorListener;
-
-	private final VOMSACParser acParser;
-
-	private AbstractValidator certChainValidator;
+	private final VOMSACValidator validator = VOMSValidators.newValidator();
 
 	private int returnCode;
 
@@ -59,22 +49,9 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 			ProxyInfoListenerAdapter listenerAdapter) {
 
 		this.listener = listenerAdapter;
-		this.certChainValidationErrorListener = listenerAdapter;
 
-		acParser = new DefaultVOMSACParser();
 		returnCode = 0;
 
-	}
-
-	private void initCertChainValidator(ProxyInfoParams params) {
-
-		if (certChainValidator == null) {
-			String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
-
-			certChainValidator = CertificateValidatorBuilder
-					.buildCertificateValidator(trustAnchorsDir,
-							certChainValidationErrorListener);
-		}
 	}
 
 	@Override
@@ -82,8 +59,6 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 		X509Certificate[] proxyChain = null;
 		List<VOMSAttribute> listVOMSAttributes = null;
-
-		initCertChainValidator(params);
 
 		boolean printStandardMessage = true;
 
@@ -95,8 +70,10 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 					params.getProxyFile()), null);
 
 			proxyChain = proxyCredential.getCertificateChain();
-			listVOMSAttributes = acParser.parse(proxyCredential
+
+			listVOMSAttributes = validator.parse(proxyCredential
 					.getCertificateChain());
+
 			File proxyFilePath = new File(params.getProxyFile());
 
 			resolveProxyKeyUsage();
@@ -110,15 +87,10 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 			if (!params.containsOption(PrintOption.SKIP_AC)) {
 				try {
 					printStandardMessage = true;
-					List<AttributeCertificate> acs = new ArrayList<AttributeCertificate>();
 
-					Iterator<VOMSAttribute> it = listVOMSAttributes.iterator();
+					validator.validate(proxyChain);
 
-					while (it.hasNext())
-						acs.add(it.next().getVOMSAC().toASN1Structure());
-
-					VOMSACValidityChecker.verifyACs(acs, listener, listener,
-							certChainValidator);
+					validator.shutdown();
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -199,7 +171,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 			if (params.containsOption(PrintOption.ALL_OPTIONS)) {
 				printStandardMessage = false;
 				printProxyStandardInfo(proxyFilePath);
-				tabularFormatted("keyusage", getProxyKeyUsages());
+				tabularFormatted("key usage", getProxyKeyUsages());
 
 				Iterator<VOMSAttribute> it = listVOMSAttributes.iterator();
 
@@ -231,7 +203,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 					&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
 				printStandardMessage = false;
 				printProxyStandardInfo(proxyFilePath);
-				tabularFormatted("keyusage", getProxyKeyUsages());
+				tabularFormatted("key usage", getProxyKeyUsages());
 			}
 
 			if (params.containsOption(PrintOption.TIMELEFT)) {
@@ -363,6 +335,8 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 	}
 
 	private void printProxyStandardInfo(File proxyFilePath) {
+
+		listener.logInfoMessage("");
 
 		tabularFormatted("subject", getDNFormat(proxyCredential
 				.getCertificate().getSubjectDN().toString()));
