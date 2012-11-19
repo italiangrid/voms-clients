@@ -10,12 +10,16 @@ import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.clients.impl.DefaultVOMSCommandsParser;
 import org.italiangrid.voms.clients.impl.DefaultVOMSProxyInitBehaviour;
 import org.italiangrid.voms.clients.impl.ProxyInitListenerHelper;
+import org.italiangrid.voms.clients.impl.ProxyInitListenerHelper.WARNING_POLICY;
 import org.italiangrid.voms.clients.options.CLIOption;
 import org.italiangrid.voms.clients.options.CommonOptions;
 import org.italiangrid.voms.clients.options.ProxyInitOptions;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 import org.italiangrid.voms.clients.util.TimeUtils;
 import org.italiangrid.voms.util.VOMSFQANNamingScheme;
+import org.w3c.dom.ls.LSInput;
+
+import eu.emi.security.authn.x509.proxy.ProxyType;
 
 /**
  * 
@@ -95,21 +99,35 @@ public class VomsProxyInit extends AbstractCLI {
 		if (commandLineHasOption(ProxyInitOptions.LIMITED_PROXY))
 			params.setLimited(true);
 
+		if (commandLineHasOption(ProxyInitOptions.PATHLEN_CONSTRAINT))
+			params.setPathLenConstraint(Integer.parseInt(getOptionValue(ProxyInitOptions.PATHLEN_CONSTRAINT)));
+		
 		if (commandLineHasOption(ProxyInitOptions.CERT_LOCATION))
 			params.setCertFile(getOptionValue(ProxyInitOptions.CERT_LOCATION));
 
 		if (commandLineHasOption(ProxyInitOptions.KEY_LOCATION))
 			params.setKeyFile(getOptionValue(ProxyInitOptions.KEY_LOCATION));
 
-		if (commandLineHasOption(ProxyInitOptions.AC_VALIDITY))
-			params.setAcLifetimeInSeconds(parseLifeTimeInHoursAndMinutesString(
-					getOptionValue(ProxyInitOptions.AC_VALIDITY), ProxyInitOptions.AC_VALIDITY));
-
+		if (commandLineHasOption(ProxyInitOptions.PROXY_LOCATION))
+			params.setGeneratedProxyFile(getOptionValue(ProxyInitOptions.PROXY_LOCATION));
+		
+		if (commandLineHasOption(ProxyInitOptions.VALIDITY)){
+			int lifetimeInSeconds = parseLifeTimeInHoursAndMinutesString(getOptionValue(ProxyInitOptions.VALIDITY), 
+					ProxyInitOptions.VALIDITY);
+		
+			params.setAcLifetimeInSeconds(lifetimeInSeconds);
+			params.setProxyLifetimeInSeconds(lifetimeInSeconds);
+		}
+		
 		if (commandLineHasOption(ProxyInitOptions.AC_LIFETIME))
 			params.setAcLifetimeInSeconds(parseLifeTimeInHoursAndMinutesString(
 					getOptionValue(ProxyInitOptions.AC_LIFETIME), 
 					ProxyInitOptions.AC_LIFETIME));
-
+		
+		if (commandLineHasOption((ProxyInitOptions.PROXY_LIFETIME_IN_HOURS)))
+			params.setProxyLifetimeInSeconds(parseLifetimeInHoursString(getOptionValue(ProxyInitOptions.PROXY_LIFETIME_IN_HOURS), 
+					ProxyInitOptions.PROXY_LIFETIME_IN_HOURS));
+		
 		if (commandLineHasOption(ProxyInitOptions.VOMS_COMMAND))
 			params.setVomsCommands(getOptionValues(ProxyInitOptions.VOMS_COMMAND));
 		
@@ -122,17 +140,45 @@ public class VomsProxyInit extends AbstractCLI {
 		if (commandLineHasOption(ProxyInitOptions.SKIP_AC_VERIFICATION))
 			params.setVerifyAC(false);
 		
-		if (commandLineHasOption((ProxyInitOptions.PROXY_LIFETIME_IN_HOURS)))
-			params.setProxyLifetimeInSeconds(parseLifetimeInHoursString(getOptionValue(ProxyInitOptions.PROXY_LIFETIME_IN_HOURS), 
-					ProxyInitOptions.PROXY_LIFETIME_IN_HOURS));
-
 		if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
 			params.setFqanOrder(parseFQANOrdering(getOptionValue(ProxyInitOptions.FQANS_ORDERING)));
+		
+		if (commandLineHasOption(ProxyInitOptions.PROXY_VERSION))
+			params.setProxyType(proxyTypeFromVersion(getOptionValue(ProxyInitOptions.PROXY_VERSION)));
+		
+		if (commandLineHasOption(ProxyInitOptions.TARGET_HOSTNAME))
+			params.setTargets(Arrays.asList(getOptionValue(ProxyInitOptions.TARGET_HOSTNAME)));
+	
+		if (commandLineHasOption(ProxyInitOptions.VOMSES_LOCATION))
+			params.setVomsesLocation(getOptionValue(ProxyInitOptions.VOMSES_LOCATION));
+			
+		if (commandLineHasOption(ProxyInitOptions.IGNORE_WARNINGS))
+			listenerHelper = new ProxyInitListenerHelper(logger, WARNING_POLICY.ignoreWarnings);
+		
+		if (commandLineHasOption(ProxyInitOptions.FAIL_ON_WARN))
+			listenerHelper = new ProxyInitListenerHelper(logger, WARNING_POLICY.failOnWarnings);
 		
 		return params;
 
 	}
 
+	private ProxyType proxyTypeFromVersion(String version){
+		try{
+			int versionNumber = Integer.parseInt(version);
+			
+			if (versionNumber == 2)
+				return ProxyType.LEGACY;
+			else if (versionNumber == 3)
+				return ProxyType.DRAFT_RFC;
+			else if (versionNumber == 4)
+				return ProxyType.RFC3820;
+			
+			throw new VOMSError("Please specify a valid value for proxyversion: (2-> legacy, 3-> draft rfc, 4-> rfc).");
+		}catch(NumberFormatException e){
+			throw new VOMSError("Please specify a valid value for proxyversion.");
+		}
+	}
+	
 	private List<String> parseFQANOrdering(String orderingParam){
 		 
 		String[] orderStrings = orderingParam.split(",");

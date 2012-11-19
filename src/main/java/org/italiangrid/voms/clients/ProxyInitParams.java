@@ -58,6 +58,9 @@ public class ProxyInitParams {
 	private boolean validateUserCredential = false;
 	
 	private boolean noRegen = false;
+	
+	private String vomsesLocation;
+	
 
 	/**
 	 * @return the certFile
@@ -339,6 +342,20 @@ public class ProxyInitParams {
 	 */
 	public void setFqanOrder(List<String> fqanOrder) {
 		this.fqanOrder = fqanOrder;
+	}
+
+	/**
+	 * @return the vomsesLocation
+	 */
+	public String getVomsesLocation() {
+		return vomsesLocation;
+	}
+
+	/**
+	 * @param vomsesLocation the vomsesLocation to set
+	 */
+	public void setVomsesLocation(String vomsesLocation) {
+		this.vomsesLocation = vomsesLocation;
 	}
 	
 }

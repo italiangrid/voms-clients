@@ -23,10 +23,12 @@ import org.italiangrid.voms.credential.LoadCredentialsEventListener;
 import org.italiangrid.voms.credential.LoadCredentialsStrategy;
 import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 import org.italiangrid.voms.request.VOMSACService;
+import org.italiangrid.voms.request.VOMSESLookupStrategy;
 import org.italiangrid.voms.request.VOMSRequestListener;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
 import org.italiangrid.voms.request.impl.DefaultVOMSACService;
+import org.italiangrid.voms.request.impl.DefaultVOMSESLookupStrategy;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 import org.italiangrid.voms.util.CertificateValidatorBuilder;
@@ -193,6 +195,15 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		return unsortedFQANs;
 	}
+
+	protected VOMSESLookupStrategy getVOMSESLookupStrategyFromParams(ProxyInitParams params){
+		
+		if (params.getVomsesLocation() != null)
+			return new CustomVOMSESLookupStrategy(params.getVomsesLocation());
+		else
+			return new DefaultVOMSESLookupStrategy();
+		
+	}
 	
 	protected List<AttributeCertificate> getAttributeCertificates(
 			ProxyInitParams params, X509Credential cred) {
@@ -219,6 +230,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 			VOMSACService acService = new DefaultVOMSACService(certChainValidator,
 					requestListener, 
+					getVOMSESLookupStrategyFromParams(params),
 					serverInfoStoreListener);
 
 			AttributeCertificate ac = acService.getVOMSAttributeCertificate(

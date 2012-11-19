@@ -30,9 +30,22 @@ import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	MessageLogger logger;
-
+	
+	public enum WARNING_POLICY {
+		printWarnings,
+		failOnWarnings,
+		ignoreWarnings
+	}
+	
+	WARNING_POLICY warningPolicy = WARNING_POLICY.printWarnings;
+	
 	public ProxyInitListenerHelper(MessageLogger logger) {
 		this.logger = logger;
+	}
+	
+	public ProxyInitListenerHelper(MessageLogger logger, WARNING_POLICY warnPolicy) {
+		this.logger = logger;
+		this.warningPolicy = warnPolicy;
 	}
 
 	@Override
@@ -147,9 +160,18 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	@Override
 	public void notifyWarningsInVOMSResponse(VOMSACRequest request,
 			VOMSServerInfo si, VOMSWarningMessage[] warnings) {
-		for (VOMSWarningMessage e : warnings)
-			logger.error("WARNING: VOMS server warning %d: %s\n", e.getCode(),
-					e.getMessage());
+		
+		if (warningPolicy.equals(WARNING_POLICY.printWarnings)){
+			for (VOMSWarningMessage e : warnings)
+				logger.warning("WARNING: VOMS server warning %d: %s\n", e.getCode(),
+						e.getMessage());
+			
+		}else if (warningPolicy.equals(WARNING_POLICY.failOnWarnings)){
+			for (VOMSWarningMessage e : warnings)
+				logger.warning("WARNING: VOMS server warning %d: %s\n", e.getCode(),
+						e.getMessage());
+			System.exit(1);
+		}
 	}
 
 	@Override
