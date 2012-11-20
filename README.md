@@ -29,21 +29,24 @@ RPMs for the latest development build can be found at the following URLs:
 
 ### Credentials
 
-While user credentials may be put anywhere, and then their location passed to voms-proxy-init via the
-appropriate options, there are obviously default values. 
 User credentials typically live in the 
+
   $HOME/.globus
+
 directory.
 
 PKCS12 and PEM X.509 credentials are both supported. For PKCS12 the credential file should be
 named:
+  
   $HOME/.globus/usercred.p12
 
 PEM credential files should be named:
+  
   $HOME/.globus/usercert.pem
   $HOME/.globus/userkey.pem
 
 In case both PEM and PKCS12 formats are present, PEM takes precedence.
+
 Please setup your user credentials so that the private key is only readable by the user owning 
 the credentials (i.e., unix mode 0400).
 
@@ -72,14 +75,13 @@ $ voms-proxy-init --voms <test>
 ```
 where `test` is the name of the VO to which the user belongs. This command will create a proxy containing all the
 groups to which the user belongs, but none of the roles. The -voms option may be speciﬁed multiple times to request
-multiple attributes.
+multiple attributes or attributes from multiple VOs.
 
 VOMS roles are conditional attributes which are included in a VOMS attribute certificate only when explicitly
 requested. Roles can be requested using a command like the following one:
 ```bash
 voms-proxy-init -voms atlas:/atlas/Role=pilot
 ```
-
 If the `-voms` option is not specified, a proxy without VOMS extension will be created.
 
 ### Validity constraints
