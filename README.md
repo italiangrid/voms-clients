@@ -64,7 +64,7 @@ man page.
 ### Configuring trust for VOMS servers
 
 VOMS server trust information in typically maintained in the `/etc/grid-security/vomsdir` directory,
-or in the directory pointed by the `X509_VOMS_DIR` environment variable/
+or in the directory pointed by the `X509_VOMS_DIR` environment variable.
 
 For more information on the format of this directory and what information should be there, 
 consult the `vomsdir` man page.
