@@ -30,20 +30,24 @@ RPMs for the latest development build can be found at the following URLs:
 ### Credentials
 
 User credentials typically live in the 
-
+```bash
   $HOME/.globus
-
+```
 directory.
 
 PKCS12 and PEM X.509 credentials are both supported. For PKCS12 the credential file should be
 named:
-  
+
+```bash
   $HOME/.globus/usercred.p12
+```
 
 PEM credential files should be named:
-  
+
+```bash  
   $HOME/.globus/usercert.pem
   $HOME/.globus/userkey.pem
+```
 
 In case both PEM and PKCS12 formats are present, PEM takes precedence.
 
@@ -54,16 +58,14 @@ the credentials (i.e., unix mode 0400).
 
 VOMS server contact information is typically maintained in `/etc/vomses` or in `$HOME/.glite/vomses` directory.
 
-For more information on the format of this files and what information should be there, type
-  man vomses
+For more information on the format of this files and what information should be there, type `man vomses`.
 
 ### Configuring trust for VOMS servers
 
 VOMS server trust information in typically maintained in the `/etc/grid-security/vomsdir` directory,
 or in the directory pointed by the `X509_VOMS_DIR` environment variable/
 
-For more information on the format of this directory and what information should be there, type
-  man vomsdir
+For more information on the format of this directory and what information should be there, type `man vomsdir`
 
 ### Creating a VOMS proxy certificate
 
@@ -91,7 +93,7 @@ These time periods can be changed using the *-valid* option, which will set the 
 the AC. Note that the validity of the AC can only be "proposed" by voms-proxy-init, as the AC validity is set by the VOMS server
 and its maximum value is limited by local VOMS server configuration (typically the maximum value is 24 hours).
 
-More information can be found in the `voms-proxy-init` man page
+More information can be found in the `voms-proxy-init` man page.
 
 ### Displayng information embedded in a VOMS proxy certificate 
 
