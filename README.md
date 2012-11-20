@@ -58,14 +58,16 @@ the credentials (i.e., unix mode 0400).
 
 VOMS server contact information is typically maintained in `/etc/vomses` or in `$HOME/.glite/vomses` directory.
 
-For more information on the format of this files and what information should be there, type `man vomses`.
+For more information on the format of these files and what information should be there, consult the `vomses`
+man page.
 
 ### Configuring trust for VOMS servers
 
 VOMS server trust information in typically maintained in the `/etc/grid-security/vomsdir` directory,
 or in the directory pointed by the `X509_VOMS_DIR` environment variable/
 
-For more information on the format of this directory and what information should be there, type `man vomsdir`
+For more information on the format of this directory and what information should be there, 
+consult the `vomsdir` man page.
 
 ### Creating a VOMS proxy certificate
 
