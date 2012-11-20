@@ -22,7 +22,6 @@ public enum ProxyInitOptions implements CLIOption{
 	PROXY_NOREGEN("noregen"),
 	PROXY_VERSION("proxyver"),
 	QUIET_MODE("quiet"),
-	REQUEST_TIMEOUT("timeout"),
 	RFC_PROXY("rfc"),
 	SKIP_AC_VERIFICATION("dont_verify_ac"),
 	TARGET_HOSTNAME("target"),

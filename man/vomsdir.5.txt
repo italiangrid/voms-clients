@@ -1,0 +1,114 @@
+VOMSDIR(5)
+==========
+:doctype: manpage
+
+== NAME
+
+vomsdir - The structure of the vomsdir VOMS server trust anchor directory
+
+== SYNOPSIS
+
+*/etc/grid-security/vomsdir* 
+
+== DESCRIPTION
+
+This manual page describes the structure of the _vomsdir_ VOMS server trust anchor
+directory. The function of this directory is to keep local information about trusted VOMS servers
+which is used to verify the signatures on the attributes issued by VOMS servers.
+
+The _vomsdir_ directory is structured as follows:
+----
+<vomsdir>
+   |
+   |--vo1
+   |
+   |--vo2
+   |
+   |--vo3
+   |
+----
+A subdirectory is created for each of the trusted VOs. Inside each VO directory two types of
+files can be found:
+
+* *LSC files*
+An LSC file contains a description of the certificate chain of the certificate used by a VOMS server
+to sign VOMS attributes.
+
+* *X509 certificates* 
+The certificate used by a VOMS server to sign attributes.
+
+These files are commonly named using the following pattern:
+----
+<hostname>.lsc
+<hostname>.pem
+----
+Where hostname is the host where the VOMS server is running.
+
+When both lsc and pem files are present for a given VO and hostname, the lsc file takes precedence.
+
+=== LSC file syntax
+
+The LSC file contains a list of X.509 subject strings, one on each line, encoded in OpenSSL slash-separated syntax,
+describing the certificate chain (up and including the CA that issued the certificate).
+For instance, the voms.cnaf.infn.it VOMS server has the following LSC file:
+----
+/C=IT/O=INFN/OU=Host/L=CNAF/CN=voms.cnaf.infn.it
+/C=IT/O=INFN/CN=INFN CA
+----
+
+== EXAMPLES
+Assuming locally two VOs are trusted, the *cms* VO and the *cdf* VO, the */etc/grid-security/vomsdir* directory will be structured 
+as follows:
+----
+/etc/grid-security/vomsdir
+/etc/grid-security/vomsdir/cms
+/etc/grid-security/vomsdir/cdf
+----
+
+The */etc/grid-security/vomsdir/cms* directory will contain the following files:
+----
+lcg-voms.cern.ch.lsc  
+voms.cern.ch.lsc
+----
+
+The */etc/grid-security/vomsdir/cdf* directory will contain the following files:
+----
+voms-01.pd.infn.it.lsc  
+voms.cnaf.infn.it.lsc  
+voms.fnal.gov.lsc
+----
+
+The LSC files will contain descriptions of the certificate chains used by VOMS servers to sign attribute certificates.
+
+
+== BUGS
+
+To report bugs or ask for support, use GGUS: https://ggus.eu/pages/home.php
+
+== AUTHORS
+
+Andrea Ceccanti <andrea.ceccanti@cnaf.infn.it>
+
+Daniele Andreotti <daniele.andreotti@cnaf.infn.it>
+
+Valerio Venturi <valerio.venturi@cnaf.infn.it>
+
+== SEE ALSO
+
+voms-proxy-destroy(1), voms-proxy-info(1), voms-lsc(5)
+
+== COPYING
+
+Copyright 2012 Istituto Nazionale di Fisica Nucleare
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

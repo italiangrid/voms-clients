@@ -31,6 +31,8 @@
         <include>voms-proxy-init.1</include>
         <include>voms-proxy-info.1</include>
         <include>voms-proxy-destroy.1</include>
+        <include>vomses.5</include>
+        <include>vomsdir.5</include>
       </includes>
     </fileSet>
   </fileSets>

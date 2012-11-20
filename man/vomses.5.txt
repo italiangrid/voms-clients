@@ -1,0 +1,81 @@
+VOMSES(5)
+=========
+:doctype: manpage
+
+== NAME
+
+vomses - The VOMS server contact table
+
+== SYNOPSIS
+
+*/etc/vomses* 
+
+*~/.glite/vomses*
+
+== DESCRIPTION
+
+This manual page describes the format of _vomses_ files.
+_vomses_ files contain contact information for VOMS servers and are typically organized in the */etc/vomses* directory.
+A _vomses_ file is a simple text file which contains one or more lines formatted as follows:
+
+"vo_name" "hostname" "port" "server DN" "alias"
+
+Where:
+
+*vo_name*: the name of the VO served by the VOMS server 
+
+*hostname*: the hostname where the VOMS server is running
+
+*port*: the port where the VOMS server is listening for incoming requests
+
+*server DN*: the certificate subject of the VOMS server
+
+*alias*: an alias that can be used for this VOMS server (this is typically identical to the vo_name)
+
+System wide VOMSES configuration is maintained in the */etc/vomses* file or directory.
+If */etc/vomses* is a directory, all the files contained in such directory are parsed looking for VOMS
+contact information.
+
+A user can define its custom *vomses* configuration in the *~/.glite/vomses* file or directory, which
+will be parsed in the same way as just described.
+
+== EXAMPLES
+
+The following is an example of valid vomes file for the *cms* VO:
+
+----
+"cms" "lcg-voms.cern.ch" "15002" "/DC=ch/DC=cern/OU=computers/CN=lcg-voms.cern.ch" "cms"
+"cms" "voms.cern.ch" "15002" "/DC=ch/DC=cern/OU=computers/CN=voms.cern.ch" "cms"
+----
+
+== BUGS
+
+To report bugs or ask for support, use GGUS: https://ggus.eu/pages/home.php
+
+== AUTHORS
+
+Andrea Ceccanti <andrea.ceccanti@cnaf.infn.it>
+
+Daniele Andreotti <daniele.andreotti@cnaf.infn.it>
+
+Valerio Venturi <valerio.venturi@cnaf.infn.it>
+
+== SEE ALSO
+
+voms-proxy-destroy(1), voms-proxy-info(1), voms-lsc(5)
+
+== COPYING
+
+Copyright 2012 Istituto Nazionale di Fisica Nucleare
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
