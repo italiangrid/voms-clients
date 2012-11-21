@@ -1,15 +1,12 @@
 package org.italiangrid.voms.clients.impl;
 
-import org.italiangrid.voms.ac.ValidationResultListener;
-import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
+//public interface ProxyInfoListenerAdapter extends ValidationErrorListener,
+//		ValidationResultListener, VOMSTrustStoreStatusListener {
 
-import eu.emi.security.authn.x509.ValidationErrorListener;
-
-public interface ProxyInfoListenerAdapter extends ValidationErrorListener,
-		ValidationResultListener, VOMSTrustStoreStatusListener {
+public interface ProxyInfoListenerAdapter {
 
 	public void notifyProxyNotFound();
 
-	public void logInfoMessage(String msg);
+	// public void logInfoMessage(String msg);
 
 }

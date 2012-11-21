@@ -137,4 +137,13 @@ public class ProxyInfoParams {
 		this.validHours = validHours;
 	}
 
+	public boolean isEmpty() {
+		return setOfPrintOptions.isEmpty();
+	}
+
+	public int getNumberOfOptions() {
+		return setOfPrintOptions.size();
+
+	}
+
 }

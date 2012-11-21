@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.italiangrid.voms.clients.ProxyInfoParams.PrintOption;
 import org.italiangrid.voms.clients.impl.DefaultVOMSProxyInfoBehaviour;
-import org.italiangrid.voms.clients.impl.ProxyInfoListenerAdapter;
 import org.italiangrid.voms.clients.impl.ProxyInfoListenerHelper;
 import org.italiangrid.voms.clients.options.CLIOption;
 import org.italiangrid.voms.clients.options.CommonOptions;
@@ -26,10 +25,12 @@ public class VomsProxyInfo extends AbstractCLI {
 
 	private static final String COMMAND_NAME = "voms-proxy-info";
 
+	private static final int EXIT_ERROR_CODE = 1;
+
 	/** The implementation of the VOMS proxy info behaviour **/
 	private ProxyInfoStrategy proxyInfoBehaviour;
 
-	private final ProxyInfoListenerAdapter listenerHelper;
+	private final ProxyInfoListenerHelper listenerHelper;
 
 	protected VomsProxyInfo(String[] args) {
 		super(COMMAND_NAME);
@@ -153,16 +154,15 @@ public class VomsProxyInfo extends AbstractCLI {
 		ProxyInfoParams params = getProxyInfoParamsFromCommandLine(commandLine);
 
 		try {
-
-			proxyInfoBehaviour = new DefaultVOMSProxyInfoBehaviour(
+			proxyInfoBehaviour = new DefaultVOMSProxyInfoBehaviour(logger,
 					listenerHelper);
+			proxyInfoBehaviour.printProxyInfo(params);
 
-			proxyInfoBehaviour.getProxyInfo(params);
-
-			System.exit(proxyInfoBehaviour.getExitCode());
+			System.exit(0);
 
 		} catch (Throwable t) {
 			logger.error(t);
+			System.exit(EXIT_ERROR_CODE);
 		}
 
 	}

@@ -12,7 +12,6 @@ import org.italiangrid.voms.clients.ProxyInfoParams;
 
 public interface ProxyInfoStrategy {
 
-	public void getProxyInfo(ProxyInfoParams options);
+	public void printProxyInfo(ProxyInfoParams options);
 
-	public int getExitCode();
 }
