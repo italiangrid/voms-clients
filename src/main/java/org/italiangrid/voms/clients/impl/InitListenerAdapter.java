@@ -6,6 +6,7 @@ import org.italiangrid.voms.request.VOMSRequestListener;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 
+import eu.emi.security.authn.x509.StoreUpdateListener;
 import eu.emi.security.authn.x509.ValidationErrorListener;
 
 public interface InitListenerAdapter extends ValidationResultListener,
@@ -14,7 +15,8 @@ public interface InitListenerAdapter extends ValidationResultListener,
 		VOMSServerInfoStoreListener, 
 		LoadCredentialsEventListener,
 		ValidationErrorListener,
-		VOMSTrustStoreStatusListener
+		VOMSTrustStoreStatusListener,
+		StoreUpdateListener
 		{
 
 }

@@ -130,21 +130,21 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	@Override
 	public void notifyCredentialLookup(String... locations) {
-		logger.trace("Looking for user credentials in [%s]...\n", Arrays.toString(locations));
+		logger.trace("Looking for user credentials in %s...\n", Arrays.toString(locations));
 
 	}
 
 	@Override
 	public void notifyLoadCredentialSuccess(String... locations) {
-		logger.trace("Credentials loaded successfully [%s]\n", Arrays.toString(locations));
+		logger.trace("Credentials loaded successfully %s\n", Arrays.toString(locations));
 	}
 
 	@Override
 	public void notifyLoadCredentialFailure(Throwable error,
 			String... locations) {
 
-		logger.trace("Credentials couldn't be loaded [%s]: %s\n",
-				locations, error.getMessage());
+		logger.trace("Credentials couldn't be loaded %s: %s\n",
+				Arrays.toString(locations), error.getMessage());
 
 	}
 
@@ -193,5 +193,21 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 					vomsesPath);
 		else
 			logger.trace("Loaded vomses information '%s'\n", info);
+	}
+
+	@Override
+	public void loadingNotification(String location, String type,
+			Severity level, Exception cause) {
+		if (location.startsWith("file:"))
+			location = location.substring(5, location.length());
+		
+		if (level.equals(Severity.ERROR)){
+			logger.error("Error for %s %s: %s.\n", type, location, cause.getMessage());
+		}else if (level.equals(Severity.WARNING)){
+			logger.trace("Warning for %s %s: %s.\n", type, location, cause.getMessage());
+		}else if (level.equals(Severity.NOTIFICATION)){
+			logger.trace("Loading %s %s.\n", type, location);
+		}
+		
 	}
 }

@@ -21,6 +21,7 @@ import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
 import org.italiangrid.voms.credential.CredentialsUtils;
 import org.italiangrid.voms.credential.LoadCredentialsEventListener;
 import org.italiangrid.voms.credential.LoadCredentialsStrategy;
+import org.italiangrid.voms.credential.VOMSEnvironmentVariables;
 import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSESLookupStrategy;
@@ -33,10 +34,12 @@ import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 import org.italiangrid.voms.util.CertificateValidatorBuilder;
 
+import eu.emi.security.authn.x509.StoreUpdateListener;
 import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509Credential;
 import eu.emi.security.authn.x509.helpers.pkipath.AbstractValidator;
+import eu.emi.security.authn.x509.impl.CertificateUtils;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyCertificateOptions;
 import eu.emi.security.authn.x509.proxy.ProxyGenerator;
@@ -60,7 +63,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	private LoadCredentialsEventListener loadCredentialsEventListener;
 	private ValidationErrorListener certChainValidationErrorListener;
 	private VOMSTrustStoreStatusListener vomsTrustStoreListener;
-	
+	private StoreUpdateListener storeUpdateListener;
 	
 	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser,
 			ValidationResultListener validationListener,
@@ -69,7 +72,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			VOMSServerInfoStoreListener serverInfoStoreListener,
 			LoadCredentialsEventListener loadCredEventListener,
 			ValidationErrorListener certChainListener,
-			VOMSTrustStoreStatusListener vomsTSListener)
+			VOMSTrustStoreStatusListener vomsTSListener,
+			StoreUpdateListener trustStoreUpdateListener)
 			{
 		
 		this.commandsParser = commandsParser;
@@ -80,6 +84,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.loadCredentialsEventListener = loadCredEventListener;
 		this.certChainValidationErrorListener = certChainListener;
 		this.vomsTrustStoreListener = vomsTSListener;
+		this.storeUpdateListener = trustStoreUpdateListener;
 	}
 
 	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, InitListenerAdapter listenerAdapter){
@@ -91,6 +96,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.loadCredentialsEventListener = listenerAdapter;
 		this.certChainValidationErrorListener = listenerAdapter;
 		this.vomsTrustStoreListener = listenerAdapter;
+		this.storeUpdateListener = listenerAdapter;
 	}
 	
 	
@@ -104,7 +110,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	}
 	
 	public void initProxy(ProxyInitParams params) {
-		
+		CertificateUtils.configureSecProvider();
 		X509Credential cred = lookupCredential(params);
 		if (cred == null)
 			throw new VOMSError("No credentials found!");
@@ -126,13 +132,16 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		if (certChainValidator == null){
 			String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
-			
+		
+			if (System.getenv(VOMSEnvironmentVariables.X509_CERT_DIR) != null)
+				trustAnchorsDir = System.getenv(VOMSEnvironmentVariables.X509_CERT_DIR);
 			
 			if (params.getTrustAnchorsDir()!=null)
 				trustAnchorsDir = params.getTrustAnchorsDir();
 		
 			certChainValidator = CertificateValidatorBuilder.buildCertificateValidator(trustAnchorsDir, 
-					certChainValidationErrorListener);
+					certChainValidationErrorListener, storeUpdateListener);
+			
 		}
 	}
 	
