@@ -16,16 +16,10 @@ public class ProxyInfoListenerHelper extends ProxyInitListenerHelper {
 
 	public ProxyInfoListenerHelper(MessageLogger logger) {
 		super(logger);
-		// this.logger = logger;
 	}
 
 	public void notifyProxyNotFound() {
 		logger.error("\nProxy file doesn't exist\n");
 	}
-
-	// @Override
-	// public void logInfoMessage(String msg) {
-	// logger.info(msg);
-	// }
 
 }
