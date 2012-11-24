@@ -1,13 +1,13 @@
 '\" t
 .\"     Title: voms-proxy-info
-.\"    Author: [see the "AUTHOR" section]
-.\" Generator: DocBook XSL Stylesheets v1.77.1 <http://docbook.sf.net/>
-.\"      Date: 11/09/2012
+.\"    Author: [see the "AUTHORS" section]
+.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
+.\"      Date: 11/24/2012
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "VOMS\-PROXY\-INFO" "1" "11/09/2012" "\ \&" "\ \&"
+.TH "VOMS\-PROXY\-INFO" "1" "11/24/2012" "\ \&" "\ \&"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -31,77 +31,403 @@
 voms-proxy-info \- prints informations about a proxy with VOMS extensions
 .SH "SYNOPSIS"
 .sp
-voms\-proxy\-info [options]
+\fBvoms\-proxy\-info\fR [options]
 .SH "DESCRIPTION"
 .sp
 The voms\-proxy\-info command prints information about a proxy, including information about the VOMS extension\&.
+.sp
+The default location of the proxy is
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+ /tmp/x509up_u<user_id>
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+where user_id is the effective user id of the user running the command\&. A non\-standard location for the proxy can be specified using the \fB\-file\fR option\&.
 .SH "OPTIONS"
 .sp
-Options may be specified indifferently with either a "\-" or "\-\-" prefix\&. The options from \-help to \-out are present for compatibility with grid\-proxy\-init, and have the exact same meaning\&. The meaning of the other ones is the following\&.
+Options may be specified indifferently with either a "\-" or "\-\-" prefix\&.
 .sp
-\fB\-help\fR
+\fB\-\-acexists <voname>\fR
 .sp
-\fB\-usage\fR Displays usage\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Returns 0 if AC exists corresponding to voname, 1 otherwise
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-version\fR Displays version\&.
+\fB\-\-acissuer\fR
 .sp
-\fB\-debug\fR Enables extra debug output\&. This is for bug reports only\&. Users must not rely on the extra output printed by this option\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the DN of AC issuer (certificate signer)
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-file\fR <proxyfile> The name of the file containing the proxy, in case it is in a non\-standard place\&.
+\fB\-\-acsubject\fR
 .sp
-\fB\-chain\fR Prints informations about the proxy\(cqs certificate chain\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the distinguished name (DN) of AC subject
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-subject\fR Prints the DN of the proxy\(cqs subject\&.
+\fB\-\-actimeleft\fR
 .sp
-\fB\-issuer\fR Prints the DN of the proxy\(cqs issuer\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints time (in seconds) until AC expires
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-identity\fR Prints the DN of the iodentity represented by the proxy\&. This is synonimous
+\fB\-\-all\fR
 .sp
-\fB\-type\fR Print the proxy\(cqs type (limited or not)
+.if n \{\
+.RS 4
+.\}
+.nf
+All proxy options in a human readable format
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-strength\fR Prints the proxy\(cqs strength\&. I\&.e\&. the number of bits in the key\&.
+\fB\-b,\-\-bits <B>\fR
 .sp
-\fB\-valid\fR Prints validity times\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+[option to \-exists] strength requirement for proxy to be valid
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-timeleft\fR Prints how much time is left (in seconds) instead of the end time of the proxy\&. This option implies \-valid
+\fB\-\-chain\fR
 .sp
-\fB\-all\fR Prints everything\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints information about the whole proxy certificate chain (CA excluded)
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-fqan\fR Prints the VOMS attributes in the FQAN format\&. Default
+\fB\-\-conf <file>\fR
 .sp
-\fB\-exists\fR \-bits <N> \-hours <H> Verifies if the proxy is valid for at least other H hours and has a key of at least N bits\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Read options from <file>
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-acexists\fR <voname> Verifies if an AC for the VO specified is present in the proxy\&.
+\fB\-\-debug\fR
 .sp
-\fB\-conf\fR <file> Read options from file\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Enables extra debug output
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-text\fR Prints the certificate to standard output\&.
+\fB\-\-dont_verify_ac\fR
 .sp
-\fB\-path\fR Prints the full path name of the proxy file\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Skips AC verification
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-vo\fR Prints the names of the VOs whose AC are present in the proxy
+\fB\-e,\-\-exists\fR
 .sp
-\fB\-acsubject\fR Prints the subject of the owners of the ACs in the proxy\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Returns 0 if valid proxy exists, 1 otherwise
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-acissuer\fR Prints the issuer of the owners of the ACs in the proxy\&.
+\fB\-\-file <proxyfile>\fR
 .sp
-\fB\-actimeleft\fR Prints how much time is left (in seconds) instead of the end time of the AC\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Reads information from file <proxyfile>
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-serial\fR Prints the serial number of each AC present in the proxy\&.
+\fB\-\-fqan\fR
 .sp
-\fB\-dont\-verify\-ac\fR Skips the AC verification step\&. Warning! Data printed when this option is specified may not be reliable\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints VOMS fully qualified attribute names (FQANs)
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-targets\fR Prints the list of hosts to which the AC has been targeted\&.
+\fB\-\-help\fR
 .sp
-\fB\-included\-file\fR In case the proxy included a user\-specified file, this option prints it to screen\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+Displays helps and exits
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-\fB\-uri\fR Prints the URI of the serve which issued this AC\&.
+\fB\-\-hours <H>\fR
 .sp
-\fB\-keyusage\fR Print the content of the KeyUsage extension of the certificate\&.
+.if n \{\
+.RS 4
+.\}
+.nf
+[option to \-exists] time requirement for proxy to be valid (deprecated, use \-valid instead)
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-identity\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the DN of the identity represented by the proxy
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-include <file>\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Print included file
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-issuer\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the proxy issuer DN
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-k,\-\-keyusage\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints content of the KeyUsage extension
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-p,\-\-path\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the proxy file pathname
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-serial\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the AC serial number
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-strength\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the proxy key size (in bits)
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-subject\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the proxy subject Distinguished name (DN)
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-text\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints all of the certificate
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-timeleft\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints time (in seconds) until proxy expires
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-type\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the proxy type (full or limited)
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-uri\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the URI of the VOMS server that issued the attributes
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-usage\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Displays helps and exits
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-valid <H:M>\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+[option to \-exists] time requirement for proxy to be valid
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-version\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Displays version
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+\fB\-\-vo\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Prints the vo name
+.fi
+.if n \{\
+.RE
+.\}
 .SH "BUGS"
 .sp
-EGEE Bug Tracking Tool: https://savannah\&.cern\&.ch/projects/jra1mdw/
-.SH "AUTHOR"
+To report bugs or ask for support, use GGUS: https://ggus\&.eu/pages/home\&.php
+.SH "AUTHORS"
 .sp
 Andrea Ceccanti <andrea\&.ceccanti@cnaf\&.infn\&.it>
 .sp
@@ -110,19 +436,21 @@ Daniele Andreotti <daniele\&.andreotti@cnaf\&.infn\&.it>
 Valerio Venturi <valerio\&.venturi@cnaf\&.infn\&.it>
 .SH "SEE ALSO"
 .sp
-voms\-proxy\-init(1), voms\-proxy\-info(1)
-.sp
-EDT Auth Home page: http://grid\-auth\&.infn\&.it
-.sp
-CVSweb: http://datagrid\&.in2p3\&.fr/cgi\-bin/cvsweb\&.cgi/Auth/voms
-.sp
-RPM repository: http://datagrid\&.in2p3\&.fr/distribution/autobuild/i386\-rh7\&.3
+voms\-proxy\-destroy(1), voms\-proxy\-info(1), vomses(5), vomsdir(5)
 .SH "COPYING"
 .sp
-Copyright (c) Members of the EGEE Collaboration\&. 2004\&. See the beneficiaries list for details on the copyright holders\&.
+Copyright 2012 Istituto Nazionale di Fisica Nucleare
 .sp
 Licensed under the Apache License, Version 2\&.0 (the "License"); you may not use this file except in compliance with the License\&. You may obtain a copy of the License at
 .sp
-www\&.apache\&.org/licenses/LICENSE\-2\&.0: http://www\&.apache\&.org/licenses/LICENSE\-2\&.0
+.if n \{\
+.RS 4
+.\}
+.nf
+http://www\&.apache\&.org/licenses/LICENSE\-2\&.0
+.fi
+.if n \{\
+.RE
+.\}
 .sp
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or im\- plied\&. See the License for the specific language governing permissions and limitations under the License\&.
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied\&. See the License for the specific language governing permissions and limitations under the License\&.

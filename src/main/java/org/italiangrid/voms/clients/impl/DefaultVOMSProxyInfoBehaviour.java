@@ -29,10 +29,14 @@ import org.italiangrid.voms.clients.util.OpensslNameUtilities;
 import org.italiangrid.voms.clients.util.TimeUtils;
 import org.italiangrid.voms.clients.util.VOMSAttributesPrinter;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
+import org.italiangrid.voms.credential.VOMSEnvironmentVariables;
 import org.italiangrid.voms.store.VOMSTrustStore;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 import org.italiangrid.voms.util.CertificateValidatorBuilder;
+
+
+import eu.emi.security.authn.x509.StoreUpdateListener;
 
 import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
@@ -49,7 +53,10 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 	VOMSTrustStoreStatusListener listenerTrust;
 	ValidationResultListener listenerValidationResult;
+	ValidationErrorListener certChainValidationErrorListener;
+	StoreUpdateListener storeUpdateListener;
 
+	private X509CertChainValidatorExt certChainValidator = null;
 	private VOMSACValidator acValidator = null;
 
 	private final String[] keyUsagesValues = { "Digital Signature",
@@ -62,31 +69,41 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 	private final MessageLogger logger;
 
 	public DefaultVOMSProxyInfoBehaviour(MessageLogger logger,
-			InitListenerAdapter listenerHelper) {
+			InitListenerAdapter listenerAdapter) {
 
 		this.logger = logger;
-		this.listenerTrust = listenerHelper;
-		this.listenerValidationResult = listenerHelper;
+		this.listenerTrust = listenerAdapter;
+		this.listenerValidationResult = listenerAdapter;
+		this.storeUpdateListener = listenerAdapter;
 
 	}
 
-	private void initValidator(ProxyInfoParams params) {
+	private void initCertChainValidator(ProxyInfoParams params) {
 
-		if (acValidator == null) {
+		if (certChainValidator == null) {
 
 			String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
 
-			VOMSTrustStore trust = new DefaultVOMSTrustStore(listenerTrust);
+			if (System.getenv(VOMSEnvironmentVariables.X509_CERT_DIR) != null)
+				trustAnchorsDir = System
+						.getenv(VOMSEnvironmentVariables.X509_CERT_DIR);
 
-			ValidationErrorListener certChainValidationErrorListener = null;
 
-			X509CertChainValidatorExt certChainValidator = CertificateValidatorBuilder
+			certChainValidator = CertificateValidatorBuilder
 					.buildCertificateValidator(trustAnchorsDir,
-							certChainValidationErrorListener);
+							certChainValidationErrorListener,
+							storeUpdateListener);
 
+		}
+	}
+
+	private void initACValidator(ProxyInfoParams params) {
+
+		VOMSTrustStore trust = new DefaultVOMSTrustStore(listenerTrust);
+
+		if (acValidator == null) {
 			acValidator = VOMSValidators.newValidator(trust,
 					certChainValidator, listenerValidationResult);
-
 		}
 	}
 
@@ -116,7 +133,8 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 		proxyChain = proxyCredential.getCertificateChain();
 
-		initValidator(params);
+		initCertChainValidator(params);
+		initACValidator(params);
 
 		listVOMSAttributes = acValidator.parse(proxyChain);
 
@@ -126,24 +144,16 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 			acValidator.validate(proxyChain);
 			acValidator.shutdown();
-
 		}
 
-		if (params.containsOption(PrintOption.ALL_OPTIONS)) {
+		if (params.containsOption(PrintOption.ALL_OPTIONS)
+				&& !params.containsOption(PrintOption.CHAIN)) {
 
 			printProxyStandardInfo(proxyFilePath);
 
-			Iterator<VOMSAttribute> it = listVOMSAttributes.iterator();
+			printExtraInfo(listVOMSAttributes);
 
-			MessageLogger logger = new MessageLogger();
-
-			while (it.hasNext()) {
-
-				VOMSAttribute attribute = it.next();
-				VOMSAttributesPrinter.printVOMSAttributes(logger,
-						MessageLogger.MessageLevel.INFO, attribute);
-
-			}
+			logger.printMessage("");
 		}
 
 		if (params.isEmpty()
@@ -152,7 +162,8 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 			printProxyStandardInfo(proxyFilePath);
 		}
 
-		checkProxyBasicOptions(params, proxyFilePath, proxyChain);
+		checkProxyBasicOptions(params, listVOMSAttributes, proxyFilePath,
+				proxyChain);
 		checkVOMSOptions(params, listVOMSAttributes, proxyChain, proxyFilePath);
 		checkValidityOptions(params, proxyChain);
 
@@ -218,7 +229,8 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 	 * Proxy basic options
 	 */
 	private void checkProxyBasicOptions(ProxyInfoParams params,
-			File proxyFilePath, X509Certificate[] proxyChain) {
+			List<VOMSAttribute> listVOMSAttributes, File proxyFilePath,
+			X509Certificate[] proxyChain) {
 
 		if (params.containsOption(PrintOption.TYPE)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
@@ -244,15 +256,40 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 			logger.printMessage(proxyFilePath.getAbsolutePath());
 		}
 
-		if (params.containsOption(PrintOption.TEXT)) {
+		if (params.containsOption(PrintOption.CHAIN)) {
+			logger.printMessage("=== Proxy Chain Information ===");
+			for (int i = proxyChain.length - 1; i > 0; i--) {
+				logger.printMessage(CertificateUtils.format(proxyChain[i],
+						FormatMode.MEDIUM));
+				logger.printMessage("");
+			}
+
+			logger.printMessage("=== Proxy Information ===");
 			printProxyStandardInfo(proxyFilePath);
-			logger.printMessage(CertificateUtils.format(proxyChain,
-					FormatMode.MEDIUM));
+
+			if (params.containsOption(PrintOption.ALL_OPTIONS)) {
+				printExtraInfo(listVOMSAttributes);
+			}
+
+			logger.printMessage("");
 		}
 
-		if (params.containsOption(PrintOption.CHAIN)) {
-			logger.printMessage(CertificateUtils.format(proxyChain,
-					FormatMode.FULL));
+		if (params.containsOption(PrintOption.TEXT)) {
+			if (!params.containsOption(PrintOption.ALL_OPTIONS)
+					&& !params.containsOption(PrintOption.CHAIN)) {
+				printProxyStandardInfo(proxyFilePath);
+				logger.printMessage("");
+			}
+
+			int chainLength = 1;
+			if (params.containsOption(PrintOption.CHAIN))
+				chainLength = proxyChain.length;
+			for (int i = chainLength - 1; i >= 0; i--) {
+				logger.printMessage("Certificate:");
+				logger.printMessage(CertificateUtils.format(proxyChain[i],
+						FormatMode.FULL));
+				logger.printMessage("");
+			}
 		}
 
 		if (params.containsOption(PrintOption.KEYSIZE)
@@ -399,6 +436,19 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		}
 
 		return usage.toString();
+	}
+
+	private void printExtraInfo(List<VOMSAttribute> listVOMSAttributes) {
+
+		Iterator<VOMSAttribute> it = listVOMSAttributes.iterator();
+
+		while (it.hasNext()) {
+
+			VOMSAttribute attribute = it.next();
+			VOMSAttributesPrinter.printVOMSAttributes(logger,
+					MessageLogger.MessageLevel.INFO, attribute);
+
+		}
 	}
 
 	private void printProxyStandardInfo(File proxyFilePath) {
