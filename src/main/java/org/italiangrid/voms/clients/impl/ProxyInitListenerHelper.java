@@ -78,11 +78,11 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 			VOMSAttribute attributes) {
 
 		if (!result.isValid()) {
-			logger.error("\nWARNING: VOMS AC validation failed for the following reasons:");
+			logger.error("\nWARNING: VOMS AC validation for VO %s failed for the following reasons:", attributes.getVO());
 			for (VOMSValidationErrorMessage m : result.getValidationErrors())
 				logger.error("\t%s\n", m.getMessage());
 		} else {
-			logger.trace("VOMS AC validation succeded.\n");
+			logger.trace("VOMS AC validation for VO %s succeded.\n", attributes.getVO());
 			VOMSAttributesPrinter.printVOMSAttributes(logger,
 					MessageLevel.TRACE, attributes);
 		}
