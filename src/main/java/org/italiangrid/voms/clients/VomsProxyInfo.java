@@ -99,9 +99,6 @@ public class VomsProxyInfo extends AbstractCLI {
 		if (commandLineHasOption(ProxyInfoOptions.PRINT_VONAME))
 			params.addPrintOption(PrintOption.VONAME);
 
-		if (commandLineHasOption(ProxyInfoOptions.SKIP_AC_VERIFICATION))
-			params.addPrintOption(PrintOption.SKIP_AC);
-
 		if (commandLineHasOption(ProxyInfoOptions.PRINT_ACISSUER))
 			params.addPrintOption(PrintOption.ACISSUER);
 

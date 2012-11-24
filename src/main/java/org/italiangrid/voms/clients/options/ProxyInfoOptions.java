@@ -5,11 +5,9 @@ import org.apache.commons.cli.Option;
 public enum ProxyInfoOptions implements CLIOption {
 
 	PROXY_FILENAME("file"),
-	SKIP_AC_VERIFICATION("dont_verify_ac"),
 	PROXY_EXISTS("exists"),
 	AC_EXISTS("acexists"),
 	OPTIONS_FILE("conf"),
-	PRINT_INCLUDED_FILE("include"),
 	PRINT_CHAIN("chain"),
 	PRINT_SUBJECT("subject"),
 	PRINT_ISSUER("issuer"),

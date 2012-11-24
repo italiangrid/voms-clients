@@ -65,10 +65,6 @@ Options  may be specified indifferently with either a "-" or "--" prefix.
 
 	Enables extra debug output
 
-*--dont_verify_ac*
-
-	Skips AC verification
-
 *-e,--exists*
 
 	Returns 0 if valid proxy exists, 1 otherwise
@@ -92,10 +88,6 @@ Options  may be specified indifferently with either a "-" or "--" prefix.
 *--identity*
 
 	Prints the DN of the identity represented by the proxy
-
-*--include <file>*
-
-      Print included file
 
 *--issuer*
 
@@ -123,7 +115,7 @@ Options  may be specified indifferently with either a "-" or "--" prefix.
     
 *--text*                
 
-	Prints all of the certificate
+	Prints all information regarding the certificate
     
 *--timeleft*            
 

@@ -18,8 +18,6 @@ public class ProxyInfoParams {
 
 		ISSUER,
 
-		SKIP_AC,
-
 		PROXY_EXISTS,
 
 		AC_EXISTS,

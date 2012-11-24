@@ -17,7 +17,14 @@ import org.italiangrid.voms.clients.util.MessageLogger;
 import org.italiangrid.voms.clients.util.OptionsFileLoader;
 import org.italiangrid.voms.clients.util.VersionProvider;
 
+import eu.emi.security.authn.x509.impl.CertificateUtils;
+
 public abstract class AbstractCLI {
+	
+	static{
+		
+		CertificateUtils.configureSecProvider();
+	}
 	
 	public static final String DEFAULT_TMP_PATH = "/tmp";
 

@@ -40,8 +40,6 @@ import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;
-import eu.emi.security.authn.x509.helpers.pkipath.AbstractValidator;
-import eu.emi.security.authn.x509.impl.CertificateUtils;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyCertificateOptions;
 import eu.emi.security.authn.x509.proxy.ProxyGenerator;
@@ -112,17 +110,22 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	}
 	
 	public void initProxy(ProxyInitParams params) {
-		CertificateUtils.configureSecProvider();
+		
 		X509Credential cred = lookupCredential(params);
 		if (cred == null)
 			throw new VOMSError("No credentials found!");
 
-		initCertChainValidator(params);
-		
-		if (params.validateUserCredential())
+		if (params.validateUserCredential()){
+			initCertChainValidator(params);
 			validateUserCredential(params, cred);
+		}
 		
-		List<AttributeCertificate> acs = getAttributeCertificates(params, cred);
+		List<AttributeCertificate> acs = Collections.emptyList();
+		
+		if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
+			initCertChainValidator(params);
+			acs = getAttributeCertificates(params, cred);
+		}
 
 		if (params.verifyAC() && !acs.isEmpty())
 			verifyACs(params, acs);

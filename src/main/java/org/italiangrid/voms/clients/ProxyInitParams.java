@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
-import org.italiangrid.voms.request.impl.AbstractVOMSProtocol;
 
 import eu.emi.security.authn.x509.proxy.ProxyType;
 
@@ -20,10 +19,8 @@ public class ProxyInitParams {
 	public static final int DEFAULT_PROXY_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12); 
 	public static final int DEFAULT_AC_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12);
 	public static final int DEFAULT_KEY_SIZE = 1024;
-	/**
-	 * 2 seconds of default connect timeout
-	 */
-	public static final int DEFAULT_CONNECT_TIMEOUT = 2;
+	
+	public static final int DEFAULT_CONNECT_TIMEOUT_IN_SECONDS = 2;
 	
 	private String certFile;
 	private String keyFile;
@@ -42,7 +39,7 @@ public class ProxyInitParams {
 
 	private ProxyType proxyType = ProxyType.LEGACY;
 
-	private int timeoutInSeconds;
+	private int timeoutInSeconds = DEFAULT_CONNECT_TIMEOUT_IN_SECONDS;
 
 	private boolean verifyAC = true;
 
