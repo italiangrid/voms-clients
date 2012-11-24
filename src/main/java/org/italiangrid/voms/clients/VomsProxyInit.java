@@ -158,6 +158,9 @@ public class VomsProxyInit extends AbstractCLI {
 		if (commandLineHasOption(ProxyInitOptions.FAIL_ON_WARN))
 			listenerHelper = new ProxyInitListenerHelper(logger, WARNING_POLICY.failOnWarnings);
 		
+		if (commandLineHasOption(ProxyInitOptions.TIMEOUT))
+			params.setTimeoutInSeconds(parseConnectionTimeout(getOptionValue(ProxyInitOptions.TIMEOUT)));
+		
 		return params;
 
 	}
@@ -225,6 +228,22 @@ public class VomsProxyInit extends AbstractCLI {
 		}
 	}
 
+	private int parseConnectionTimeout(String timeoutStringValue){
+		int timeoutInSeconds = 0;
+		
+		try{
+			timeoutInSeconds = Integer.parseInt(timeoutStringValue);
+			
+			if (timeoutInSeconds < 0)
+				throw new VOMSError("Invalid value for the timeout option. It should be a positive integer.");
+			
+		}catch(NumberFormatException e){
+			throw new VOMSError("Invalid value for the timeout option. It should be a positive integer.");
+		}
+		
+		
+		return timeoutInSeconds;
+	}
 	@Override
 	protected void execute() {
 		ProxyInitParams params = getProxyInitParamsFromCommandLine(commandLine);

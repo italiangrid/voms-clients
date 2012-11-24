@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.openssl.PasswordFinder;
@@ -37,6 +38,7 @@ import org.italiangrid.voms.util.CertificateValidatorBuilder;
 import eu.emi.security.authn.x509.StoreUpdateListener;
 import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
+import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;
 import eu.emi.security.authn.x509.helpers.pkipath.AbstractValidator;
 import eu.emi.security.authn.x509.impl.CertificateUtils;
@@ -53,7 +55,7 @@ import eu.emi.security.authn.x509.proxy.ProxyGenerator;
 public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 	private VOMSCommandsParsingStrategy commandsParser;
-	private AbstractValidator certChainValidator;
+	private X509CertChainValidatorExt certChainValidator;
 	
 	
 	private ValidationResultListener validationResultListener;
@@ -241,6 +243,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 					requestListener, 
 					getVOMSESLookupStrategyFromParams(params),
 					serverInfoStoreListener);
+			
+			acService.setConnectTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()));
 
 			AttributeCertificate ac = acService.getVOMSAttributeCertificate(
 					cred, request);
@@ -251,6 +255,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 		if (!vomsCommandsMap.keySet().isEmpty() && acs.isEmpty())
 			throw new VOMSError("Unable to satisfy user request!");
+		
 		return acs;
 	}
 

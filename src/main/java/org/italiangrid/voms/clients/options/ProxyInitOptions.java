@@ -25,6 +25,7 @@ public enum ProxyInitOptions implements CLIOption{
 	RFC_PROXY("rfc"),
 	SKIP_AC_VERIFICATION("dont_verify_ac"),
 	TARGET_HOSTNAME("target"),
+	TIMEOUT("timeout"),
 	TRUSTED_CERT_LOCATION("certdir"),
 	VERIFY_CERT("verify"),
 	VOMS_COMMAND("voms"),
