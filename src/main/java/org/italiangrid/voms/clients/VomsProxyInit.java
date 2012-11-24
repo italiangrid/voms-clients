@@ -17,7 +17,6 @@ import org.italiangrid.voms.clients.options.ProxyInitOptions;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 import org.italiangrid.voms.clients.util.TimeUtils;
 import org.italiangrid.voms.util.VOMSFQANNamingScheme;
-import org.w3c.dom.ls.LSInput;
 
 import eu.emi.security.authn.x509.proxy.ProxyType;
 
@@ -142,6 +141,9 @@ public class VomsProxyInit extends AbstractCLI {
 		
 		if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
 			params.setFqanOrder(parseFQANOrdering(getOptionValue(ProxyInitOptions.FQANS_ORDERING)));
+
+		if (commandLineHasOption(ProxyInitOptions.RFC_PROXY))
+			params.setProxyType(ProxyType.RFC3820);
 		
 		if (commandLineHasOption(ProxyInitOptions.PROXY_VERSION))
 			params.setProxyType(proxyTypeFromVersion(getOptionValue(ProxyInitOptions.PROXY_VERSION)));
