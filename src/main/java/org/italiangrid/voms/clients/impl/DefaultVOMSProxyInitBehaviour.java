@@ -44,6 +44,8 @@ import eu.emi.security.authn.x509.X509Credential;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyCertificateOptions;
 import eu.emi.security.authn.x509.proxy.ProxyGenerator;
+import eu.emi.security.authn.x509.proxy.ProxyPolicy;
+import eu.emi.security.authn.x509.proxy.ProxyType;
 
 /**
  * The default VOMS proxy init behaviour.
@@ -181,6 +183,16 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		certOptions.setType(params.getProxyType());
 		certOptions.setKeyLength(params.getKeySize());
 		
+		if (certOptions.getType().equals(ProxyType.RFC3820)|| certOptions.getType().equals(ProxyType.DRAFT_RFC)){
+			ProxyPolicy policy;
+			
+			if (params.isLimited())
+				policy = new ProxyPolicy(ProxyPolicy.LIMITED_PROXY_OID);
+			else
+				policy = new ProxyPolicy(ProxyPolicy.INHERITALL_POLICY_OID);
+			
+			certOptions.setPolicy(policy);
+		}
 		if (acs != null && !acs.isEmpty())
 			certOptions.setAttributeCertificates(acs.toArray(new AttributeCertificate[acs.size()]));
 		
