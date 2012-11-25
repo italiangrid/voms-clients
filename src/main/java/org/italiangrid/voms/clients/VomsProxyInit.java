@@ -221,7 +221,7 @@ public class VomsProxyInit extends AbstractCLI {
 
 		try {
 			
-			return TimeUtils.parseLifetimeInHoursAndSeconds(acLifetimeProperty);
+			return TimeUtils.parseLifetimeInHoursAndMinutes(acLifetimeProperty);
 
 		} catch (ParseException e) {
 			throw new VOMSError("Invalid format for the time interval option '"

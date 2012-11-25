@@ -150,6 +150,10 @@ public class MessageLogger {
 	public PrintStream getErrorStream() {
 		return errorStream;
 	}
+	
+	public boolean isLevelEnabled(MessageLevel l){
+		return levelFilter.contains(l);
+	}
 }
 
 

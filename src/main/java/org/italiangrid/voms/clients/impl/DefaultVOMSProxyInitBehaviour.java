@@ -26,6 +26,7 @@ import org.italiangrid.voms.credential.VOMSEnvironmentVariables;
 import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSESLookupStrategy;
+import org.italiangrid.voms.request.VOMSProtocolListener;
 import org.italiangrid.voms.request.VOMSRequestListener;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
@@ -64,6 +65,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	private ValidationErrorListener certChainValidationErrorListener;
 	private VOMSTrustStoreStatusListener vomsTrustStoreListener;
 	private StoreUpdateListener storeUpdateListener;
+	private VOMSProtocolListener protocolListener;
 	
 	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser,
 			ValidationResultListener validationListener,
@@ -73,7 +75,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			LoadCredentialsEventListener loadCredEventListener,
 			ValidationErrorListener certChainListener,
 			VOMSTrustStoreStatusListener vomsTSListener,
-			StoreUpdateListener trustStoreUpdateListener)
+			StoreUpdateListener trustStoreUpdateListener,
+			VOMSProtocolListener protocolListener)
 			{
 		
 		this.commandsParser = commandsParser;
@@ -85,6 +88,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.certChainValidationErrorListener = certChainListener;
 		this.vomsTrustStoreListener = vomsTSListener;
 		this.storeUpdateListener = trustStoreUpdateListener;
+		this.protocolListener = protocolListener;
 	}
 
 	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, InitListenerAdapter listenerAdapter){
@@ -97,6 +101,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.certChainValidationErrorListener = listenerAdapter;
 		this.vomsTrustStoreListener = listenerAdapter;
 		this.storeUpdateListener = listenerAdapter;
+		this.protocolListener = listenerAdapter;
 	}
 	
 	
@@ -245,7 +250,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			VOMSACService acService = new DefaultVOMSACService(certChainValidator,
 					requestListener, 
 					getVOMSESLookupStrategyFromParams(params),
-					serverInfoStoreListener);
+					serverInfoStoreListener,
+					protocolListener);
 			
 			acService.setConnectTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()));
 
@@ -257,7 +263,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		}
 
 		if (!vomsCommandsMap.keySet().isEmpty() && acs.isEmpty())
-			throw new VOMSError("Unable to satisfy user request!");
+			throw new VOMSError("User's request for VOMS attributes could not be fulfilled.");
 		
 		return acs;
 	}

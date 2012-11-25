@@ -139,7 +139,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		if (params.containsOption(PrintOption.PROXY_TIME_VALIDITY)) {
 			int period = 0;
 			try {
-				period = TimeUtils.parseLifetimeInHoursAndSeconds(params
+				period = TimeUtils.parseLifetimeInHoursAndMinutes(params
 						.getValidTime());
 			} catch (ParseException e) {
 				throw new VOMSError("Wrong validity format, required 'hh:mm': "

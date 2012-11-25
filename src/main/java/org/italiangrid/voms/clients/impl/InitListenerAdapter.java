@@ -2,6 +2,7 @@ package org.italiangrid.voms.clients.impl;
 
 import org.italiangrid.voms.ac.ValidationResultListener;
 import org.italiangrid.voms.credential.LoadCredentialsEventListener;
+import org.italiangrid.voms.request.VOMSProtocolListener;
 import org.italiangrid.voms.request.VOMSRequestListener;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
@@ -16,6 +17,7 @@ public interface InitListenerAdapter extends ValidationResultListener,
 		LoadCredentialsEventListener,
 		ValidationErrorListener,
 		VOMSTrustStoreStatusListener,
+		VOMSProtocolListener,
 		StoreUpdateListener
 		{
 

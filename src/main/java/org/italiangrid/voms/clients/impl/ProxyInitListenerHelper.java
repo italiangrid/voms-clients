@@ -7,12 +7,14 @@ import java.util.List;
 
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.ac.VOMSValidationResult;
+import org.italiangrid.voms.clients.options.ProxyInitOptions;
 import org.italiangrid.voms.clients.util.MessageLogger;
 import org.italiangrid.voms.clients.util.MessageLogger.MessageLevel;
 import org.italiangrid.voms.clients.util.VOMSAttributesPrinter;
 import org.italiangrid.voms.error.VOMSValidationErrorMessage;
 import org.italiangrid.voms.request.VOMSACRequest;
 import org.italiangrid.voms.request.VOMSErrorMessage;
+import org.italiangrid.voms.request.VOMSResponse;
 import org.italiangrid.voms.request.VOMSServerInfo;
 import org.italiangrid.voms.request.VOMSWarningMessage;
 import org.italiangrid.voms.store.LSCInfo;
@@ -80,7 +82,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 		if (!result.isValid()) {
 			logger.error("\nWARNING: VOMS AC validation for VO %s failed for the following reasons:\n", attributes.getVO());
 			for (VOMSValidationErrorMessage m : result.getValidationErrors())
-				logger.error("\t%s\n", m.getMessage());
+				logger.error("         %s\n", m.getMessage());
 		} else {
 			logger.trace("VOMS AC validation for VO %s succeded.\n", attributes.getVO());
 			VOMSAttributesPrinter.printVOMSAttributes(logger,
@@ -152,25 +154,27 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	public void notifyErrorsInVOMSReponse(VOMSACRequest request,
 			VOMSServerInfo si, VOMSErrorMessage[] errors) {
 
+		logger.error("VOMS server %s:%d returned the following errors:\n", 
+				si.getURL().getHost(), 
+				si.getURL().getPort());
+		
 		for (VOMSErrorMessage e : errors)
-			logger.error("ERROR: VOMS server error %d: %s\n", e.getCode(),
-					e.getMessage());
+			logger.error("%s\n", e.getMessage());
 	}
 
 	@Override
 	public void notifyWarningsInVOMSResponse(VOMSACRequest request,
 			VOMSServerInfo si, VOMSWarningMessage[] warnings) {
 		
-		if (warningPolicy.equals(WARNING_POLICY.printWarnings)){
+		if (!warningPolicy.equals(WARNING_POLICY.ignoreWarnings)){
+		
 			for (VOMSWarningMessage e : warnings)
-				logger.warning("WARNING: VOMS server warning %d: %s\n", e.getCode(),
-						e.getMessage());
+				logger.warning("%s\n", e.getMessage());
 			
-		}else if (warningPolicy.equals(WARNING_POLICY.failOnWarnings)){
-			for (VOMSWarningMessage e : warnings)
-				logger.warning("WARNING: VOMS server warning %d: %s\n", e.getCode(),
-						e.getMessage());
-			System.exit(1);
+			if (warningPolicy.equals(WARNING_POLICY.failOnWarnings)){
+				logger.trace("Exiting as requested by the --%s option...\n", ProxyInitOptions.FAIL_ON_WARN.getLongOptionName());
+				System.exit(1);
+			}
 		}
 	}
 
@@ -209,5 +213,29 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 			logger.trace("Loading %s %s.\n", type, location);
 		}
 		
+	}
+
+	@Override
+	public void notifyHTTPRequest(String url) {
+		logger.trace("Sent HTTP request for %s\n", url);
+		
+	}
+
+	@Override
+	public void notifyLegacyRequest(String xmlLegacyRequest) {
+		
+		if (logger.isLevelEnabled(MessageLevel.TRACE)){
+			logger.trace("Sent VOMS legacy request:\n");
+			logger.trace(xmlLegacyRequest);
+		}
+		
+	}
+
+	@Override
+	public void notifyReceivedResponse(VOMSResponse r) {
+		if (logger.isLevelEnabled(MessageLevel.TRACE)){
+			logger.trace("Received VOMS response:\n");
+			logger.trace(r.getXMLAsString());
+		}
 	}
 }
