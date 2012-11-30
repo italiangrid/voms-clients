@@ -2,7 +2,7 @@ package org.italiangrid.voms.clients.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ public class DefaultVOMSCommandsParser implements VOMSCommandsParsingStrategy {
 		if (commands.isEmpty())
 			return Collections.emptyMap();
 
-		Map<String, List<String>> commandsMap = new HashMap<String, List<String>>();
+		Map<String, List<String>> commandsMap = new LinkedHashMap<String, List<String>>();
 
 		for (String cmd : commands) {
 
