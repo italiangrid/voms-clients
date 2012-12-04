@@ -1,9 +1,7 @@
 package org.italiangrid.voms.clients.util;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.italiangrid.voms.VOMSAttribute;
@@ -26,7 +24,7 @@ public class TimeUtils {
 
 		if (!acLifetimeProperty.contains(":"))
 			throw new VOMSError("Illegal format for lifetime property.");
-		
+
 		String[] tokens = acLifetimeProperty.split(":");
 
 		int hours = Integer.parseInt(tokens[0]);
@@ -39,22 +37,31 @@ public class TimeUtils {
 
 	}
 
-	public static String getACValidityAsString(VOMSAttribute attr) {
+	/*
+	 * Returns time in the custom format HH:mm:ss (e.g.: a value of more than 24
+	 * hours is allowed for the field HH )
+	 */
+	public static final String getFormattedTime(long timeleft) {
 
-		String validityString = "00:00";
+		long hours = TimeUnit.MILLISECONDS.toHours(timeleft);
+
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(timeleft
+				- TimeUnit.HOURS.toMillis(hours));
+
+		long seconds = TimeUnit.MILLISECONDS.toSeconds(timeleft
+				- TimeUnit.HOURS.toMillis(hours)
+				- TimeUnit.MINUTES.toMillis(minutes));
+
+		return (String.format("%02d:%02d:%02d", hours, minutes, seconds));
+	}
+
+	public static String getACValidityAsString(VOMSAttribute attr) {
 
 		Date now = new Date();
 
 		long timeDiff = attr.getNotAfter().getTime() - now.getTime();
 
-		if (timeDiff > 0) {
-			Date validity = new Date(timeDiff);
-			SimpleDateFormat df = new SimpleDateFormat("hh:mm:ss");
-			df.setTimeZone(TimeZone.getTimeZone("GMT"));
-			validityString = df.format(validity);
-		}
-
-		return validityString;
+		return getFormattedTime(timeDiff);
 	}
 
 	private TimeUtils() {
