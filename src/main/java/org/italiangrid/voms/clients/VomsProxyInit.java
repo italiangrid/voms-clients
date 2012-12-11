@@ -152,7 +152,7 @@ public class VomsProxyInit extends AbstractCLI {
 			params.setTargets(Arrays.asList(getOptionValue(ProxyInitOptions.TARGET_HOSTNAME)));
 	
 		if (commandLineHasOption(ProxyInitOptions.VOMSES_LOCATION))
-			params.setVomsesLocation(getOptionValue(ProxyInitOptions.VOMSES_LOCATION));
+			params.setVomsesLocations(getOptionValues(ProxyInitOptions.VOMSES_LOCATION));
 			
 		if (commandLineHasOption(ProxyInitOptions.IGNORE_WARNINGS))
 			listenerHelper = new ProxyInitListenerHelper(logger, WARNING_POLICY.ignoreWarnings);

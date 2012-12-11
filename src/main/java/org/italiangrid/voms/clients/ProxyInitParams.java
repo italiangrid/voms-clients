@@ -61,7 +61,7 @@ public class ProxyInitParams {
 	
 	private boolean noRegen = false;
 	
-	private String vomsesLocation;
+	private List<String> vomsesLocations;
 	
 
 	/**
@@ -346,18 +346,12 @@ public class ProxyInitParams {
 		this.fqanOrder = fqanOrder;
 	}
 
-	/**
-	 * @return the vomsesLocation
-	 */
-	public String getVomsesLocation() {
-		return vomsesLocation;
+	public List<String> getVomsesLocations() {
+		return vomsesLocations;
 	}
 
-	/**
-	 * @param vomsesLocation the vomsesLocation to set
-	 */
-	public void setVomsesLocation(String vomsesLocation) {
-		this.vomsesLocation = vomsesLocation;
+	public void setVomsesLocations(List<String> vomsesLocations) {
+		this.vomsesLocations = vomsesLocations;
 	}
 	
 }

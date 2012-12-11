@@ -2,6 +2,7 @@ package org.italiangrid.voms.clients.impl;
 
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.italiangrid.voms.request.VOMSESLookupStrategy;
 import org.italiangrid.voms.request.VOMSProtocolListener;
 import org.italiangrid.voms.request.VOMSRequestListener;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
+import org.italiangrid.voms.request.impl.BaseVOMSESLookupStrategy;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
 import org.italiangrid.voms.request.impl.DefaultVOMSACService;
 import org.italiangrid.voms.request.impl.DefaultVOMSESLookupStrategy;
@@ -229,8 +231,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 	protected VOMSESLookupStrategy getVOMSESLookupStrategyFromParams(ProxyInitParams params){
 		
-		if (params.getVomsesLocation() != null)
-			return new CustomVOMSESLookupStrategy(params.getVomsesLocation());
+		if (params.getVomsesLocations() != null && ! params.getVomsesLocations().isEmpty())
+			return new BaseVOMSESLookupStrategy(params.getVomsesLocations());
 		else
 			return new DefaultVOMSESLookupStrategy();
 		
@@ -258,15 +260,15 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			request.setRequestedFQANs(sortFQANsIfRequested(params, fqans));
 			request.setTargets(params.getTargets());
 			request.setLifetime(params.getAcLifetimeInSeconds());
-
-			VOMSACService acService = new DefaultVOMSACService(certChainValidator,
-					requestListener, 
-					getVOMSESLookupStrategyFromParams(params),
-					serverInfoStoreListener,
-					protocolListener);
 			
-			acService.setConnectTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()));
-
+			VOMSACService acService = new DefaultVOMSACService.Builder(certChainValidator)
+					.requestListener(requestListener)
+					.vomsesLookupStrategy(getVOMSESLookupStrategyFromParams(params))
+					.serverInfoStoreListener(serverInfoStoreListener)
+					.protocolListener(protocolListener)
+					.connectTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
+					.build();
+			
 			AttributeCertificate ac = acService.getVOMSAttributeCertificate(
 					cred, request);
 
