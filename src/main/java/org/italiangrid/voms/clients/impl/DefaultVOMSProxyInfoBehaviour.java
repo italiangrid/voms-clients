@@ -74,7 +74,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		}
 
 		try {
-			proxyCredential = new PEMCredential(proxyInputStream, null);
+			proxyCredential = new PEMCredential(proxyInputStream, (char[])null);
 		} catch (Exception e) {
 			throw new VOMSError("Proxy not found: " + e.getMessage(), e);
 		}
