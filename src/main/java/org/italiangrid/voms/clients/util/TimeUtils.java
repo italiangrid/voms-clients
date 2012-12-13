@@ -19,7 +19,7 @@ public class TimeUtils {
 			throw new VOMSError("Number of minutes must be a positive integer.");
 		
 		if (minutes > 59)
-			throw new VOMSError("Number of minutes must be in the range 0-59");
+			throw new VOMSError("Number of minutes must be in the range 0-59.");
 		
 		long timeIntervalInSeconds = TimeUnit.HOURS.toSeconds(hours) + TimeUnit.MINUTES.toSeconds(minutes);
 		

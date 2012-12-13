@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.openssl.PasswordFinder;
 import org.italiangrid.voms.VOMSError;
@@ -20,7 +21,6 @@ import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 import org.italiangrid.voms.clients.strategies.VOMSCommandsParsingStrategy;
 import org.italiangrid.voms.clients.util.PasswordFinders;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
-import org.italiangrid.voms.credential.CredentialsUtils;
 import org.italiangrid.voms.credential.LoadCredentialsEventListener;
 import org.italiangrid.voms.credential.LoadCredentialsStrategy;
 import org.italiangrid.voms.credential.VOMSEnvironmentVariables;
@@ -34,9 +34,12 @@ import org.italiangrid.voms.request.impl.BaseVOMSESLookupStrategy;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
 import org.italiangrid.voms.request.impl.DefaultVOMSACService;
 import org.italiangrid.voms.request.impl.DefaultVOMSESLookupStrategy;
+import org.italiangrid.voms.store.VOMSTrustStore;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 import org.italiangrid.voms.util.CertificateValidatorBuilder;
+import org.italiangrid.voms.util.CredentialsUtils;
+import org.italiangrid.voms.util.FilePermissionHelper;
 
 import eu.emi.security.authn.x509.StoreUpdateListener;
 import eu.emi.security.authn.x509.ValidationErrorListener;
@@ -159,13 +162,24 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		}
 	}
 	
-	private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
+	private VOMSACValidator initVOMSValidator(ProxyInitParams params){
 		
-		VOMSACValidator acValidator = VOMSValidators.newValidator(
-				new DefaultVOMSTrustStore(vomsTrustStoreListener), 
+		String vomsdir = DefaultVOMSTrustStore.DEFAULT_VOMS_DIR;
+		
+		if (System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR) != null)
+			vomsdir = System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR);
+		
+		VOMSTrustStore trustStore = new DefaultVOMSTrustStore(Arrays.asList(vomsdir)
+				, vomsTrustStoreListener);
+		
+		return VOMSValidators.newValidator(trustStore, 
 				certChainValidator, 
 				validationResultListener);
+	}
+	
+	private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
 		
+		VOMSACValidator acValidator = initVOMSValidator(params);
 		acValidator.validateACs(acs);
 	}
 
@@ -201,7 +215,12 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		try {
 			
 			ProxyCertificate cert = ProxyGenerator.generate(certOptions, credential.getKey());
-			CredentialsUtils.saveCredentials(new FileOutputStream(proxyFilePath), cert.getCredential());
+			
+			
+			FileOutputStream proxyFile = new FileOutputStream(proxyFilePath);
+			CredentialsUtils.saveProxyCredentials(proxyFilePath, cert.getCredential());
+			proxyFile.close();
+			//FilePermissionHelper.setProxyPermissions(proxyFilePath);
 			proxyCreationListener.proxyCreated(proxyFilePath, cert);
 		} catch (Throwable t) {
 			

@@ -7,12 +7,12 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 
-import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.ac.VOMSValidationResult;
 import org.italiangrid.voms.clients.options.ProxyInitOptions;
 import org.italiangrid.voms.clients.util.MessageLogger;
 import org.italiangrid.voms.clients.util.MessageLogger.MessageLevel;
 import org.italiangrid.voms.clients.util.VOMSAttributesPrinter;
+import org.italiangrid.voms.credential.FilePermissionError;
 import org.italiangrid.voms.error.VOMSValidationErrorMessage;
 import org.italiangrid.voms.request.VOMSACRequest;
 import org.italiangrid.voms.request.VOMSErrorMessage;
@@ -147,7 +147,8 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 			String... locations) {
 		
 		MessageLevel level  = MessageLevel.TRACE;
-		if (error instanceof IOException)
+		
+		if (error instanceof FilePermissionError || error instanceof IOException)
 			level = MessageLevel.ERROR;
 		
 		if (error instanceof FileNotFoundException)
