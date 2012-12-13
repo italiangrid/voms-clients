@@ -140,7 +140,8 @@ public class VomsProxyInit extends AbstractCLI {
 			params.setVerifyAC(false);
 		
 		if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
-			params.setFqanOrder(parseFQANOrdering(getOptionValue(ProxyInitOptions.FQANS_ORDERING)));
+			params.setFqanOrder(fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
+			
 
 		if (commandLineHasOption(ProxyInitOptions.RFC_PROXY))
 			params.setProxyType(ProxyType.RFC3820);
@@ -184,16 +185,6 @@ public class VomsProxyInit extends AbstractCLI {
 		}
 	}
 	
-	private List<String> parseFQANOrdering(String orderingParam){
-		 
-		String[] orderStrings = orderingParam.split(",");
-		
-		for (String fqan: orderStrings)
-			VOMSFQANNamingScheme.checkSyntax(fqan);
-		
-		return Arrays.asList(orderStrings); 
-		
-	}
 	private void initOptions() {
 
 		List<CLIOption> options = new ArrayList<CLIOption>();
@@ -204,6 +195,13 @@ public class VomsProxyInit extends AbstractCLI {
 		initOptions(options);
 	}
 	
+	private List<String> fqansSanityChecks(List<String> fqans){
+		
+		for (String f: fqans)
+			VOMSFQANNamingScheme.checkSyntax(f);
+		
+		return fqans;
+	}
 	
 	private int parseLifetimeInHoursString(String proxyLifetimeProperty, CLIOption option){
 		

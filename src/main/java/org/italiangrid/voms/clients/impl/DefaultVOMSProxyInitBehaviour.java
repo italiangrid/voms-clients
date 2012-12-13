@@ -1,14 +1,15 @@
 package org.italiangrid.voms.clients.impl;
 
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.openssl.PasswordFinder;
 import org.italiangrid.voms.VOMSError;
@@ -39,7 +40,6 @@ import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 import org.italiangrid.voms.util.CertificateValidatorBuilder;
 import org.italiangrid.voms.util.CredentialsUtils;
-import org.italiangrid.voms.util.FilePermissionHelper;
 
 import eu.emi.security.authn.x509.StoreUpdateListener;
 import eu.emi.security.authn.x509.ValidationErrorListener;
@@ -183,6 +183,16 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		acValidator.validateACs(acs);
 	}
 
+	
+	private void checkProxyLifetimeIsConsistentWithIssuingCredential(ProxyCertificate proxy, X509Credential issuingCredential){
+		
+		Date proxyEndTime = proxy.getCredential().getCertificate().getNotAfter();
+		Date issuingCredentialEndTime = issuingCredential.getCertificate().getNotAfter();
+		
+		if ( proxyEndTime.after(issuingCredentialEndTime) )
+			throw new VOMSError("proxy lifetime extends beyond issuing certificate lifetime!");
+			
+	}
 	private void  createProxy(ProxyInitParams params,
 			X509Credential credential, List<AttributeCertificate> acs) {
 		
@@ -214,14 +224,12 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		try {
 			
-			ProxyCertificate cert = ProxyGenerator.generate(certOptions, credential.getKey());
+			ProxyCertificate proxy = ProxyGenerator.generate(certOptions, credential.getKey());
+			checkProxyLifetimeIsConsistentWithIssuingCredential(proxy, credential);
 			
-			
-			FileOutputStream proxyFile = new FileOutputStream(proxyFilePath);
-			CredentialsUtils.saveProxyCredentials(proxyFilePath, cert.getCredential());
-			proxyFile.close();
-			//FilePermissionHelper.setProxyPermissions(proxyFilePath);
-			proxyCreationListener.proxyCreated(proxyFilePath, cert);
+			CredentialsUtils.saveProxyCredentials(proxyFilePath, proxy.getCredential());
+			proxyCreationListener.proxyCreated(proxyFilePath, proxy);
+		
 		} catch (Throwable t) {
 			
 			throw new VOMSError("Error creating proxy certificate: "+t.getMessage(), t);
@@ -230,19 +238,14 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 	protected List<String> sortFQANsIfRequested(ProxyInitParams params, List<String> unsortedFQANs){
 		
-		if (params.getFqanOrder() != null && !params.getFqanOrder().isEmpty() && ! unsortedFQANs.isEmpty()){ 
-			List<String> result = new ArrayList<String>();
+		if (params.getFqanOrder() != null && !params.getFqanOrder().isEmpty()){
 			
-			for (String s: params.getFqanOrder()){
-				if (unsortedFQANs.contains(s))
-					result.add(s);
-			}
+			Set<String> fqans = new LinkedHashSet<String>();
 			
-			for (String s: unsortedFQANs)
-				if (!result.contains(s))
-					result.add(s);
+			fqans.addAll(params.getFqanOrder());
+			fqans.addAll(unsortedFQANs);
 			
-			return result;
+			return new ArrayList<String>(fqans);
 		}
 		
 		return unsortedFQANs;

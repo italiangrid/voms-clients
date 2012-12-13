@@ -93,7 +93,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 			printProxyStandardInfo(proxyFilePath);
 
-			printExtraInfo(attributes);
+			printAC(attributes);
 
 			logger.printMessage("");
 		}
@@ -230,7 +230,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 			printProxyStandardInfo(proxyFilePath);
 
 			if (params.containsOption(PrintOption.ALL_OPTIONS)) {
-				printExtraInfo(listVOMSAttributes);
+				printAC(listVOMSAttributes);
 			}
 
 			logger.printMessage("");
@@ -281,26 +281,29 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 			List<VOMSAttribute> attributes, X509Certificate[] proxyChain,
 			File proxyFilePath) {
 
+		if (params.hasACOptions() && attributes.isEmpty())
+			throw new VOMSError("No VOMS attributes found!");
+		
 		if (params.containsOption(PrintOption.ACSUBJECT)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			logger.printMessage(OpensslNameUtilities
-					.getOpensslSubjectString(proxyCredential.getCertificate()
-							.getIssuerX500Principal()));
+			
+			for (VOMSAttribute a: attributes)
+				logger.printMessage(OpensslNameUtilities
+						.getOpensslSubjectString(a.getHolder()));
 
 		}
 
 		if (params.containsOption(PrintOption.ACTIMELEFT)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			Iterator<VOMSAttribute> it = attributes.iterator();
-
-			while (it.hasNext())
-				logger.printMessage(TimeUtils.getFormattedTime(getTimeLeft(it
-						.next().getVOMSAC().getNotAfter())));
+			
+			
+			for (VOMSAttribute a: attributes)
+				logger.printMessage(TimeUtils.getFormattedTime(getTimeLeft(a.getVOMSAC().getNotAfter())));
 		}
 
 		if (params.containsOption(PrintOption.ACISSUER)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-
+			
 			for (VOMSAttribute a : attributes)
 				logger.printMessage(OpensslNameUtilities
 						.getOpensslSubjectString(a.getAACertificates()[0]
@@ -310,56 +313,53 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 		if (params.containsOption(PrintOption.ACSERIAL)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			Iterator<VOMSAttribute> it = attributes.iterator();
 
-			while (it.hasNext())
-				logger.printMessage(it.next().getVOMSAC().getSerialNumber()
+			for (VOMSAttribute a: attributes)
+				logger.printMessage(a.getVOMSAC().getSerialNumber()
 						.toString());
 
 		}
 
 		if (params.containsOption(PrintOption.AC_EXISTS)) {
-			Iterator<VOMSAttribute> it = attributes.iterator();
-
-			while (it.hasNext()) {
-				if (!it.next().getVO().equals(params.getACVO()))
-					throw new VOMSError("AC not found for VO "
-							+ params.getACVO());
+			
+			boolean foundRequestedAC = false;
+			
+			for (VOMSAttribute a: attributes){
+				if (params.getACVO().equals(a.getVO())){
+					foundRequestedAC = true;
+					break;
+				}
 			}
+			
+			if (!foundRequestedAC)
+				throw new VOMSError("AC not found for VO "
+						+ params.getACVO());
+			
 		}
 
 		if (params.containsOption(PrintOption.VONAME)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			Iterator<VOMSAttribute> it = attributes.iterator();
-
-			while (it.hasNext())
-				logger.printMessage(it.next().getVO());
+			
+			for (VOMSAttribute a: attributes)
+				logger.printMessage(a.getVO());
 		}
 
 		if (params.containsOption(PrintOption.FQAN)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
 
-			Iterator<VOMSAttribute> it = attributes.iterator();
-
-			List<String> fqans = null;
-
-			while (it.hasNext()) {
-				fqans = it.next().getFQANs();
-
-				for (String fqan : fqans)
-					logger.printMessage(fqan);
+			for (VOMSAttribute a: attributes){
+				for (String f: a.getFQANs())
+					logger.printMessage(f);
 			}
+				
 		}
 
 		if (params.containsOption(PrintOption.SERVER_URI)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			Iterator<VOMSAttribute> it = attributes.iterator();
-
-			while (it.hasNext()) {
-				VOMSAttribute tmp = it.next();
-				logger.printMessage(tmp.getHost() + ":" + tmp.getPort());
+			
+			for (VOMSAttribute a: attributes){
+				logger.formatMessage("%s:%s\n", a.getHost(), a.getPort());
 			}
-
 		}
 
 	}
@@ -402,16 +402,12 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		return usage.toString();
 	}
 
-	private void printExtraInfo(List<VOMSAttribute> listVOMSAttributes) {
+	private void printAC(List<VOMSAttribute> listVOMSAttributes) {
 
-		Iterator<VOMSAttribute> it = listVOMSAttributes.iterator();
-
-		while (it.hasNext()) {
-
-			VOMSAttribute attribute = it.next();
+		for (VOMSAttribute a : listVOMSAttributes){
 			VOMSAttributesPrinter.printVOMSAttributes(logger,
-					MessageLogger.MessageLevel.INFO, attribute);
-
+					MessageLogger.MessageLevel.INFO, a);
+			
 		}
 	}
 

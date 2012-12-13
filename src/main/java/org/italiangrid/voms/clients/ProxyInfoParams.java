@@ -11,7 +11,7 @@ import java.util.EnumSet;
  */
 
 public class ProxyInfoParams {
-
+	
 	public enum PrintOption {
 
 		SUBJECT,
@@ -63,6 +63,16 @@ public class ProxyInfoParams {
 
 	private final EnumSet<PrintOption> setOfPrintOptions = EnumSet
 			.noneOf(PrintOption.class);
+	
+	public final EnumSet<PrintOption> acOptions = EnumSet.of(PrintOption.AC_EXISTS, 
+			PrintOption.ACISSUER,
+			PrintOption.ACSERIAL,
+			PrintOption.ACSUBJECT,
+			PrintOption.ACTIMELEFT,
+			PrintOption.SERVER_URI,
+			PrintOption.VONAME,
+			PrintOption.FQAN);
+			
 	/**
 	 * Name of the proxy certificate file.
 	 */
@@ -103,6 +113,13 @@ public class ProxyInfoParams {
 		return setOfPrintOptions.contains(opt);
 	}
 
+	public boolean hasACOptions(){
+		for (PrintOption p: acOptions)
+			if (setOfPrintOptions.contains(p))
+				return true;
+		
+		return false;
+	}
 	public String getACVO() {
 		return ACVO;
 	}
