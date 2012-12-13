@@ -55,6 +55,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	@Override
 	public void notifyVOMSRequestFailure(VOMSACRequest request,
 			VOMSServerInfo endpoint, Throwable error) {
+		
 		if (endpoint != null)
 			logger.error("Error contacting %s:%d for VO %s: %s\n", endpoint
 					.getURL().getHost(), endpoint.getURL().getPort(), endpoint
@@ -69,12 +70,15 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	public void notifyVOMSRequestStart(VOMSACRequest request, VOMSServerInfo si) {
 		logger.info("Contacting %s:%d [%s] \"%s\"...\n", si.getURL().getHost(),
 				si.getURL().getPort(), si.getVOMSServerDN(), si.getVoName());
+		
+		
 	}
 
 	@Override
 	public void notifyVOMSRequestSuccess(VOMSACRequest request,
 			VOMSServerInfo endpoint) {
 		logger.info("Remote VOMS server contacted succesfully.\n");
+		
 	}
 
 	@Override
@@ -92,7 +96,11 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	}
 
 	@Override
-	public void proxyCreated(String proxyPath, ProxyCertificate cert) {
+	public void proxyCreated(String proxyPath, ProxyCertificate cert, List<String> warnings) {
+		if (!warnings.isEmpty())
+			for (String w: warnings)
+				logger.warning("WARNING: %s\n", w);
+		
 		logger.info("\nCreated proxy in %s.\n\n", proxyPath);
 		logger.info("Your proxy is valid until %s\n", cert.getCredential()
 				.getCertificateChain()[0].getNotAfter());

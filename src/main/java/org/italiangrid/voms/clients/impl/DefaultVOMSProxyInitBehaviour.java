@@ -2,6 +2,7 @@ package org.italiangrid.voms.clients.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -46,11 +47,13 @@ import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;
+import eu.emi.security.authn.x509.impl.CertificateUtils;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyCertificateOptions;
 import eu.emi.security.authn.x509.proxy.ProxyGenerator;
 import eu.emi.security.authn.x509.proxy.ProxyPolicy;
 import eu.emi.security.authn.x509.proxy.ProxyType;
+import eu.emi.security.authn.x509.proxy.ProxyUtils;
 
 /**
  * The default VOMS proxy init behaviour.
@@ -184,32 +187,47 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	}
 
 	
-	private void checkProxyLifetimeIsConsistentWithIssuingCredential(ProxyCertificate proxy, X509Credential issuingCredential){
+	private void ensureProxyLifetimeIsConsistentWithIssuingCredential(ProxyCertificateOptions options, 
+			X509Credential issuingCredential,
+			List<String> proxyCreationWarnings){
 		
-		Date proxyEndTime = proxy.getCredential().getCertificate().getNotAfter();
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.SECOND, options.getLifetime());
+		
+		Date proxyEndTime = cal.getTime();
 		Date issuingCredentialEndTime = issuingCredential.getCertificate().getNotAfter();
 		
-		if ( proxyEndTime.after(issuingCredentialEndTime) )
-			throw new VOMSError("proxy lifetime extends beyond issuing certificate lifetime!");
+		if ( proxyEndTime.after(issuingCredentialEndTime) ){
+			proxyCreationWarnings.add("proxy lifetime limited to issuing credential lifetime.");
 			
+			long skew = issuingCredentialEndTime.getTime() - System.currentTimeMillis();
+			options.setLifetime(skew, TimeUnit.MILLISECONDS);
+		}	
 	}
+	
+	
 	private void  createProxy(ProxyInitParams params,
 			X509Credential credential, List<AttributeCertificate> acs) {
+		
+		List<String> proxyCreationWarnings = new ArrayList<String>();
 		
 		String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
 		
 		if (params.getGeneratedProxyFile() != null)
 			proxyFilePath = params.getGeneratedProxyFile();
 		
-		ProxyCertificateOptions certOptions = new ProxyCertificateOptions(credential.getCertificateChain());
+		ProxyCertificateOptions proxyOptions = new ProxyCertificateOptions(credential.getCertificateChain());
 		
-		certOptions.setProxyPathLimit(params.getPathLenConstraint());
-		certOptions.setLimited(params.isLimited());
-		certOptions.setLifetime(params.getProxyLifetimeInSeconds());
-		certOptions.setType(params.getProxyType());
-		certOptions.setKeyLength(params.getKeySize());
+		proxyOptions.setProxyPathLimit(params.getPathLenConstraint());
+		proxyOptions.setLimited(params.isLimited());
+		proxyOptions.setLifetime(params.getProxyLifetimeInSeconds());
+		proxyOptions.setType(params.getProxyType());
+		proxyOptions.setKeyLength(params.getKeySize());
 		
-		if (certOptions.getType().equals(ProxyType.RFC3820)|| certOptions.getType().equals(ProxyType.DRAFT_RFC)){
+		ensureProxyLifetimeIsConsistentWithIssuingCredential(proxyOptions, 
+				credential, proxyCreationWarnings);
+		
+		if (proxyOptions.getType().equals(ProxyType.RFC3820)|| proxyOptions.getType().equals(ProxyType.DRAFT_RFC)){
 			ProxyPolicy policy;
 			
 			if (params.isLimited())
@@ -217,18 +235,17 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			else
 				policy = new ProxyPolicy(ProxyPolicy.INHERITALL_POLICY_OID);
 			
-			certOptions.setPolicy(policy);
+			proxyOptions.setPolicy(policy);
 		}
 		if (acs != null && !acs.isEmpty())
-			certOptions.setAttributeCertificates(acs.toArray(new AttributeCertificate[acs.size()]));
+			proxyOptions.setAttributeCertificates(acs.toArray(new AttributeCertificate[acs.size()]));
 		
 		try {
 			
-			ProxyCertificate proxy = ProxyGenerator.generate(certOptions, credential.getKey());
-			checkProxyLifetimeIsConsistentWithIssuingCredential(proxy, credential);
+			ProxyCertificate proxy = ProxyGenerator.generate(proxyOptions, credential.getKey());
 			
 			CredentialsUtils.saveProxyCredentials(proxyFilePath, proxy.getCredential());
-			proxyCreationListener.proxyCreated(proxyFilePath, proxy);
+			proxyCreationListener.proxyCreated(proxyFilePath, proxy, proxyCreationWarnings);
 		
 		} catch (Throwable t) {
 			
@@ -289,6 +306,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 					.serverInfoStoreListener(serverInfoStoreListener)
 					.protocolListener(protocolListener)
 					.connectTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
+					.readTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
 					.build();
 			
 			AttributeCertificate ac = acService.getVOMSAttributeCertificate(
@@ -310,9 +328,11 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		if (params.isNoRegen())
 			return new LoadProxyCredential(loadCredentialsEventListener);
 		
+		if (params.getCertFile()!=null && params.getKeyFile() == null)
+			return new LoadUserCredential(loadCredentialsEventListener, params.getCertFile());
+		
 		if (params.getCertFile()!=null && params.getKeyFile()!=null)
 			return new LoadUserCredential(loadCredentialsEventListener, params.getCertFile(), params.getKeyFile());
-		
 		
 		return new DefaultLoadCredentialsStrategy(System.getProperty(DefaultLoadCredentialsStrategy.HOME_PROPERTY),
 					DefaultLoadCredentialsStrategy.TMPDIR_PROPERTY,
