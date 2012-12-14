@@ -29,7 +29,8 @@ public enum ProxyInitOptions implements CLIOption{
 	TRUSTED_CERT_LOCATION("certdir"),
 	VERIFY_CERT("verify"),
 	VOMS_COMMAND("voms"),
-	VOMSES_LOCATION("vomses");
+	VOMSES_LOCATION("vomses"),
+	SKIP_INTEGRITY_CHECKS("skip_chain_integrity_checks");
 	
 	private Option option;
 	

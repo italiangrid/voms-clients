@@ -3,6 +3,7 @@ package org.italiangrid.voms.clients.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
@@ -154,13 +155,15 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	public void notifyLoadCredentialFailure(Throwable error,
 			String... locations) {
 		
-		MessageLevel level  = MessageLevel.TRACE;
-		
-		if (error instanceof FilePermissionError || error instanceof IOException)
-			level = MessageLevel.ERROR;
+		MessageLevel level  = MessageLevel.TRACE;			
 		
 		if (error instanceof FileNotFoundException)
 			level  = MessageLevel.TRACE;
+		
+		else if (error instanceof FilePermissionError || 
+				error instanceof KeyStoreException ||
+				error instanceof IOException)
+			level = MessageLevel.ERROR;
 		
 		logger.formatMessage(level, "Credentials couldn't be loaded %s: %s\n",
 					Arrays.toString(locations), error.getMessage());

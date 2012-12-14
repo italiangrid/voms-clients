@@ -139,6 +139,9 @@ public class VomsProxyInit extends AbstractCLI {
 		if (commandLineHasOption(ProxyInitOptions.SKIP_AC_VERIFICATION))
 			params.setVerifyAC(false);
 		
+		if (commandLineHasOption(ProxyInitOptions.SKIP_INTEGRITY_CHECKS))
+			params.setEnforcingChainIntegrity(false);
+		
 		if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
 			params.setFqanOrder(fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
 			

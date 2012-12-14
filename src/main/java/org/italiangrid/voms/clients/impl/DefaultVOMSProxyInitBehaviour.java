@@ -1,5 +1,7 @@
 package org.italiangrid.voms.clients.impl;
 
+import java.io.IOException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -47,9 +49,12 @@ import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;
-import eu.emi.security.authn.x509.impl.CertificateUtils;
+import eu.emi.security.authn.x509.helpers.proxy.ExtendedProxyType;
+import eu.emi.security.authn.x509.helpers.proxy.ProxyHelper;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyCertificateOptions;
+import eu.emi.security.authn.x509.proxy.ProxyChainInfo;
+import eu.emi.security.authn.x509.proxy.ProxyChainType;
 import eu.emi.security.authn.x509.proxy.ProxyGenerator;
 import eu.emi.security.authn.x509.proxy.ProxyPolicy;
 import eu.emi.security.authn.x509.proxy.ProxyType;
@@ -186,6 +191,63 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		acValidator.validateACs(acs);
 	}
 
+	// Why we have to do this nonsense?
+	private ProxyType extendedProxyTypeAsProxyType(ExtendedProxyType pt){
+		switch(pt){
+		
+		case DRAFT_RFC:
+			return ProxyType.DRAFT_RFC;
+			
+		case LEGACY:
+			return ProxyType.LEGACY;
+			
+		case RFC3820:
+			return ProxyType.RFC3820;
+			
+		default:
+			return null;
+		}
+	}
+	
+	private void ensureProxyTypeIsCompatibleWithIssuingCredential(ProxyCertificateOptions options, 
+			X509Credential issuingCredential,
+			List<String> proxyCreationWarnings){
+		
+		if (ProxyUtils.isProxy(issuingCredential.getCertificateChain())){
+			
+			ProxyType issuingProxyType = extendedProxyTypeAsProxyType(ProxyHelper.getProxyType(issuingCredential.getCertificateChain()[0]));
+			
+			if (!issuingProxyType.equals(options.getType())){
+				proxyCreationWarnings.add("forced "+issuingProxyType.name()+" proxy type to be compatible with the type of the issuing proxy.");
+				options.setType(issuingProxyType);
+			}
+			
+			try {
+				
+				boolean issuingProxyIsLimited = ProxyHelper.isLimited(issuingCredential.getCertificateChain()[0]);
+				if (issuingProxyIsLimited && !options.isLimited()){
+					proxyCreationWarnings.add("forced the creation of a limited proxy to be compatible with the type of the issuing proxy.");
+					limitProxy(options);
+				}
+				
+			} catch (IOException e) {
+				throw new VOMSError(e.getMessage(),e);
+			}
+		}
+	}
+	private void checkMixedProxyChain(X509Credential issuingCredential){
+		if (ProxyUtils.isProxy(issuingCredential.getCertificateChain())){
+			ProxyChainInfo ci;
+			try {
+				ci = new ProxyChainInfo(issuingCredential.getCertificateChain());
+				if (ci.getProxyType().equals(ProxyChainType.MIXED))
+					throw new VOMSError("Cannot generate a proxy certificate starting from a mixed type proxy chain.");
+				
+			} catch (CertificateException e) {
+				throw new VOMSError(e.getMessage(), e);
+			}
+		}
+	}
 	
 	private void ensureProxyLifetimeIsConsistentWithIssuingCredential(ProxyCertificateOptions options, 
 			X509Credential issuingCredential,
@@ -205,6 +267,14 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		}	
 	}
 	
+	private void limitProxy(ProxyCertificateOptions proxyOptions){
+		
+		proxyOptions.setLimited(true);
+		
+		if (proxyOptions.getType().equals(ProxyType.RFC3820)|| proxyOptions.getType().equals(ProxyType.DRAFT_RFC))
+			proxyOptions.setPolicy(new ProxyPolicy(ProxyPolicy.LIMITED_PROXY_OID));
+		
+	}
 	
 	private void  createProxy(ProxyInitParams params,
 			X509Credential credential, List<AttributeCertificate> acs) {
@@ -224,19 +294,20 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		proxyOptions.setType(params.getProxyType());
 		proxyOptions.setKeyLength(params.getKeySize());
 		
-		ensureProxyLifetimeIsConsistentWithIssuingCredential(proxyOptions, 
-				credential, proxyCreationWarnings);
+		if (params.isEnforcingChainIntegrity()){
+			
+			checkMixedProxyChain(credential);
 		
-		if (proxyOptions.getType().equals(ProxyType.RFC3820)|| proxyOptions.getType().equals(ProxyType.DRAFT_RFC)){
-			ProxyPolicy policy;
-			
-			if (params.isLimited())
-				policy = new ProxyPolicy(ProxyPolicy.LIMITED_PROXY_OID);
-			else
-				policy = new ProxyPolicy(ProxyPolicy.INHERITALL_POLICY_OID);
-			
-			proxyOptions.setPolicy(policy);
+			ensureProxyTypeIsCompatibleWithIssuingCredential(proxyOptions, 
+					credential, proxyCreationWarnings);
+		
+			ensureProxyLifetimeIsConsistentWithIssuingCredential(proxyOptions, 
+					credential, proxyCreationWarnings);
 		}
+		
+		if (params.isLimited())
+			limitProxy(proxyOptions);
+		
 		if (acs != null && !acs.isEmpty())
 			proxyOptions.setAttributeCertificates(acs.toArray(new AttributeCertificate[acs.size()]));
 		

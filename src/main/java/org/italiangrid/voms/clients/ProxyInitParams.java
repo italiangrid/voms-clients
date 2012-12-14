@@ -63,7 +63,8 @@ public class ProxyInitParams {
 	
 	private List<String> vomsesLocations;
 	
-
+	private boolean enforcingChainIntegrity = true;
+	
 	/**
 	 * @return the certFile
 	 */
@@ -352,6 +353,14 @@ public class ProxyInitParams {
 
 	public void setVomsesLocations(List<String> vomsesLocations) {
 		this.vomsesLocations = vomsesLocations;
+	}
+
+	public boolean isEnforcingChainIntegrity() {
+		return enforcingChainIntegrity;
+	}
+
+	public void setEnforcingChainIntegrity(boolean enforcingChainIntegrity) {
+		this.enforcingChainIntegrity = enforcingChainIntegrity;
 	}
 	
 }
