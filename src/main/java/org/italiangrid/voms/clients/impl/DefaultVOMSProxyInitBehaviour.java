@@ -43,6 +43,7 @@ import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
 import org.italiangrid.voms.util.CertificateValidatorBuilder;
 import org.italiangrid.voms.util.CredentialsUtils;
+import org.italiangrid.voms.util.VOMSFQANNamingScheme;
 
 import eu.emi.security.authn.x509.StoreUpdateListener;
 import eu.emi.security.authn.x509.ValidationErrorListener;
@@ -329,8 +330,16 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		if (params.getFqanOrder() != null && !params.getFqanOrder().isEmpty()){
 			
 			Set<String> fqans = new LinkedHashSet<String>();
+			for (String fqan: params.getFqanOrder()){
+				
+				if (VOMSFQANNamingScheme.isGroup(fqan))
+					fqans.add(fqan);
+				
+				if (VOMSFQANNamingScheme.isQualifiedRole(fqan) && unsortedFQANs.contains(fqan))
+					fqans.add(fqan);
+				
+			}
 			
-			fqans.addAll(params.getFqanOrder());
 			fqans.addAll(unsortedFQANs);
 			
 			return new ArrayList<String>(fqans);
