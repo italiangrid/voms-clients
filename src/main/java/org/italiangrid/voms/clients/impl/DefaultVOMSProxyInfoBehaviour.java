@@ -74,7 +74,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		}
 
 		try {
-			proxyCredential = new PEMCredential(proxyInputStream, (char[])null);
+			proxyCredential = new PEMCredential(proxyInputStream, (char[]) null);
 		} catch (Exception e) {
 			throw new VOMSError("Proxy not found: " + e.getMessage(), e);
 		}
@@ -142,8 +142,8 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 						+ e.getMessage(), e);
 			}
 
-			if (!checkTimeValidity(getTimeLeft(proxyChain[0].getNotAfter()),
-					period))
+			if (!checkTimeValidity(
+					TimeUtils.getTimeLeft(proxyChain[0].getNotAfter()), period))
 				throw new VOMSError("Proxy not valid for the specified period");
 		}
 
@@ -156,8 +156,8 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 						+ e.getMessage(), e);
 			}
 
-			if (!checkTimeValidity(getTimeLeft(proxyChain[0].getNotAfter()),
-					period))
+			if (!checkTimeValidity(
+					TimeUtils.getTimeLeft(proxyChain[0].getNotAfter()), period))
 				throw new VOMSError("Proxy not valid for the specified period");
 		}
 
@@ -268,8 +268,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
 			Date endDate = proxyCredential.getCertificate().getNotAfter();
 
-			logger.printMessage(TimeUtils
-					.getFormattedTime((getTimeLeft(endDate))));
+			logger.printMessage(TimeUtils.getValidityAsString(endDate));
 		}
 
 	}
@@ -283,11 +282,11 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 		if (params.hasACOptions() && attributes.isEmpty())
 			throw new VOMSError("No VOMS attributes found!");
-		
+
 		if (params.containsOption(PrintOption.ACSUBJECT)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			
-			for (VOMSAttribute a: attributes)
+
+			for (VOMSAttribute a : attributes)
 				logger.printMessage(OpensslNameUtilities
 						.getOpensslSubjectString(a.getHolder()));
 
@@ -295,15 +294,15 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 		if (params.containsOption(PrintOption.ACTIMELEFT)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			
-			
-			for (VOMSAttribute a: attributes)
-				logger.printMessage(TimeUtils.getFormattedTime(getTimeLeft(a.getVOMSAC().getNotAfter())));
+
+			for (VOMSAttribute a : attributes)
+				logger.printMessage(TimeUtils.getValidityAsString(a.getVOMSAC()
+						.getNotAfter()));
 		}
 
 		if (params.containsOption(PrintOption.ACISSUER)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			
+
 			for (VOMSAttribute a : attributes)
 				logger.printMessage(OpensslNameUtilities
 						.getOpensslSubjectString(a.getAACertificates()[0]
@@ -314,50 +313,48 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		if (params.containsOption(PrintOption.ACSERIAL)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
 
-			for (VOMSAttribute a: attributes)
-				logger.printMessage(a.getVOMSAC().getSerialNumber()
-						.toString());
+			for (VOMSAttribute a : attributes)
+				logger.printMessage(a.getVOMSAC().getSerialNumber().toString());
 
 		}
 
 		if (params.containsOption(PrintOption.AC_EXISTS)) {
-			
+
 			boolean foundRequestedAC = false;
-			
-			for (VOMSAttribute a: attributes){
-				if (params.getACVO().equals(a.getVO())){
+
+			for (VOMSAttribute a : attributes) {
+				if (params.getACVO().equals(a.getVO())) {
 					foundRequestedAC = true;
 					break;
 				}
 			}
-			
+
 			if (!foundRequestedAC)
-				throw new VOMSError("AC not found for VO "
-						+ params.getACVO());
-			
+				throw new VOMSError("AC not found for VO " + params.getACVO());
+
 		}
 
 		if (params.containsOption(PrintOption.VONAME)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			
-			for (VOMSAttribute a: attributes)
+
+			for (VOMSAttribute a : attributes)
 				logger.printMessage(a.getVO());
 		}
 
 		if (params.containsOption(PrintOption.FQAN)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
 
-			for (VOMSAttribute a: attributes){
-				for (String f: a.getFQANs())
+			for (VOMSAttribute a : attributes) {
+				for (String f : a.getFQANs())
 					logger.printMessage(f);
 			}
-				
+
 		}
 
 		if (params.containsOption(PrintOption.SERVER_URI)
 				&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			
-			for (VOMSAttribute a: attributes){
+
+			for (VOMSAttribute a : attributes) {
 				logger.formatMessage("%s:%s\n", a.getHost(), a.getPort());
 			}
 		}
@@ -404,10 +401,10 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 	private void printAC(List<VOMSAttribute> listVOMSAttributes) {
 
-		for (VOMSAttribute a : listVOMSAttributes){
+		for (VOMSAttribute a : listVOMSAttributes) {
 			VOMSAttributesPrinter.printVOMSAttributes(logger,
 					MessageLogger.MessageLevel.INFO, a);
-			
+
 		}
 	}
 
@@ -435,8 +432,8 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		tabularFormatted("path", proxyFilePath.getAbsolutePath());
 
 		tabularFormatted("timeleft",
-				TimeUtils.getFormattedTime(getTimeLeft(proxyCredential
-						.getCertificate().getNotAfter())));
+				TimeUtils.getValidityAsString(proxyCredential.getCertificate()
+						.getNotAfter()));
 
 		tabularFormatted("key usage", getProxyKeyUsages());
 
@@ -486,21 +483,6 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		else
 			return true;
 
-	}
-
-	private long getTimeLeft(Date end) {
-
-		Date today = new Date();
-
-		long expireTime = end.getTime();
-		long currentTime = today.getTime();
-
-		long timeleft = (expireTime - currentTime);
-
-		if (timeleft <= 0)
-			timeleft = 0;
-
-		return timeleft;
 	}
 
 	private String getKeySize(X509Certificate chain) {

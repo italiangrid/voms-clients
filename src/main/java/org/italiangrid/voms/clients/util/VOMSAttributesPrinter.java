@@ -7,19 +7,20 @@ public class VOMSAttributesPrinter {
 
 	public static void printVOMSAttributes(MessageLogger logger,
 			MessageLogger.MessageLevel level, VOMSAttribute attributes) {
-		
-		String validityString = TimeUtils.getACValidityAsString(attributes);
+
+		String validityString = TimeUtils.getValidityAsString(attributes
+				.getNotAfter());
 
 		logger.formatMessage(level, "=== VO %s extension information ===\n",
 				attributes.getVO());
 		logger.formatMessage(level, "VO        : %s\n", attributes.getVO());
 
-		logger.formatMessage(level, "subject   : %s\n",
-				OpensslNameUtilities.getOpensslSubjectString(attributes.getHolder()));
+		logger.formatMessage(level, "subject   : %s\n", OpensslNameUtilities
+				.getOpensslSubjectString(attributes.getHolder()));
 
-		logger.formatMessage(level, "issuer    : %s\n",
-				OpensslNameUtilities.getOpensslSubjectString(attributes.getIssuer()));
-		
+		logger.formatMessage(level, "issuer    : %s\n", OpensslNameUtilities
+				.getOpensslSubjectString(attributes.getIssuer()));
+
 		for (String fqan : attributes.getFQANs())
 			logger.formatMessage(level, "attribute : %s\n", fqan);
 

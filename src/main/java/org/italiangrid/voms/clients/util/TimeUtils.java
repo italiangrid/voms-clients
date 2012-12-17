@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.VOMSError;
 
 public class TimeUtils {
@@ -69,12 +68,12 @@ public class TimeUtils {
 		if (timeleft <= 0)
 			formattedTime = String.format("%02d:%02d:%02d", 0, 0, 0);
 		else {
-			long hours = TimeUnit.MILLISECONDS.toHours(timeleft);
+			final long hours = TimeUnit.MILLISECONDS.toHours(timeleft);
 
-			long minutes = TimeUnit.MILLISECONDS.toMinutes(timeleft
+			final long minutes = TimeUnit.MILLISECONDS.toMinutes(timeleft
 					- TimeUnit.HOURS.toMillis(hours));
 
-			long seconds = TimeUnit.MILLISECONDS.toSeconds(timeleft
+			final long seconds = TimeUnit.MILLISECONDS.toSeconds(timeleft
 					- TimeUnit.HOURS.toMillis(hours)
 					- TimeUnit.MINUTES.toMillis(minutes));
 
@@ -85,11 +84,24 @@ public class TimeUtils {
 		return formattedTime;
 	}
 
-	public static String getACValidityAsString(VOMSAttribute attr) {
+	public static final long getTimeLeft(Date end) {
 
 		Date now = new Date();
 
-		long timeDiff = attr.getNotAfter().getTime() - now.getTime();
+		final long expireTime = end.getTime();
+		final long currentTime = now.getTime();
+
+		long timeleft = (expireTime - currentTime);
+
+		if (timeleft <= 0)
+			timeleft = 0;
+
+		return timeleft;
+	}
+
+	public static final String getValidityAsString(Date endDate) {
+
+		final long timeDiff = getTimeLeft(endDate);
 
 		return getFormattedTime(timeDiff);
 	}
