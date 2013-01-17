@@ -62,7 +62,7 @@ Valerio Venturi <valerio.venturi@cnaf.infn.it>
 
 == SEE ALSO
 
-voms-proxy-destroy(1), voms-proxy-info(1), voms-lsc(5)
+voms-proxy-destroy(1), voms-proxy-info(1), vomsdir(5)
 
 == COPYING
 
