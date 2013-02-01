@@ -92,6 +92,7 @@ public class VomsProxyInit extends AbstractCLI {
 		if (commandLineHasOption(ProxyInitOptions.KEY_SIZE)){
 			params.setKeySize(parseKeySize(getOptionValue(ProxyInitOptions.KEY_SIZE)));
 		}
+		
 		if (commandLineHasOption(ProxyInitOptions.ENABLE_STDIN_PWD))
 			params.setReadPasswordFromStdin(true);
 
@@ -144,7 +145,6 @@ public class VomsProxyInit extends AbstractCLI {
 		
 		if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
 			params.setFqanOrder(fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
-			
 
 		if (commandLineHasOption(ProxyInitOptions.RFC_PROXY))
 			params.setProxyType(ProxyType.RFC3820);
@@ -166,6 +166,9 @@ public class VomsProxyInit extends AbstractCLI {
 		
 		if (commandLineHasOption(ProxyInitOptions.TIMEOUT))
 			params.setTimeoutInSeconds(parseConnectionTimeout(getOptionValue(ProxyInitOptions.TIMEOUT)));
+
+		if (commandLineHasOption(ProxyInitOptions.TRUSTED_CERT_LOCATION))
+			params.setTrustAnchorsDir(getOptionValue(ProxyInitOptions.TRUSTED_CERT_LOCATION));
 		
 		return params;
 
