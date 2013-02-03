@@ -170,6 +170,9 @@ public class VomsProxyInit extends AbstractCLI {
 		if (commandLineHasOption(ProxyInitOptions.TRUSTED_CERT_LOCATION))
 			params.setTrustAnchorsDir(getOptionValue(ProxyInitOptions.TRUSTED_CERT_LOCATION));
 		
+		if (commandLineHasOption(ProxyInitOptions.VOMSDIR))
+			params.setVomsdir(getOptionValue(ProxyInitOptions.VOMSDIR));
+		
 		return params;
 
 	}

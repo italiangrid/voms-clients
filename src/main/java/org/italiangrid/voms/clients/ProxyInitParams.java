@@ -65,6 +65,9 @@ public class ProxyInitParams {
 	
 	private boolean enforcingChainIntegrity = true;
 	
+	private String vomsdir;
+	
+	
 	/**
 	 * @return the certFile
 	 */
@@ -361,6 +364,14 @@ public class ProxyInitParams {
 
 	public void setEnforcingChainIntegrity(boolean enforcingChainIntegrity) {
 		this.enforcingChainIntegrity = enforcingChainIntegrity;
+	}
+
+	public String getVomsdir() {
+		return vomsdir;
+	}
+
+	public void setVomsdir(String vomsdir) {
+		this.vomsdir = vomsdir;
 	}
 	
 }

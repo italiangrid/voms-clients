@@ -1,5 +1,7 @@
 package org.italiangrid.voms.clients.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
@@ -72,6 +74,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
 	private VOMSCommandsParsingStrategy commandsParser;
 	private X509CertChainValidatorExt certChainValidator;
+	private VOMSACValidator vomsValidator;
 	
 	
 	private ValidationResultListener validationResultListener;
@@ -131,16 +134,33 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 	}
 	
+	
+	private void init(ProxyInitParams params){
+		
+		boolean hasVOMSCommands = params.getVomsCommands() != null 
+				&& !params.getVomsCommands().isEmpty();
+		
+		if (hasVOMSCommands)
+			params.setValidateUserCredential(true);
+		
+		if (params.validateUserCredential() || hasVOMSCommands)			
+			initCertChainValidator(params);
+		
+		if (params.verifyAC())
+			initVOMSValidator(params);
+			
+	}
+	
 	public void initProxy(ProxyInitParams params) {
+		
+		init(params);
 		
 		X509Credential cred = lookupCredential(params);
 		if (cred == null)
 			throw new VOMSError("No credentials found!");
 
-		if (params.validateUserCredential()){
-			initCertChainValidator(params);
+		if (params.validateUserCredential())	
 			validateUserCredential(params, cred);
-		}
 		
 		List<AttributeCertificate> acs = Collections.emptyList();
 		
@@ -155,6 +175,26 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		createProxy(params, cred, acs);
 	}
 	
+	private void directorySanityChecks(String dirPath, String preambleMessage){
+		
+		File f = new File(dirPath);
+		
+		String errorTemplate = String.format("%s: '%s'", preambleMessage, dirPath);
+		errorTemplate = errorTemplate +" (%s)";
+		
+		if (!f.exists()){
+			Throwable t = new FileNotFoundException(String.format(errorTemplate, "file not found"));
+			throw new VOMSError(t.getMessage(), t);
+		}
+		
+		if (!f.isDirectory()){
+			throw new VOMSError(String.format(errorTemplate, "not a directory"));
+		}
+		
+		if (!f.canRead())
+			throw new VOMSError(String.format(errorTemplate, "not readable"));			
+	}
+	
 	private void initCertChainValidator(ProxyInitParams params){
 		
 		if (certChainValidator == null){
@@ -165,6 +205,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			
 			if (params.getTrustAnchorsDir()!=null)
 				trustAnchorsDir = params.getTrustAnchorsDir();
+			
+			directorySanityChecks(trustAnchorsDir, "Invalid trust anchors location");
 		
 			certChainValidator = CertificateValidatorBuilder.buildCertificateValidator(trustAnchorsDir, 
 					certChainValidationErrorListener, storeUpdateListener);
@@ -174,23 +216,34 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	
 	private VOMSACValidator initVOMSValidator(ProxyInitParams params){
 		
+		if (vomsValidator != null)
+			return vomsValidator;
+		
 		String vomsdir = DefaultVOMSTrustStore.DEFAULT_VOMS_DIR;
 		
 		if (System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR) != null)
 			vomsdir = System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR);
 		
+		if (params.getVomsdir() != null)
+			vomsdir = params.getVomsdir();
+		
+		directorySanityChecks(vomsdir, "Invalid vomsdir location");
+		
 		VOMSTrustStore trustStore = new DefaultVOMSTrustStore(Arrays.asList(vomsdir)
 				, vomsTrustStoreListener);
 		
-		return VOMSValidators.newValidator(trustStore, 
+		vomsValidator = VOMSValidators.newValidator(trustStore, 
 				certChainValidator, 
-				validationResultListener);
+				validationResultListener); 
+		
+		return vomsValidator;
 	}
 	
 	private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
 		
 		VOMSACValidator acValidator = initVOMSValidator(params);
 		acValidator.validateACs(acs);
+		
 	}
 
 	// Why we have to do this nonsense?

@@ -55,7 +55,7 @@ public class MessageLogger {
 	
 	
 	private PrintStream streamFromLevel(MessageLevel level){
-		if (level.equals(MessageLevel.ERROR))
+		if (level.equals(MessageLevel.ERROR) || level.equals(MessageLevel.WARNING))
 			return errorStream;
 		
 		return outputStream;
