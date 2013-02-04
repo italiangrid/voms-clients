@@ -75,8 +75,8 @@ public abstract class AbstractCLI {
 	    }
 		  
 	    setVerbosityFromCommandLine();
-			displayVersionIfRequested();
-			displayHelpIfRequested();
+		displayVersionIfRequested();
+		displayHelpIfRequested();
 
 		} catch (ParseException e) {
 			
@@ -138,8 +138,10 @@ public abstract class AbstractCLI {
 	}
 	
 	protected final void displayVersionIfRequested(){
+		
 		if (commandLineHasOption(CommonOptions.VERSION)){
 			displayVersion();
+			System.exit(0);
 		}
 	}
 
