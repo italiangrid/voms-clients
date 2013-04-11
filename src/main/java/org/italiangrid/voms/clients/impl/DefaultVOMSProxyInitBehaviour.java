@@ -344,6 +344,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		ProxyCertificateOptions proxyOptions = new ProxyCertificateOptions(credential.getCertificateChain());
 		
 		proxyOptions.setProxyPathLimit(params.getPathLenConstraint());
+		
 		proxyOptions.setLimited(params.isLimited());
 		proxyOptions.setLifetime(params.getProxyLifetimeInSeconds());
 		proxyOptions.setType(params.getProxyType());

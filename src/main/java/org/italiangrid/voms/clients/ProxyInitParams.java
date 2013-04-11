@@ -35,7 +35,7 @@ public class ProxyInitParams {
 
 	private String policyLanguage;
 
-	private int pathLenConstraint;
+	private int pathLenConstraint = Integer.MAX_VALUE;
 
 	private ProxyType proxyType = ProxyType.LEGACY;
 
