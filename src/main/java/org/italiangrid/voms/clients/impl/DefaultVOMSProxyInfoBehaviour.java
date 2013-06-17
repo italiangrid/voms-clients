@@ -27,6 +27,7 @@ import org.italiangrid.voms.clients.util.OpensslNameUtilities;
 import org.italiangrid.voms.clients.util.TimeUtils;
 import org.italiangrid.voms.clients.util.VOMSAttributesPrinter;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
+import org.italiangrid.voms.credential.VOMSEnvironmentVariables;
 
 import eu.emi.security.authn.x509.helpers.proxy.ExtendedProxyType;
 import eu.emi.security.authn.x509.helpers.proxy.ProxyHelper;
@@ -66,7 +67,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 		String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
 
-		String envProxyPath = System.getenv("X509_USER_PROXY");
+		String envProxyPath = System.getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
 
 		if (envProxyPath != null)
 			proxyFilePath =envProxyPath;
