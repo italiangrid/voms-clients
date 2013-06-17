@@ -338,6 +338,11 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
 		
+		String envProxyPath = System.getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
+
+		if (envProxyPath != null)
+			proxyFilePath = envProxyPath;
+		
 		if (params.getGeneratedProxyFile() != null)
 			proxyFilePath = params.getGeneratedProxyFile();
 		

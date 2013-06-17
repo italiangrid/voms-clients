@@ -61,25 +61,40 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 	public void printProxyInfo(ProxyInfoParams params) {
 
 		List<VOMSAttribute> attributes = new ArrayList<VOMSAttribute>();
+		
 		X509Certificate[] proxyChain = null;
 
-		if (params.getProxyFile() == null)
-			params.setProxyFile(VOMSProxyPathBuilder.buildProxyPath());
+		String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
+
+		String envProxyPath = System.getenv("X509_USER_PROXY");
+
+		if (envProxyPath != null)
+			proxyFilePath =envProxyPath;
+		
+		if (params.getProxyFile() != null)
+			proxyFilePath = params.getProxyFile();
 
 		FileInputStream proxyInputStream = null;
+		
 		try {
-			proxyInputStream = new FileInputStream(params.getProxyFile());
+		
+			proxyInputStream = new FileInputStream(proxyFilePath);
+		
 		} catch (FileNotFoundException e) {
+			
 			throw new VOMSError("Proxy not found: " + e.getMessage(), e);
 		}
 
 		try {
+			
 			proxyCredential = new PEMCredential(proxyInputStream, (char[]) null);
+		
 		} catch (Exception e) {
+			
 			throw new VOMSError("Proxy not found: " + e.getMessage(), e);
 		}
 
-		File proxyFilePath = new File(params.getProxyFile());
+		File proxyFile = new File(proxyFilePath);
 
 		proxyChain = proxyCredential.getCertificateChain();
 
@@ -91,7 +106,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		if (params.containsOption(PrintOption.ALL_OPTIONS)
 			&& !params.containsOption(PrintOption.CHAIN)) {
 
-			printProxyStandardInfo(proxyFilePath);
+			printProxyStandardInfo(proxyFile);
 
 			printAC(attributes);
 
@@ -99,10 +114,10 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		}
 
 		if (params.isEmpty())
-			printProxyStandardInfo(proxyFilePath);
+			printProxyStandardInfo(proxyFile);
 
-		checkProxyBasicOptions(params, attributes, proxyFilePath, proxyChain);
-		checkVOMSOptions(params, attributes, proxyChain, proxyFilePath);
+		checkProxyBasicOptions(params, attributes, proxyFile, proxyChain);
+		checkVOMSOptions(params, attributes, proxyChain, proxyFile);
 		checkValidityOptions(params, proxyChain);
 
 	}
