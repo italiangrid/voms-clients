@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.VOMSError;
@@ -280,9 +282,14 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 		if (params.containsOption(PrintOption.TIMELEFT)
 			&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
-			Date endDate = proxyCredential.getCertificate().getNotAfter();
 
-			logger.printMessage(TimeUtils.getValidityAsString(endDate));
+			Date notAfter = proxyCredential.getCertificate().getNotAfter();
+
+			long notAfterinMSec = TimeUtils.getTimeLeft(notAfter);
+			
+			long notAfterInSec = TimeUnit.MILLISECONDS.toSeconds(notAfterinMSec);
+			
+			logger.printMessage(String.valueOf(notAfterInSec));
 		}
 
 	}
@@ -309,9 +316,16 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 		if (params.containsOption(PrintOption.ACTIMELEFT)
 			&& !params.containsOption(PrintOption.ALL_OPTIONS)) {
 
-			for (VOMSAttribute a : attributes)
-				logger.printMessage(TimeUtils.getValidityAsString(a.getVOMSAC()
-					.getNotAfter()));
+			for (VOMSAttribute a : attributes) {
+				
+				long notAfterInMSec = TimeUtils.getTimeLeft(a.getVOMSAC().getNotAfter());
+				
+				long notAfterInSec = TimeUnit.MILLISECONDS.toSeconds(notAfterInMSec);
+				
+				logger.printMessage(String.valueOf(notAfterInSec));
+				
+			}
+				
 		}
 
 		if (params.containsOption(PrintOption.ACISSUER)
@@ -488,7 +502,7 @@ public class DefaultVOMSProxyInfoBehaviour implements ProxyInfoStrategy {
 
 	private boolean checkTimeValidity(long certTimeLeft, int period) {
 
-		long msPeriod = period * 1000;
+		long msPeriod = TimeUnit.SECONDS.toMillis(period);
 
 		if (certTimeLeft < msPeriod)
 			return false;
