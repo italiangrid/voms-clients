@@ -30,4 +30,10 @@ VOMSCLIENTS_CP=`ls -x $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 # the class implementing voms-proxy-info
 VOMSPROXYINFO_CLASS="org.italiangrid.voms.clients.VomsProxyInfo"
 
-java -cp $VOMSCLIENTS_CP $VOMSPROXYINFO_CLASS "$@"
+# java options
+VOMSCLIENTS_JAVA_OPTIONS=$VOMSCLIENTS_JAVA_OPTIONS
+if [ "x$VOMSCLIENTS_JAVA_OPTIONS" == "x" ]; then
+  VOMSCLIENTS_JAVA_OPTIONS=-Xmx512m
+fi
+
+java $VOMSCLIENTS_JAVA_OPTIONS -cp $VOMSCLIENTS_CP $VOMSPROXYINFO_CLASS "$@"
