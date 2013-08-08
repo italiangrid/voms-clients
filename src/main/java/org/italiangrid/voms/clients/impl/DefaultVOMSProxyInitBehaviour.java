@@ -291,7 +291,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		}
 	}
 	private void checkMixedProxyChain(X509Credential issuingCredential){
+		
 		if (ProxyUtils.isProxy(issuingCredential.getCertificateChain())){
+		
 			ProxyChainInfo ci;
 			try {
 				ci = new ProxyChainInfo(issuingCredential.getCertificateChain());
@@ -309,16 +311,21 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			List<String> proxyCreationWarnings){
 		
 		Calendar cal = Calendar.getInstance();
+		
+		Date proxyStartTime = cal.getTime();
+		
 		cal.add(Calendar.SECOND, options.getLifetime());
 		
 		Date proxyEndTime = cal.getTime();
 		Date issuingCredentialEndTime = issuingCredential.getCertificate().getNotAfter();
 		
+		options.setValidityBounds(proxyStartTime, proxyEndTime);
+		
 		if ( proxyEndTime.after(issuingCredentialEndTime) ){
-			proxyCreationWarnings.add("proxy lifetime limited to issuing credential lifetime.");
 			
-			long skew = issuingCredentialEndTime.getTime() - System.currentTimeMillis();
-			options.setLifetime(skew, TimeUnit.MILLISECONDS);
+			proxyCreationWarnings.add("proxy lifetime limited to issuing " +
+					"credential lifetime.");
+			options.setValidityBounds(proxyStartTime, issuingCredentialEndTime);
 		}	
 	}
 	
