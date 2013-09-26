@@ -119,8 +119,10 @@ Options  may be specified using either a "-" or "--" prefix.
 
 *--hours <hours>*
 
-	Sets the generated proxy validity to H hours (default:12)
-
+	Sets the generated proxy validity to H hours (default:12). 
+	Note that this option only sets the lifetime of the generated proxy. 
+	Use -valid to set lifetime for both the proxy and the AC.
+	
 *--ignorewarn*
 
 	Ignore warnings
