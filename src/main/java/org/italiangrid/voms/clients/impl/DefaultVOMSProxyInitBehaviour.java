@@ -447,7 +447,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 				.lifetime(params.getAcLifetimeInSeconds())
 				.build();
 			
-			VOMSACService acService = new DefaultVOMSACService.Builder(certChainValidator)
+			VOMSACService acService = new DefaultVOMSACService
+			    .Builder(certChainValidator)
 					.requestListener(requestListener)
 					.vomsesLookupStrategy(getVOMSESLookupStrategyFromParams(params))
 					.serverInfoStoreListener(serverInfoStoreListener)
