@@ -473,8 +473,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	
 	private LoadCredentialsStrategy strategyFromParams(ProxyInitParams params){
 		
-		if (params.isNoRegen())
-			return new LoadProxyCredential(loadCredentialsEventListener);
+		if (params.isNoRegen()){
+			return new LoadProxyCredential(loadCredentialsEventListener, params.getCertFile());
+		}
 		
 		if (params.getCertFile()!=null && params.getKeyFile() == null)
 			return new LoadUserCredential(loadCredentialsEventListener, params.getCertFile());
