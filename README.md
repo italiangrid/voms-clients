@@ -7,10 +7,18 @@ Command-line clients for Virtual Organization Membership Service (VOMS), i.e.:
 - *voms-proxy-info*: shows information about a created VOMS proxy certificate
 - *voms-proxy-destroy*: destroys a VOMS proxy certificate
 
+## Build instructions
+
+Clone this github repo. 
+Build packages with:
+
+```bash
+mvn package
+```
 
 ## Install
 
-The last stable build can be downloaded [here](http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients_master/lastSuccessfulBuild/org.italiangrid$voms-clients/artifact/org.italiangrid/voms-clients/3.0.4/voms-clients-3.0.4.tar.gz).
+The last stable build can be downloaded [here][voms-clients-tarball].
 Untar the tarball to a directory of your choice.
 
 You may want to add the bin directory to your path to be able to directly call voms-proxy-* from you shell
@@ -22,8 +30,8 @@ export PATH=$PATH:<install_dir>/bin
 ### Install from RPMs packages
 
 RPMs for the latest development build can be found at the following URLs:
-- [SL5 package](http://radiohead.cnaf.infn.it:9999/view/SL5/job/voms-clients-rpm_3_0_SL5/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-clients3-3.0-1.sl5.noarch.rpm).
-- [SL6 package](http://radiohead.cnaf.infn.it:9999/view/SL6/job/voms-clients-rpm_3_0_SL6/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-clients3-3.0-1.sl6.noarch.rpm).
+- [SL5 package][voms-clients-rpm-sl5].
+- [SL6 package][voms-clients-rpm-sl6].
 
 ## Quickstart
 
@@ -148,3 +156,8 @@ The `voms-proxy-destroy` command erases an existing proxy from the system. Its b
 $ voms-proxy-destroy
 ```
 More information can be found in the `voms-proxy-destroy` man page.
+
+
+[voms-clients-tarball]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients_master/lastSuccessfulBuild/org.italiangrid$voms-clients/artifact/org.italiangrid/voms-clients/3.0.4/voms-clients-3.0.4.tar.gz
+[voms-clients-rpm-sl5]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients-rpm_master_SL5/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-clients3-3.0.4-1.sl5.noarch.rpm
+[voms-clients-rpm-sl6]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-admin-client-rpm_SL6/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-admin-client-2.0.19-1.el6.noarch.rpm
