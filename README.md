@@ -10,7 +10,7 @@ Command-line clients for Virtual Organization Membership Service (VOMS), i.e.:
 
 ## Install
 
-The last stable build can be downloaded [here](http://radiohead.cnaf.infn.it:9999/job/voms-clients_3_0-SNAPSHOT/lastStableBuild/org.italiangrid$voms-clients/artifact/org.italiangrid/voms-clients/3.0-SNAPSHOT/voms-clients-3.0-SNAPSHOT.tar.gz).
+The last stable build can be downloaded [here](http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients_master/lastSuccessfulBuild/org.italiangrid$voms-clients/artifact/org.italiangrid/voms-clients/3.0.4/voms-clients-3.0.4.tar.gz).
 Untar the tarball to a directory of your choice.
 
 You may want to add the bin directory to your path to be able to directly call voms-proxy-* from you shell
