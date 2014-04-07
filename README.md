@@ -160,4 +160,4 @@ More information can be found in the `voms-proxy-destroy` man page.
 
 [voms-clients-tarball]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients_master/lastSuccessfulBuild/org.italiangrid$voms-clients/artifact/org.italiangrid/voms-clients/3.0.4/voms-clients-3.0.4.tar.gz
 [voms-clients-rpm-sl5]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients-rpm_master_SL5/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-clients3-3.0.4-1.sl5.noarch.rpm
-[voms-clients-rpm-sl6]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-admin-client-rpm_SL6/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-admin-client-2.0.19-1.el6.noarch.rpm
+[voms-clients-rpm-sl6]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients-rpm_master_SL6/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-clients3-3.0.4-1.sl6.noarch.rpm
