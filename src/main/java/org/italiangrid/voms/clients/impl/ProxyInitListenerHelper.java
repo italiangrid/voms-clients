@@ -44,6 +44,8 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	
 	WARNING_POLICY warningPolicy = WARNING_POLICY.printWarnings;
 	
+	private boolean hadValidationErrors = false;
+	
 	public ProxyInitListenerHelper(MessageLogger logger) {
 		this.logger = logger;
 	}
@@ -86,6 +88,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	public void notifyValidationResult(VOMSValidationResult result) {
 
 		if (!result.isValid()) {
+		  hadValidationErrors = true;
 			logger.error("\nWARNING: VOMS AC validation for VO %s failed for the following reasons:\n", result.getAttributes().getVO());
 			for (VOMSValidationErrorMessage m : result.getValidationErrors())
 				logger.error("         %s\n", m.getMessage());
@@ -109,6 +112,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	@Override
 	public boolean onValidationError(ValidationError error) {
+	  hadValidationErrors = true;
 		logger.warning("Certificate validation error: %s\n", error.getMessage());
 		return false;
 	}
@@ -258,4 +262,11 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 			logger.trace(r.getXMLAsString());
 		}
 	}
+
+  @Override
+  public boolean hadValidationErrors() {
+    return hadValidationErrors;
+  }
+	
+	
 }

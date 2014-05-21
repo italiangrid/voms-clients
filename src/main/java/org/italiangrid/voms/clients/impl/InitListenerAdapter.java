@@ -21,4 +21,6 @@ public interface InitListenerAdapter extends ValidationResultListener,
 		StoreUpdateListener
 		{
 
+  public boolean hadValidationErrors();
+  
 }
