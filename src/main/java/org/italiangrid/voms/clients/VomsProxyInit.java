@@ -261,6 +261,10 @@ public class VomsProxyInit extends AbstractCLI {
 
 			proxyInitBehaviour = getProxyInitBehaviour();
 			proxyInitBehaviour.initProxy(params);
+			
+			if (listenerHelper.hadValidationErrors()){
+			  System.exit(EXIT_ERROR_CODE);
+			}
 
 		} catch (Throwable t) {
 			logger.error(t);
