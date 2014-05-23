@@ -208,9 +208,14 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			
 			directorySanityChecks(trustAnchorsDir, "Invalid trust anchors location");
 		
-			certChainValidator = CertificateValidatorBuilder.buildCertificateValidator(trustAnchorsDir, 
-					certChainValidationErrorListener, storeUpdateListener);
-			
+		  CertificateValidatorBuilder builder = new CertificateValidatorBuilder();
+		  
+		  certChainValidator = builder
+		    .trustAnchorsDir(trustAnchorsDir)
+		    .storeUpdateListener(storeUpdateListener)
+		    .lazyAnchorsLoading(true)
+		    .validationErrorListener(certChainValidationErrorListener)
+		    .build();
 		}
 	}
 	
