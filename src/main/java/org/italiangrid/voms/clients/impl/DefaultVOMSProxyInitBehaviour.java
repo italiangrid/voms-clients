@@ -36,11 +36,13 @@ import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSESLookupStrategy;
 import org.italiangrid.voms.request.VOMSProtocolListener;
 import org.italiangrid.voms.request.VOMSRequestListener;
+import org.italiangrid.voms.request.VOMSServerInfoStore;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.BaseVOMSESLookupStrategy;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
 import org.italiangrid.voms.request.impl.DefaultVOMSACService;
 import org.italiangrid.voms.request.impl.DefaultVOMSESLookupStrategy;
+import org.italiangrid.voms.request.impl.DefaultVOMSServerInfoStore;
 import org.italiangrid.voms.store.VOMSTrustStore;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
@@ -155,6 +157,14 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		init(params);
 		
+		VOMSServerInfoStore serverInfoStore = null;
+		
+		// Fail fast if VO is not configured correctly
+		if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
+      serverInfoStore = initServerInfoStore(params);
+      checkCommands(params, serverInfoStore);
+		}
+		
 		X509Credential cred = lookupCredential(params);
 		if (cred == null)
 			throw new VOMSError("No credentials found!");
@@ -166,13 +176,42 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
 			initCertChainValidator(params);
-			acs = getAttributeCertificates(params, cred);
+			acs = getAttributeCertificates(params, cred, serverInfoStore);
 		}
 
 		if (params.verifyAC() && !acs.isEmpty())
 			verifyACs(params, acs);
 		
 		createProxy(params, cred, acs);
+	}
+	
+	private void checkCommands(ProxyInitParams params, VOMSServerInfoStore sis){
+	  
+    Map<String, List<String>> vomsCommandsMap = commandsParser
+        .parseCommands(params.getVomsCommands()); 
+    
+    for (String voOrAlias: vomsCommandsMap.keySet()){
+      if (sis.getVOMSServerInfo(voOrAlias).isEmpty()){
+         
+        String msg = String.format("VOMS server for VO %s is not known! "
+          + "Check your vomses configuration.", voOrAlias);
+        throw new VOMSError(msg);
+      }        
+    }
+	}
+	
+	private VOMSServerInfoStore initServerInfoStore(ProxyInitParams params){
+	  
+	  VOMSServerInfoStore sis = null;
+	  
+	  if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
+	    sis = new DefaultVOMSServerInfoStore.Builder()
+      .lookupStrategy(getVOMSESLookupStrategyFromParams(params))
+      .storeListener(serverInfoStoreListener)
+      .build();
+	  }
+	  
+	  return sis;
 	}
 	
 	private void directorySanityChecks(String dirPath, String preambleMessage){
@@ -430,7 +469,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	}
 	
 	protected List<AttributeCertificate> getAttributeCertificates(
-			ProxyInitParams params, X509Credential cred) {
+			ProxyInitParams params, X509Credential cred, 
+			VOMSServerInfoStore serverInfoStore) {
 
 		List<String> vomsCommands = params.getVomsCommands();
 
@@ -454,9 +494,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			
 			VOMSACService acService = new DefaultVOMSACService
 			    .Builder(certChainValidator)
-					.requestListener(requestListener)
+			    .requestListener(requestListener)
+			    .serverInfoStore(serverInfoStore)
 					.vomsesLookupStrategy(getVOMSESLookupStrategyFromParams(params))
-					.serverInfoStoreListener(serverInfoStoreListener)
 					.protocolListener(protocolListener)
 					.connectTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
 					.readTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))

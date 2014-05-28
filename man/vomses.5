@@ -1,13 +1,13 @@
 '\" t
 .\"     Title: vomses
 .\"    Author: [see the "AUTHORS" section]
-.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
-.\"      Date: 11/20/2012
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 05/28/2014
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "VOMSES" "5" "11/20/2012" "\ \&" "\ \&"
+.TH "VOMSES" "5" "05/28/2014" "\ \&" "\ \&"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -38,19 +38,19 @@ vomses \- The VOMS server contact table
 .sp
 This manual page describes the format of \fIvomses\fR files\&. \fIvomses\fR files contain contact information for VOMS servers and are typically organized in the \fB/etc/vomses\fR directory\&. A \fIvomses\fR file is a simple text file which contains one or more lines formatted as follows:
 .sp
-"vo_name" "hostname" "port" "server DN" "alias"
+"alias" "hostname" "port" "server DN" "vo_name"
 .sp
 Where:
 .sp
-\fBvo_name\fR: the name of the VO served by the VOMS server
+\fBalias\fR: an alias that can be used for this VOMS server (this is typically identical to the vo_name)
 .sp
 \fBhostname\fR: the hostname where the VOMS server is running
+.sp
+\fBvo_name\fR: the name of the VO served by the VOMS server
 .sp
 \fBport\fR: the port where the VOMS server is listening for incoming requests
 .sp
 \fBserver DN\fR: the certificate subject of the VOMS server
-.sp
-\fBalias\fR: an alias that can be used for this VOMS server (this is typically identical to the vo_name)
 .sp
 System wide VOMSES configuration is maintained in the \fB/etc/vomses\fR file or directory\&. If \fB/etc/vomses\fR is a directory, all the files contained in such directory are parsed looking for VOMS contact information\&.
 .sp
