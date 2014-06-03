@@ -113,7 +113,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.protocolListener = protocolListener;
 	}
 
-	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, InitListenerAdapter listenerAdapter){
+	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, 
+	  InitListenerAdapter listenerAdapter){
+
 		this.commandsParser = commandsParser;
 		this.validationResultListener = listenerAdapter;
 		this.requestListener = listenerAdapter;
@@ -142,14 +144,15 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		boolean hasVOMSCommands = params.getVomsCommands() != null 
 				&& !params.getVomsCommands().isEmpty();
 		
-		if (hasVOMSCommands)
-			params.setValidateUserCredential(true);
-		
-		if (params.validateUserCredential() || hasVOMSCommands)			
+		if (hasVOMSCommands || params.validateUserCredential()){
+			
+		  params.setValidateUserCredential(true);
 			initCertChainValidator(params);
-		
-		if (params.verifyAC())
-			initVOMSValidator(params);
+			
+			if (params.verifyAC() && hasVOMSCommands){
+			  initVOMSValidator(params);  
+			}
+		}
 			
 	}
 	
