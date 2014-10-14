@@ -1,5 +1,6 @@
-VOMS Clients
-============
+# VOMS Clients
+
+[![Build Status](https://travis-ci.org/italiangrid/voms-clients.svg)](https://travis-ci.org/italiangrid/voms-clients)
 
 Command-line clients for Virtual Organization Membership Service (VOMS), i.e.:
 
