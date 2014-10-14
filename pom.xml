@@ -6,6 +6,23 @@
   <version>3.0.5</version>
 
   <name>voms-clients</name>
+  <description>VOMS service command-line clients</description>
+
+  <url>https://github.com/italiangrid/voms-clients</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/italiangrid/voms-clients</url>
+    <connection>scm:git:git://github.com/italiangrid/voms-clients.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:italiangrid/voms-clients.git</developerConnection>
+  </scm>
 
   <properties>
 
@@ -212,6 +229,37 @@
   </dependencies>
 
   <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${plugin.gpg.version}</version>
+            <configuration>
+              <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>local-staging</id>
       <activation>
