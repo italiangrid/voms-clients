@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>voms-clients</artifactId>
-  <version>3.0.5</version>
+  <version>3.0.5-SNAPSHOT</version>
 
   <name>voms-clients</name>
 
@@ -85,6 +85,7 @@
             <exclude>**/*.sh</exclude>
             <exclude>man/*.1</exclude>
             <exclude>man/*.5</exclude>
+            <exclude>man/*.txt</exclude>
             <exclude>AUTHORS</exclude>
             <exclude>LICENSE</exclude>
             <exclude>.gitignore</exclude>
