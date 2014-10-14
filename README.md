@@ -16,6 +16,8 @@ To build the clients, type:
 
   mvn package
 
+To build RPM packages, see instructions in the `package/centos` directory.
+
 ## Install
 
 A tarball containing the clients can be found in the `target` directory under the source tree.
