@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 name=voms-clients
 
 base_dir=../../
@@ -40,7 +40,7 @@ popd
 rm -rf ${soruce_tmp_dir}
 
 ## Build RPMs
-if [ -n "${dist}" ]; then
+if [ -z "${dist}" ]; then
 	rpmbuild --nodeps -v -ba ${spec} --define "_topdir ${rpmbuild_dir}"
 else
 	rpmbuild --nodeps -v -ba ${spec} --define "_topdir ${rpmbuild_dir}" --define "dist ${dist}"
