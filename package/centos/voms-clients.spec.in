@@ -6,7 +6,7 @@
 
 Name: voms-clients3
 Version: 3.0.5
-Release: 0%{?dist}
+Release: 1%{?dist}
 Summary: The Virtual Organisation Membership Service command line clients
 
 Group: Applications/Internet
@@ -165,10 +165,9 @@ fi
 
 %changelog
 
-* Mon Jan 27 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.5-0
+* Mon Jan 27 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.5-1
 - Fix for https://issues.infn.it/jira/browse/VOMS-495. New packaging installable
   together with with voms-clients 2.x package.
-- Fix for https://issues.infn.it/jira/browse/VOMS-460
 
 * Thu Sep 26 2013 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.4-1
 - Fix for https://issues.infn.it/jira/browse/VOMS-423
