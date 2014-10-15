@@ -28,10 +28,16 @@ mkdir -p ${rpmbuild_dir}/BUILD \
 	  ${rpmbuild_dir}/SRPMS
 
 ## Prepare sources
-pushd ${base_dir}
-mvn clean 
-tar --transform 's,^,/voms-clients/,S' -z -c -v -f ${rpmbuild_dir}/SOURCES/${name}3-${rpm_version}.tar.gz --exclude='package/*' --exclude='package' .
+## We cannot use tar --transform as the tar version in SL5 does not support it
+source_tmp_dir=$(mktemp -d /tmp/voms-client-centos.XXXXX)
+
+mkdir -p ${source_tmp_dir}/${name}
+cp -r ${base_dir} ${source_tmp_dir}/${name}
+pushd ${source_tmp_dir}
+tar cvzf ${rpmbuild_dir}/SOURCES/${name}3-${rpm_version}.tar.gz --exclude="${name}/package/*" --exclude="${name}/package" --exclude="${name}/target" .
 popd
+
+rm -rf ${soruce_tmp_dir}
 
 ## Build RPMs
 if [ -n "${dist}" ]; then
@@ -39,3 +45,4 @@ if [ -n "${dist}" ]; then
 else
 	rpmbuild --nodeps -v -ba ${spec} --define "_topdir ${rpmbuild_dir}" --define "dist ${dist}"
 fi
+
