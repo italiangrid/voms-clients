@@ -6,8 +6,8 @@ Spec file and rpmbuild preparation and calls for building rpms out of the VOMS c
 
 To build packages, run:
 
-	./build-rpm.sh
+  ./build-rpm.sh
 
 To cleanup, run:
 
-	./clean.sh
+  ./clean.sh

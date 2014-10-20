@@ -29,7 +29,7 @@ mkdir -p ${rpmbuild_dir}/BUILD \
 
 ## Prepare sources
 ## We cannot use tar --transform as the tar version in SL5 does not support it
-source_tmp_dir=$(mktemp -d /tmp/voms-client-centos.XXXXX)
+source_tmp_dir=$(mktemp -d /tmp/voms-client-rpm.XXXXX)
 
 mkdir -p ${source_tmp_dir}/${name}
 cp -r ${base_dir} ${source_tmp_dir}/${name}

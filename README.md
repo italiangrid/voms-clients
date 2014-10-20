@@ -16,7 +16,7 @@ To build the clients, type:
 
   mvn package
 
-To build RPM packages, see instructions in the `package/centos` directory.
+To build RPM packages, see instructions in the `package/rpm` directory.
 
 ## Install
 
