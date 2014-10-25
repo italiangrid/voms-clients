@@ -8,6 +8,14 @@ Command-line clients for Virtual Organization Membership Service (VOMS), i.e.:
 - *voms-proxy-info*: shows information about a created VOMS proxy certificate
 - *voms-proxy-destroy*: destroys a VOMS proxy certificate
 
+## Build instructions
+
+Clone this github repo. 
+Build packages with:
+
+```bash
+mvn package
+```
 
 ## Build
 
@@ -37,6 +45,7 @@ RPMs for the latest stable release can be found on the EMI repository:
 - [CentOS/SL 5](http://emisoft.web.cern.ch/emisoft/dist/EMI/3/sl5/x86_64/updates/repoview/voms-clients3.html)
 
 RPMs for the latest development build can be found at the following URLs:
+
 - [CentOS/SL 6](http://radiohead.cnaf.infn.it:9999/job/voms-clients-rpm_develop_SL6/lastSuccessfulBuild)
 - [CentOS/SL 5](http://radiohead.cnaf.infn.it:9999/job/voms-clients-rpm_develop_SL5/lastSuccessfulBuild)
 
