@@ -1,5 +1,6 @@
-VOMS Clients
-============
+# VOMS Clients
+
+[![Build Status](https://travis-ci.org/italiangrid/voms-clients.svg)](https://travis-ci.org/italiangrid/voms-clients)
 
 Command-line clients for Virtual Organization Membership Service (VOMS), i.e.:
 
@@ -16,9 +17,18 @@ Build packages with:
 mvn package
 ```
 
+## Build
+
+You will need maven and Java >= 6.
+To build the clients, type:
+
+  mvn package
+
+To build RPM packages, see instructions in the `package/rpm` directory.
+
 ## Install
 
-The last stable build can be downloaded [here][voms-clients-tarball].
+A tarball containing the clients can be found in the `target` directory under the source tree.
 Untar the tarball to a directory of your choice.
 
 You may want to add the bin directory to your path to be able to directly call voms-proxy-* from you shell
@@ -29,9 +39,15 @@ export PATH=$PATH:<install_dir>/bin
 
 ### Install from RPMs packages
 
+RPMs for the latest stable release can be found on the EMI repository:
+
+- [CentOS/SL 6](http://emisoft.web.cern.ch/emisoft/dist/EMI/3/sl6/x86_64/updates/repoview/voms-clients3.html)
+- [CentOS/SL 5](http://emisoft.web.cern.ch/emisoft/dist/EMI/3/sl5/x86_64/updates/repoview/voms-clients3.html)
+
 RPMs for the latest development build can be found at the following URLs:
-- [SL5 package][voms-clients-rpm-sl5].
-- [SL6 package][voms-clients-rpm-sl6].
+
+- [CentOS/SL 6](http://radiohead.cnaf.infn.it:9999/job/voms-clients-rpm_develop_SL6/lastSuccessfulBuild)
+- [CentOS/SL 5](http://radiohead.cnaf.infn.it:9999/job/voms-clients-rpm_develop_SL5/lastSuccessfulBuild)
 
 ## Quickstart
 
@@ -156,8 +172,3 @@ The `voms-proxy-destroy` command erases an existing proxy from the system. Its b
 $ voms-proxy-destroy
 ```
 More information can be found in the `voms-proxy-destroy` man page.
-
-
-[voms-clients-tarball]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients_master/lastSuccessfulBuild/org.italiangrid$voms-clients/artifact/org.italiangrid/voms-clients/3.0.4/voms-clients-3.0.4.tar.gz
-[voms-clients-rpm-sl5]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients-rpm_master_SL5/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-clients3-3.0.4-1.sl5.noarch.rpm
-[voms-clients-rpm-sl6]: http://radiohead.cnaf.infn.it:9999/view/VOMS/job/voms-clients-rpm_master_SL6/lastSuccessfulBuild/artifact/rpmbuild/RPMS/noarch/voms-clients3-3.0.4-1.sl6.noarch.rpm

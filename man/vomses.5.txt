@@ -18,19 +18,19 @@ This manual page describes the format of _vomses_ files.
 _vomses_ files contain contact information for VOMS servers and are typically organized in the */etc/vomses* directory.
 A _vomses_ file is a simple text file which contains one or more lines formatted as follows:
 
-"vo_name" "hostname" "port" "server DN" "alias"
+"alias" "hostname" "port" "server DN" "vo_name"
 
 Where:
 
-*vo_name*: the name of the VO served by the VOMS server 
+*alias*: an alias that can be used for this VOMS server (this is typically identical to the vo_name)
 
 *hostname*: the hostname where the VOMS server is running
+
+*vo_name*: the name of the VO served by the VOMS server 
 
 *port*: the port where the VOMS server is listening for incoming requests
 
 *server DN*: the certificate subject of the VOMS server
-
-*alias*: an alias that can be used for this VOMS server (this is typically identical to the vo_name)
 
 System wide VOMSES configuration is maintained in the */etc/vomses* file or directory.
 If */etc/vomses* is a directory, all the files contained in such directory are parsed looking for VOMS

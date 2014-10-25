@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) Istituto Nazionale di Fisica Nucleare, 2006-2014.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.italiangrid.voms.clients.impl;
 
 import java.io.File;
@@ -44,6 +59,8 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	
 	WARNING_POLICY warningPolicy = WARNING_POLICY.printWarnings;
 	
+	private boolean hadValidationErrors = false;
+	
 	public ProxyInitListenerHelper(MessageLogger logger) {
 		this.logger = logger;
 	}
@@ -86,6 +103,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 	public void notifyValidationResult(VOMSValidationResult result) {
 
 		if (!result.isValid()) {
+		  hadValidationErrors = true;
 			logger.error("\nWARNING: VOMS AC validation for VO %s failed for the following reasons:\n", result.getAttributes().getVO());
 			for (VOMSValidationErrorMessage m : result.getValidationErrors())
 				logger.error("         %s\n", m.getMessage());
@@ -109,6 +127,7 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 
 	@Override
 	public boolean onValidationError(ValidationError error) {
+	  hadValidationErrors = true;
 		logger.warning("Certificate validation error: %s\n", error.getMessage());
 		return false;
 	}
@@ -258,4 +277,11 @@ public class ProxyInitListenerHelper implements InitListenerAdapter {
 			logger.trace(r.getXMLAsString());
 		}
 	}
+
+  @Override
+  public boolean hadValidationErrors() {
+    return hadValidationErrors;
+  }
+	
+	
 }

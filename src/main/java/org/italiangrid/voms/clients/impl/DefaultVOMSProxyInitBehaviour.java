@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) Istituto Nazionale di Fisica Nucleare, 2006-2014.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.italiangrid.voms.clients.impl;
 
 import java.io.File;
@@ -36,11 +51,13 @@ import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSESLookupStrategy;
 import org.italiangrid.voms.request.VOMSProtocolListener;
 import org.italiangrid.voms.request.VOMSRequestListener;
+import org.italiangrid.voms.request.VOMSServerInfoStore;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.BaseVOMSESLookupStrategy;
 import org.italiangrid.voms.request.impl.DefaultVOMSACRequest;
 import org.italiangrid.voms.request.impl.DefaultVOMSACService;
 import org.italiangrid.voms.request.impl.DefaultVOMSESLookupStrategy;
+import org.italiangrid.voms.request.impl.DefaultVOMSServerInfoStore;
 import org.italiangrid.voms.store.VOMSTrustStore;
 import org.italiangrid.voms.store.VOMSTrustStoreStatusListener;
 import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
@@ -111,7 +128,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		this.protocolListener = protocolListener;
 	}
 
-	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, InitListenerAdapter listenerAdapter){
+	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, 
+	  InitListenerAdapter listenerAdapter){
+
 		this.commandsParser = commandsParser;
 		this.validationResultListener = listenerAdapter;
 		this.requestListener = listenerAdapter;
@@ -140,20 +159,29 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		boolean hasVOMSCommands = params.getVomsCommands() != null 
 				&& !params.getVomsCommands().isEmpty();
 		
-		if (hasVOMSCommands)
-			params.setValidateUserCredential(true);
-		
-		if (params.validateUserCredential() || hasVOMSCommands)			
+		if (hasVOMSCommands || params.validateUserCredential()){
+			
+		  params.setValidateUserCredential(true);
 			initCertChainValidator(params);
-		
-		if (params.verifyAC())
-			initVOMSValidator(params);
+			
+			if (params.verifyAC() && hasVOMSCommands){
+			  initVOMSValidator(params);  
+			}
+		}
 			
 	}
 	
 	public void initProxy(ProxyInitParams params) {
 		
 		init(params);
+		
+		VOMSServerInfoStore serverInfoStore = null;
+		
+		// Fail fast if VO is not configured correctly
+		if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
+      serverInfoStore = initServerInfoStore(params);
+      checkCommands(params, serverInfoStore);
+		}
 		
 		X509Credential cred = lookupCredential(params);
 		if (cred == null)
@@ -166,13 +194,42 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
 			initCertChainValidator(params);
-			acs = getAttributeCertificates(params, cred);
+			acs = getAttributeCertificates(params, cred, serverInfoStore);
 		}
 
 		if (params.verifyAC() && !acs.isEmpty())
 			verifyACs(params, acs);
 		
 		createProxy(params, cred, acs);
+	}
+	
+	private void checkCommands(ProxyInitParams params, VOMSServerInfoStore sis){
+	  
+    Map<String, List<String>> vomsCommandsMap = commandsParser
+        .parseCommands(params.getVomsCommands()); 
+    
+    for (String voOrAlias: vomsCommandsMap.keySet()){
+      if (sis.getVOMSServerInfo(voOrAlias).isEmpty()){
+         
+        String msg = String.format("VOMS server for VO %s is not known! "
+          + "Check your vomses configuration.", voOrAlias);
+        throw new VOMSError(msg);
+      }        
+    }
+	}
+	
+	private VOMSServerInfoStore initServerInfoStore(ProxyInitParams params){
+	  
+	  VOMSServerInfoStore sis = null;
+	  
+	  if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
+	    sis = new DefaultVOMSServerInfoStore.Builder()
+      .lookupStrategy(getVOMSESLookupStrategyFromParams(params))
+      .storeListener(serverInfoStoreListener)
+      .build();
+	  }
+	  
+	  return sis;
 	}
 	
 	private void directorySanityChecks(String dirPath, String preambleMessage){
@@ -208,9 +265,14 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			
 			directorySanityChecks(trustAnchorsDir, "Invalid trust anchors location");
 		
-			certChainValidator = CertificateValidatorBuilder.buildCertificateValidator(trustAnchorsDir, 
-					certChainValidationErrorListener, storeUpdateListener);
-			
+		  CertificateValidatorBuilder builder = new CertificateValidatorBuilder();
+		  
+		  certChainValidator = builder
+		    .trustAnchorsDir(trustAnchorsDir)
+		    .storeUpdateListener(storeUpdateListener)
+		    .lazyAnchorsLoading(true)
+		    .validationErrorListener(certChainValidationErrorListener)
+		    .build();
 		}
 	}
 	
@@ -425,7 +487,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	}
 	
 	protected List<AttributeCertificate> getAttributeCertificates(
-			ProxyInitParams params, X509Credential cred) {
+			ProxyInitParams params, X509Credential cred, 
+			VOMSServerInfoStore serverInfoStore) {
 
 		List<String> vomsCommands = params.getVomsCommands();
 
@@ -447,10 +510,11 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 				.lifetime(params.getAcLifetimeInSeconds())
 				.build();
 			
-			VOMSACService acService = new DefaultVOMSACService.Builder(certChainValidator)
-					.requestListener(requestListener)
+			VOMSACService acService = new DefaultVOMSACService
+			    .Builder(certChainValidator)
+			    .requestListener(requestListener)
+			    .serverInfoStore(serverInfoStore)
 					.vomsesLookupStrategy(getVOMSESLookupStrategyFromParams(params))
-					.serverInfoStoreListener(serverInfoStoreListener)
 					.protocolListener(protocolListener)
 					.connectTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
 					.readTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
@@ -472,8 +536,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 	
 	private LoadCredentialsStrategy strategyFromParams(ProxyInitParams params){
 		
-		if (params.isNoRegen())
-			return new LoadProxyCredential(loadCredentialsEventListener);
+		if (params.isNoRegen()){
+			return new LoadProxyCredential(loadCredentialsEventListener, params.getCertFile());
+		}
 		
 		if (params.getCertFile()!=null && params.getKeyFile() == null)
 			return new LoadUserCredential(loadCredentialsEventListener, params.getCertFile());
