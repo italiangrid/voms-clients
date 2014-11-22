@@ -19,29 +19,26 @@ import org.apache.commons.cli.Option;
 
 public enum ProxyDestroyOptions implements CLIOption {
 
-	HELP("help"),
-	USAGE("usage"),
-	VERSION("version"),
-	DEBUG("debug"),
-	QUIET("quiet"),
-	FILE("file"),
-	DRY("dry"),
-	CONF("conf");
-	
-	private Option option;
-	
-	private ProxyDestroyOptions(String longOpt){
-		option = VOMSCLIOptionBuilder.buildOption(longOpt, CLIOptionsBundle.proxyInfo);
-	}
+  HELP("help"), USAGE("usage"), VERSION("version"), DEBUG("debug"), QUIET(
+    "quiet"), FILE("file"), DRY("dry"), CONF("conf");
 
-	@Override
-	public Option getOption() {
-		return option;
-	}
+  private Option option;
 
-	@Override
-	public String getLongOptionName() {
-		
-		return option.getLongOpt();
-	}
+  private ProxyDestroyOptions(String longOpt) {
+
+    option = VOMSCLIOptionBuilder.buildOption(longOpt,
+      CLIOptionsBundle.proxyInfo);
+  }
+
+  @Override
+  public Option getOption() {
+
+    return option;
+  }
+
+  @Override
+  public String getLongOptionName() {
+
+    return option.getLongOpt();
+  }
 }

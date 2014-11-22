@@ -22,11 +22,11 @@ import org.italiangrid.voms.clients.ProxyInfoParams;
  * as argument.
  * 
  * @param options
- *            the options to query the proxy
+ *          the options to query the proxy
  */
 
 public interface ProxyInfoStrategy {
 
-	public void printProxyInfo(ProxyInfoParams options);
+  public void printProxyInfo(ProxyInfoParams options);
 
 }

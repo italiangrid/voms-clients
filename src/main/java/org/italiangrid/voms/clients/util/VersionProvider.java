@@ -30,29 +30,29 @@ import java.util.Properties;
  */
 public class VersionProvider {
 
-	/**
-	 * Display version information.
-	 * 
-	 * @param command
-	 */
-	public static void displayVersionInfo(String command) {
+  /**
+   * Display version information.
+   * 
+   * @param command
+   */
+  public static void displayVersionInfo(String command) {
 
-		Properties properties = new Properties();
+    Properties properties = new Properties();
 
-		InputStream inputStream = VersionProvider.class.getClassLoader()
-				.getResourceAsStream("version.properties");
+    InputStream inputStream = VersionProvider.class.getClassLoader()
+      .getResourceAsStream("version.properties");
 
-		try {
+    try {
 
-			properties.load(inputStream);
+      properties.load(inputStream);
 
-		} catch (IOException e) {
+    } catch (IOException e) {
 
-			throw new RuntimeException(e);
-		}
+      throw new RuntimeException(e);
+    }
 
-		String version = properties.getProperty("version");
-		System.out.format("%s v. %s\n", command, version);
-	}
+    String version = properties.getProperty("version");
+    System.out.format("%s v. %s\n", command, version);
+  }
 
 }

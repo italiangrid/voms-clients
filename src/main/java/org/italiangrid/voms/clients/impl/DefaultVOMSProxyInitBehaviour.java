@@ -89,481 +89,502 @@ import eu.emi.security.authn.x509.proxy.ProxyUtils;
  */
 public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
-	private VOMSCommandsParsingStrategy commandsParser;
-	private X509CertChainValidatorExt certChainValidator;
-	private VOMSACValidator vomsValidator;
-	
-	
-	private ValidationResultListener validationResultListener;
-	private VOMSRequestListener requestListener;
-	private ProxyCreationListener proxyCreationListener;
-	private VOMSServerInfoStoreListener serverInfoStoreListener;
-	private LoadCredentialsEventListener loadCredentialsEventListener;
-	private ValidationErrorListener certChainValidationErrorListener;
-	private VOMSTrustStoreStatusListener vomsTrustStoreListener;
-	private StoreUpdateListener storeUpdateListener;
-	private VOMSProtocolListener protocolListener;
-	
-	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser,
-			ValidationResultListener validationListener,
-			VOMSRequestListener requestListener,
-			ProxyCreationListener pxCreationListener,
-			VOMSServerInfoStoreListener serverInfoStoreListener,
-			LoadCredentialsEventListener loadCredEventListener,
-			ValidationErrorListener certChainListener,
-			VOMSTrustStoreStatusListener vomsTSListener,
-			StoreUpdateListener trustStoreUpdateListener,
-			VOMSProtocolListener protocolListener)
-			{
-		
-		this.commandsParser = commandsParser;
-		this.validationResultListener = validationListener;
-		this.requestListener = requestListener;
-		this.proxyCreationListener = pxCreationListener;
-		this.serverInfoStoreListener = serverInfoStoreListener;
-		this.loadCredentialsEventListener = loadCredEventListener;
-		this.certChainValidationErrorListener = certChainListener;
-		this.vomsTrustStoreListener = vomsTSListener;
-		this.storeUpdateListener = trustStoreUpdateListener;
-		this.protocolListener = protocolListener;
-	}
+  private VOMSCommandsParsingStrategy commandsParser;
+  private X509CertChainValidatorExt certChainValidator;
+  private VOMSACValidator vomsValidator;
 
-	public DefaultVOMSProxyInitBehaviour(VOMSCommandsParsingStrategy commandsParser, 
-	  InitListenerAdapter listenerAdapter){
+  private ValidationResultListener validationResultListener;
+  private VOMSRequestListener requestListener;
+  private ProxyCreationListener proxyCreationListener;
+  private VOMSServerInfoStoreListener serverInfoStoreListener;
+  private LoadCredentialsEventListener loadCredentialsEventListener;
+  private ValidationErrorListener certChainValidationErrorListener;
+  private VOMSTrustStoreStatusListener vomsTrustStoreListener;
+  private StoreUpdateListener storeUpdateListener;
+  private VOMSProtocolListener protocolListener;
 
-		this.commandsParser = commandsParser;
-		this.validationResultListener = listenerAdapter;
-		this.requestListener = listenerAdapter;
-		this.proxyCreationListener = listenerAdapter;
-		this.serverInfoStoreListener = listenerAdapter;
-		this.loadCredentialsEventListener = listenerAdapter;
-		this.certChainValidationErrorListener = listenerAdapter;
-		this.vomsTrustStoreListener = listenerAdapter;
-		this.storeUpdateListener = listenerAdapter;
-		this.protocolListener = listenerAdapter;
-	}
-	
-	
-	
-	protected void validateUserCredential(ProxyInitParams params, X509Credential cred){
-		
-		ValidationResult result = certChainValidator.validate(cred.getCertificateChain());
-		if (!result.isValid())
-			throw new VOMSError("User credential is not valid!");
-		
-	}
-	
-	
-	private void init(ProxyInitParams params){
-		
-		boolean hasVOMSCommands = params.getVomsCommands() != null 
-				&& !params.getVomsCommands().isEmpty();
-		
-		if (hasVOMSCommands || params.validateUserCredential()){
-			
-		  params.setValidateUserCredential(true);
-			initCertChainValidator(params);
-			
-			if (params.verifyAC() && hasVOMSCommands){
-			  initVOMSValidator(params);  
-			}
-		}
-			
-	}
-	
-	public void initProxy(ProxyInitParams params) {
-		
-		init(params);
-		
-		VOMSServerInfoStore serverInfoStore = null;
-		
-		// Fail fast if VO is not configured correctly
-		if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
+  public DefaultVOMSProxyInitBehaviour(
+    VOMSCommandsParsingStrategy commandsParser,
+    ValidationResultListener validationListener,
+    VOMSRequestListener requestListener,
+    ProxyCreationListener pxCreationListener,
+    VOMSServerInfoStoreListener serverInfoStoreListener,
+    LoadCredentialsEventListener loadCredEventListener,
+    ValidationErrorListener certChainListener,
+    VOMSTrustStoreStatusListener vomsTSListener,
+    StoreUpdateListener trustStoreUpdateListener,
+    VOMSProtocolListener protocolListener) {
+
+    this.commandsParser = commandsParser;
+    this.validationResultListener = validationListener;
+    this.requestListener = requestListener;
+    this.proxyCreationListener = pxCreationListener;
+    this.serverInfoStoreListener = serverInfoStoreListener;
+    this.loadCredentialsEventListener = loadCredEventListener;
+    this.certChainValidationErrorListener = certChainListener;
+    this.vomsTrustStoreListener = vomsTSListener;
+    this.storeUpdateListener = trustStoreUpdateListener;
+    this.protocolListener = protocolListener;
+  }
+
+  public DefaultVOMSProxyInitBehaviour(
+    VOMSCommandsParsingStrategy commandsParser,
+    InitListenerAdapter listenerAdapter) {
+
+    this.commandsParser = commandsParser;
+    this.validationResultListener = listenerAdapter;
+    this.requestListener = listenerAdapter;
+    this.proxyCreationListener = listenerAdapter;
+    this.serverInfoStoreListener = listenerAdapter;
+    this.loadCredentialsEventListener = listenerAdapter;
+    this.certChainValidationErrorListener = listenerAdapter;
+    this.vomsTrustStoreListener = listenerAdapter;
+    this.storeUpdateListener = listenerAdapter;
+    this.protocolListener = listenerAdapter;
+  }
+
+  protected void validateUserCredential(ProxyInitParams params,
+    X509Credential cred) {
+
+    ValidationResult result = certChainValidator.validate(cred
+      .getCertificateChain());
+    if (!result.isValid())
+      throw new VOMSError("User credential is not valid!");
+
+  }
+
+  private void init(ProxyInitParams params) {
+
+    boolean hasVOMSCommands = params.getVomsCommands() != null
+      && !params.getVomsCommands().isEmpty();
+
+    if (hasVOMSCommands || params.validateUserCredential()) {
+
+      params.setValidateUserCredential(true);
+      initCertChainValidator(params);
+
+      if (params.verifyAC() && hasVOMSCommands) {
+        initVOMSValidator(params);
+      }
+    }
+
+  }
+
+  public void initProxy(ProxyInitParams params) {
+
+    init(params);
+
+    VOMSServerInfoStore serverInfoStore = null;
+
+    // Fail fast if VO is not configured correctly
+    if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()) {
       serverInfoStore = initServerInfoStore(params);
       checkCommands(params, serverInfoStore);
-		}
-		
-		X509Credential cred = lookupCredential(params);
-		if (cred == null)
-			throw new VOMSError("No credentials found!");
+    }
 
-		if (params.validateUserCredential())	
-			validateUserCredential(params, cred);
-		
-		List<AttributeCertificate> acs = Collections.emptyList();
-		
-		if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
-			initCertChainValidator(params);
-			acs = getAttributeCertificates(params, cred, serverInfoStore);
-		}
+    X509Credential cred = lookupCredential(params);
+    if (cred == null)
+      throw new VOMSError("No credentials found!");
 
-		if (params.verifyAC() && !acs.isEmpty())
-			verifyACs(params, acs);
-		
-		createProxy(params, cred, acs);
-	}
-	
-	private void checkCommands(ProxyInitParams params, VOMSServerInfoStore sis){
-	  
+    if (params.validateUserCredential())
+      validateUserCredential(params, cred);
+
+    List<AttributeCertificate> acs = Collections.emptyList();
+
+    if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()) {
+      initCertChainValidator(params);
+      acs = getAttributeCertificates(params, cred, serverInfoStore);
+    }
+
+    if (params.verifyAC() && !acs.isEmpty())
+      verifyACs(params, acs);
+
+    createProxy(params, cred, acs);
+  }
+
+  private void checkCommands(ProxyInitParams params, VOMSServerInfoStore sis) {
+
     Map<String, List<String>> vomsCommandsMap = commandsParser
-        .parseCommands(params.getVomsCommands()); 
-    
-    for (String voOrAlias: vomsCommandsMap.keySet()){
-      if (sis.getVOMSServerInfo(voOrAlias).isEmpty()){
-         
+      .parseCommands(params.getVomsCommands());
+
+    for (String voOrAlias : vomsCommandsMap.keySet()) {
+      if (sis.getVOMSServerInfo(voOrAlias).isEmpty()) {
+
         String msg = String.format("VOMS server for VO %s is not known! "
           + "Check your vomses configuration.", voOrAlias);
         throw new VOMSError(msg);
-      }        
+      }
     }
-	}
-	
-	private VOMSServerInfoStore initServerInfoStore(ProxyInitParams params){
-	  
-	  VOMSServerInfoStore sis = null;
-	  
-	  if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()){
-	    sis = new DefaultVOMSServerInfoStore.Builder()
-      .lookupStrategy(getVOMSESLookupStrategyFromParams(params))
-      .storeListener(serverInfoStoreListener)
-      .build();
-	  }
-	  
-	  return sis;
-	}
-	
-	private void directorySanityChecks(String dirPath, String preambleMessage){
-		
-		File f = new File(dirPath);
-		
-		String errorTemplate = String.format("%s: '%s'", preambleMessage, dirPath);
-		errorTemplate = errorTemplate +" (%s)";
-		
-		if (!f.exists()){
-			Throwable t = new FileNotFoundException(String.format(errorTemplate, "file not found"));
-			throw new VOMSError(t.getMessage(), t);
-		}
-		
-		if (!f.isDirectory()){
-			throw new VOMSError(String.format(errorTemplate, "not a directory"));
-		}
-		
-		if (!f.canRead())
-			throw new VOMSError(String.format(errorTemplate, "not readable"));			
-	}
-	
-	private void initCertChainValidator(ProxyInitParams params){
-		
-		if (certChainValidator == null){
-			String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
-		
-			if (System.getenv(VOMSEnvironmentVariables.X509_CERT_DIR) != null)
-				trustAnchorsDir = System.getenv(VOMSEnvironmentVariables.X509_CERT_DIR);
-			
-			if (params.getTrustAnchorsDir()!=null)
-				trustAnchorsDir = params.getTrustAnchorsDir();
-			
-			directorySanityChecks(trustAnchorsDir, "Invalid trust anchors location");
-		
-		  CertificateValidatorBuilder builder = new CertificateValidatorBuilder();
-		  
-		  certChainValidator = builder
-		    .trustAnchorsDir(trustAnchorsDir)
-		    .storeUpdateListener(storeUpdateListener)
-		    .lazyAnchorsLoading(true)
-		    .validationErrorListener(certChainValidationErrorListener)
-		    .build();
-		}
-	}
-	
-	private VOMSACValidator initVOMSValidator(ProxyInitParams params){
-		
-		if (vomsValidator != null)
-			return vomsValidator;
-		
-		String vomsdir = DefaultVOMSTrustStore.DEFAULT_VOMS_DIR;
-		
-		if (System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR) != null)
-			vomsdir = System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR);
-		
-		if (params.getVomsdir() != null)
-			vomsdir = params.getVomsdir();
-		
-		directorySanityChecks(vomsdir, "Invalid vomsdir location");
-		
-		VOMSTrustStore trustStore = new DefaultVOMSTrustStore(Arrays.asList(vomsdir)
-				, vomsTrustStoreListener);
-		
-		vomsValidator = VOMSValidators.newValidator(trustStore, 
-				certChainValidator, 
-				validationResultListener); 
-		
-		return vomsValidator;
-	}
-	
-	private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
-		
-		VOMSACValidator acValidator = initVOMSValidator(params);
-		acValidator.validateACs(acs);
-		
-	}
+  }
 
-	// Why we have to do this nonsense?
-	private ProxyType extendedProxyTypeAsProxyType(ExtendedProxyType pt){
-		switch(pt){
-		
-		case DRAFT_RFC:
-			return ProxyType.DRAFT_RFC;
-			
-		case LEGACY:
-			return ProxyType.LEGACY;
-			
-		case RFC3820:
-			return ProxyType.RFC3820;
-			
-		default:
-			return null;
-		}
-	}
-	
-	private void ensureProxyTypeIsCompatibleWithIssuingCredential(ProxyCertificateOptions options, 
-			X509Credential issuingCredential,
-			List<String> proxyCreationWarnings){
-		
-		if (ProxyUtils.isProxy(issuingCredential.getCertificateChain())){
-			
-			ProxyType issuingProxyType = extendedProxyTypeAsProxyType(ProxyHelper.getProxyType(issuingCredential.getCertificateChain()[0]));
-			
-			if (!issuingProxyType.equals(options.getType())){
-				proxyCreationWarnings.add("forced "+issuingProxyType.name()+" proxy type to be compatible with the type of the issuing proxy.");
-				options.setType(issuingProxyType);
-			}
-			
-			try {
-				
-				boolean issuingProxyIsLimited = ProxyHelper.isLimited(issuingCredential.getCertificateChain()[0]);
-				if (issuingProxyIsLimited && !options.isLimited()){
-					proxyCreationWarnings.add("forced the creation of a limited proxy to be compatible with the type of the issuing proxy.");
-					limitProxy(options);
-				}
-				
-			} catch (IOException e) {
-				throw new VOMSError(e.getMessage(),e);
-			}
-		}
-	}
-	private void checkMixedProxyChain(X509Credential issuingCredential){
-		
-		if (ProxyUtils.isProxy(issuingCredential.getCertificateChain())){
-		
-			ProxyChainInfo ci;
-			try {
-				ci = new ProxyChainInfo(issuingCredential.getCertificateChain());
-				if (ci.getProxyType().equals(ProxyChainType.MIXED))
-					throw new VOMSError("Cannot generate a proxy certificate starting from a mixed type proxy chain.");
-				
-			} catch (CertificateException e) {
-				throw new VOMSError(e.getMessage(), e);
-			}
-		}
-	}
-	
-	private void ensureProxyLifetimeIsConsistentWithIssuingCredential(ProxyCertificateOptions options, 
-			X509Credential issuingCredential,
-			List<String> proxyCreationWarnings){
-		
-		Calendar cal = Calendar.getInstance();
-		
-		Date proxyStartTime = cal.getTime();
-		
-		cal.add(Calendar.SECOND, options.getLifetime());
-		
-		Date proxyEndTime = cal.getTime();
-		Date issuingCredentialEndTime = issuingCredential.getCertificate().getNotAfter();
-		
-		options.setValidityBounds(proxyStartTime, proxyEndTime);
-		
-		if ( proxyEndTime.after(issuingCredentialEndTime) ){
-			
-			proxyCreationWarnings.add("proxy lifetime limited to issuing " +
-					"credential lifetime.");
-			options.setValidityBounds(proxyStartTime, issuingCredentialEndTime);
-		}	
-	}
-	
-	private void limitProxy(ProxyCertificateOptions proxyOptions){
-		
-		proxyOptions.setLimited(true);
-		
-		if (proxyOptions.getType().equals(ProxyType.RFC3820)|| proxyOptions.getType().equals(ProxyType.DRAFT_RFC))
-			proxyOptions.setPolicy(new ProxyPolicy(ProxyPolicy.LIMITED_PROXY_OID));
-		
-	}
-	
-	private void  createProxy(ProxyInitParams params,
-			X509Credential credential, List<AttributeCertificate> acs) {
-		
-		List<String> proxyCreationWarnings = new ArrayList<String>();
-		
-		String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
-		
-		String envProxyPath = System.getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
+  private VOMSServerInfoStore initServerInfoStore(ProxyInitParams params) {
 
-		if (envProxyPath != null)
-			proxyFilePath = envProxyPath;
-		
-		if (params.getGeneratedProxyFile() != null)
-			proxyFilePath = params.getGeneratedProxyFile();
-		
-		ProxyCertificateOptions proxyOptions = new ProxyCertificateOptions(credential.getCertificateChain());
-		
-		proxyOptions.setProxyPathLimit(params.getPathLenConstraint());
-		
-		proxyOptions.setLimited(params.isLimited());
-		proxyOptions.setLifetime(params.getProxyLifetimeInSeconds());
-		proxyOptions.setType(params.getProxyType());
-		proxyOptions.setKeyLength(params.getKeySize());
-		
-		if (params.isEnforcingChainIntegrity()){
-			
-			checkMixedProxyChain(credential);
-		
-			ensureProxyTypeIsCompatibleWithIssuingCredential(proxyOptions, 
-					credential, proxyCreationWarnings);
-		
-			ensureProxyLifetimeIsConsistentWithIssuingCredential(proxyOptions, 
-					credential, proxyCreationWarnings);
-		}
-		
-		if (params.isLimited())
-			limitProxy(proxyOptions);
-		
-		if (acs != null && !acs.isEmpty())
-			proxyOptions.setAttributeCertificates(acs.toArray(new AttributeCertificate[acs.size()]));
-		
-		try {
-			
-			ProxyCertificate proxy = ProxyGenerator.generate(proxyOptions, credential.getKey());
-			
-			CredentialsUtils.saveProxyCredentials(proxyFilePath, proxy.getCredential());
-			proxyCreationListener.proxyCreated(proxyFilePath, proxy, proxyCreationWarnings);
-		
-		} catch (Throwable t) {
-			
-			throw new VOMSError("Error creating proxy certificate: "+t.getMessage(), t);
-		}
-	}
+    VOMSServerInfoStore sis = null;
 
-	protected List<String> sortFQANsIfRequested(ProxyInitParams params, List<String> unsortedFQANs){
-		
-		if (params.getFqanOrder() != null && !params.getFqanOrder().isEmpty()){
-			
-			Set<String> fqans = new LinkedHashSet<String>();
-			for (String fqan: params.getFqanOrder()){
-				
-				if (VOMSFQANNamingScheme.isGroup(fqan))
-					fqans.add(fqan);
-				
-				if (VOMSFQANNamingScheme.isQualifiedRole(fqan) && unsortedFQANs.contains(fqan))
-					fqans.add(fqan);
-				
-			}
-			
-			fqans.addAll(unsortedFQANs);
-			
-			return new ArrayList<String>(fqans);
-		}
-		
-		return unsortedFQANs;
-	}
+    if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()) {
+      sis = new DefaultVOMSServerInfoStore.Builder()
+        .lookupStrategy(getVOMSESLookupStrategyFromParams(params))
+        .storeListener(serverInfoStoreListener).build();
+    }
 
-	protected VOMSESLookupStrategy getVOMSESLookupStrategyFromParams(ProxyInitParams params){
-		
-		if (params.getVomsesLocations() != null && ! params.getVomsesLocations().isEmpty())
-			return new BaseVOMSESLookupStrategy(params.getVomsesLocations());
-		else
-			return new DefaultVOMSESLookupStrategy();
-		
-	}
-	
-	protected List<AttributeCertificate> getAttributeCertificates(
-			ProxyInitParams params, X509Credential cred, 
-			VOMSServerInfoStore serverInfoStore) {
+    return sis;
+  }
 
-		List<String> vomsCommands = params.getVomsCommands();
+  private void directorySanityChecks(String dirPath, String preambleMessage) {
 
-		if (vomsCommands == null || vomsCommands.isEmpty())
-			return Collections.emptyList();
+    File f = new File(dirPath);
 
-		Map<String, List<String>> vomsCommandsMap = commandsParser
-				.parseCommands(params.getVomsCommands());
+    String errorTemplate = String.format("%s: '%s'", preambleMessage, dirPath);
+    errorTemplate = errorTemplate + " (%s)";
 
-		List<AttributeCertificate> acs = new ArrayList<AttributeCertificate>();
+    if (!f.exists()) {
+      Throwable t = new FileNotFoundException(String.format(errorTemplate,
+        "file not found"));
+      throw new VOMSError(t.getMessage(), t);
+    }
 
-		for (String vo : vomsCommandsMap.keySet()) {
+    if (!f.isDirectory()) {
+      throw new VOMSError(String.format(errorTemplate, "not a directory"));
+    }
 
-			List<String> fqans = vomsCommandsMap.get(vo);
-			
-			VOMSACRequest request = new DefaultVOMSACRequest.Builder(vo)
-				.fqans(sortFQANsIfRequested(params, fqans))
-				.targets(params.getTargets())
-				.lifetime(params.getAcLifetimeInSeconds())
-				.build();
-			
-			VOMSACService acService = new DefaultVOMSACService
-			    .Builder(certChainValidator)
-			    .requestListener(requestListener)
-			    .serverInfoStore(serverInfoStore)
-					.vomsesLookupStrategy(getVOMSESLookupStrategyFromParams(params))
-					.protocolListener(protocolListener)
-					.connectTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
-					.readTimeout((int)TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
-					.build();
-			
-			AttributeCertificate ac = acService.getVOMSAttributeCertificate(
-					cred, request);
+    if (!f.canRead())
+      throw new VOMSError(String.format(errorTemplate, "not readable"));
+  }
 
-			if (ac != null)
-				acs.add(ac);
-		}
+  private void initCertChainValidator(ProxyInitParams params) {
 
-		if (!vomsCommandsMap.keySet().isEmpty() && acs.isEmpty())
-			throw new VOMSError("User's request for VOMS attributes could not be fulfilled.");
-		
-		return acs;
-	}
+    if (certChainValidator == null) {
+      String trustAnchorsDir = DefaultVOMSValidator.DEFAULT_TRUST_ANCHORS_DIR;
 
-	
-	private LoadCredentialsStrategy strategyFromParams(ProxyInitParams params){
-		
-		if (params.isNoRegen()){
-			return new LoadProxyCredential(loadCredentialsEventListener, params.getCertFile());
-		}
-		
-		if (params.getCertFile()!=null && params.getKeyFile() == null)
-			return new LoadUserCredential(loadCredentialsEventListener, params.getCertFile());
-		
-		if (params.getCertFile()!=null && params.getKeyFile()!=null)
-			return new LoadUserCredential(loadCredentialsEventListener, params.getCertFile(), params.getKeyFile());
-		
-		return new DefaultLoadCredentialsStrategy(System.getProperty(DefaultLoadCredentialsStrategy.HOME_PROPERTY),
-					DefaultLoadCredentialsStrategy.TMPDIR_PROPERTY,
-					loadCredentialsEventListener);
-		
-	}
-	
-	private X509Credential lookupCredential(ProxyInitParams params) {
+      if (System.getenv(VOMSEnvironmentVariables.X509_CERT_DIR) != null)
+        trustAnchorsDir = System.getenv(VOMSEnvironmentVariables.X509_CERT_DIR);
 
-		PasswordFinder pf = null;
+      if (params.getTrustAnchorsDir() != null)
+        trustAnchorsDir = params.getTrustAnchorsDir();
 
-		if (params.isReadPasswordFromStdin())
-			pf = PasswordFinders.getNoPromptInputStreamPasswordFinder(System.in, System.out);
-		else
-			pf = PasswordFinders.getDefault();
-		
-		LoadCredentialsStrategy loadCredStrategy = strategyFromParams(params);
-		
-		return loadCredStrategy.loadCredentials(pf);
-	}
+      directorySanityChecks(trustAnchorsDir, "Invalid trust anchors location");
+
+      CertificateValidatorBuilder builder = new CertificateValidatorBuilder();
+
+      certChainValidator = builder.trustAnchorsDir(trustAnchorsDir)
+        .storeUpdateListener(storeUpdateListener).lazyAnchorsLoading(true)
+        .validationErrorListener(certChainValidationErrorListener).build();
+    }
+  }
+
+  private VOMSACValidator initVOMSValidator(ProxyInitParams params) {
+
+    if (vomsValidator != null)
+      return vomsValidator;
+
+    String vomsdir = DefaultVOMSTrustStore.DEFAULT_VOMS_DIR;
+
+    if (System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR) != null)
+      vomsdir = System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR);
+
+    if (params.getVomsdir() != null)
+      vomsdir = params.getVomsdir();
+
+    directorySanityChecks(vomsdir, "Invalid vomsdir location");
+
+    VOMSTrustStore trustStore = new DefaultVOMSTrustStore(
+      Arrays.asList(vomsdir), vomsTrustStoreListener);
+
+    vomsValidator = VOMSValidators.newValidator(trustStore, certChainValidator,
+      validationResultListener);
+
+    return vomsValidator;
+  }
+
+  private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
+
+    VOMSACValidator acValidator = initVOMSValidator(params);
+    acValidator.validateACs(acs);
+
+  }
+
+  // Why we have to do this nonsense?
+  private ProxyType extendedProxyTypeAsProxyType(ExtendedProxyType pt) {
+
+    switch (pt) {
+
+    case DRAFT_RFC:
+      return ProxyType.DRAFT_RFC;
+
+    case LEGACY:
+      return ProxyType.LEGACY;
+
+    case RFC3820:
+      return ProxyType.RFC3820;
+
+    default:
+      return null;
+    }
+  }
+
+  private void ensureProxyTypeIsCompatibleWithIssuingCredential(
+    ProxyCertificateOptions options, X509Credential issuingCredential,
+    List<String> proxyCreationWarnings) {
+
+    if (ProxyUtils.isProxy(issuingCredential.getCertificateChain())) {
+
+      ProxyType issuingProxyType = extendedProxyTypeAsProxyType(ProxyHelper
+        .getProxyType(issuingCredential.getCertificateChain()[0]));
+
+      if (!issuingProxyType.equals(options.getType())) {
+        proxyCreationWarnings.add("forced " + issuingProxyType.name()
+          + " proxy type to be compatible with the type of the issuing proxy.");
+        options.setType(issuingProxyType);
+      }
+
+      try {
+
+        boolean issuingProxyIsLimited = ProxyHelper.isLimited(issuingCredential
+          .getCertificateChain()[0]);
+        if (issuingProxyIsLimited && !options.isLimited()) {
+          proxyCreationWarnings
+            .add("forced the creation of a limited proxy to be compatible with the type of the issuing proxy.");
+          limitProxy(options);
+        }
+
+      } catch (IOException e) {
+        throw new VOMSError(e.getMessage(), e);
+      }
+    }
+  }
+
+  private void checkMixedProxyChain(X509Credential issuingCredential) {
+
+    if (ProxyUtils.isProxy(issuingCredential.getCertificateChain())) {
+
+      ProxyChainInfo ci;
+      try {
+        ci = new ProxyChainInfo(issuingCredential.getCertificateChain());
+        if (ci.getProxyType().equals(ProxyChainType.MIXED))
+          throw new VOMSError(
+            "Cannot generate a proxy certificate starting from a mixed type proxy chain.");
+
+      } catch (CertificateException e) {
+        throw new VOMSError(e.getMessage(), e);
+      }
+    }
+  }
+
+  private void ensureProxyLifetimeIsConsistentWithIssuingCredential(
+    ProxyCertificateOptions options, X509Credential issuingCredential,
+    List<String> proxyCreationWarnings) {
+
+    Calendar cal = Calendar.getInstance();
+
+    Date proxyStartTime = cal.getTime();
+
+    cal.add(Calendar.SECOND, options.getLifetime());
+
+    Date proxyEndTime = cal.getTime();
+    Date issuingCredentialEndTime = issuingCredential.getCertificate()
+      .getNotAfter();
+
+    options.setValidityBounds(proxyStartTime, proxyEndTime);
+
+    if (proxyEndTime.after(issuingCredentialEndTime)) {
+
+      proxyCreationWarnings.add("proxy lifetime limited to issuing "
+        + "credential lifetime.");
+      options.setValidityBounds(proxyStartTime, issuingCredentialEndTime);
+    }
+  }
+
+  private void limitProxy(ProxyCertificateOptions proxyOptions) {
+
+    proxyOptions.setLimited(true);
+
+    if (proxyOptions.getType().equals(ProxyType.RFC3820)
+      || proxyOptions.getType().equals(ProxyType.DRAFT_RFC))
+      proxyOptions.setPolicy(new ProxyPolicy(ProxyPolicy.LIMITED_PROXY_OID));
+
+  }
+
+  private void createProxy(ProxyInitParams params, X509Credential credential,
+    List<AttributeCertificate> acs) {
+
+    List<String> proxyCreationWarnings = new ArrayList<String>();
+
+    String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
+
+    String envProxyPath = System
+      .getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
+
+    if (envProxyPath != null)
+      proxyFilePath = envProxyPath;
+
+    if (params.getGeneratedProxyFile() != null)
+      proxyFilePath = params.getGeneratedProxyFile();
+
+    ProxyCertificateOptions proxyOptions = new ProxyCertificateOptions(
+      credential.getCertificateChain());
+
+    proxyOptions.setProxyPathLimit(params.getPathLenConstraint());
+
+    proxyOptions.setLimited(params.isLimited());
+    proxyOptions.setLifetime(params.getProxyLifetimeInSeconds());
+    proxyOptions.setType(params.getProxyType());
+    proxyOptions.setKeyLength(params.getKeySize());
+
+    if (params.isEnforcingChainIntegrity()) {
+
+      checkMixedProxyChain(credential);
+
+      ensureProxyTypeIsCompatibleWithIssuingCredential(proxyOptions,
+        credential, proxyCreationWarnings);
+
+      ensureProxyLifetimeIsConsistentWithIssuingCredential(proxyOptions,
+        credential, proxyCreationWarnings);
+    }
+
+    if (params.isLimited())
+      limitProxy(proxyOptions);
+
+    if (acs != null && !acs.isEmpty())
+      proxyOptions.setAttributeCertificates(acs
+        .toArray(new AttributeCertificate[acs.size()]));
+
+    try {
+
+      ProxyCertificate proxy = ProxyGenerator.generate(proxyOptions,
+        credential.getKey());
+
+      CredentialsUtils.saveProxyCredentials(proxyFilePath,
+        proxy.getCredential());
+      proxyCreationListener.proxyCreated(proxyFilePath, proxy,
+        proxyCreationWarnings);
+
+    } catch (Throwable t) {
+
+      throw new VOMSError(
+        "Error creating proxy certificate: " + t.getMessage(), t);
+    }
+  }
+
+  protected List<String> sortFQANsIfRequested(ProxyInitParams params,
+    List<String> unsortedFQANs) {
+
+    if (params.getFqanOrder() != null && !params.getFqanOrder().isEmpty()) {
+
+      Set<String> fqans = new LinkedHashSet<String>();
+      for (String fqan : params.getFqanOrder()) {
+
+        if (VOMSFQANNamingScheme.isGroup(fqan))
+          fqans.add(fqan);
+
+        if (VOMSFQANNamingScheme.isQualifiedRole(fqan)
+          && unsortedFQANs.contains(fqan))
+          fqans.add(fqan);
+
+      }
+
+      fqans.addAll(unsortedFQANs);
+
+      return new ArrayList<String>(fqans);
+    }
+
+    return unsortedFQANs;
+  }
+
+  protected VOMSESLookupStrategy getVOMSESLookupStrategyFromParams(
+    ProxyInitParams params) {
+
+    if (params.getVomsesLocations() != null
+      && !params.getVomsesLocations().isEmpty())
+      return new BaseVOMSESLookupStrategy(params.getVomsesLocations());
+    else
+      return new DefaultVOMSESLookupStrategy();
+
+  }
+
+  protected List<AttributeCertificate> getAttributeCertificates(
+    ProxyInitParams params, X509Credential cred,
+    VOMSServerInfoStore serverInfoStore) {
+
+    List<String> vomsCommands = params.getVomsCommands();
+
+    if (vomsCommands == null || vomsCommands.isEmpty())
+      return Collections.emptyList();
+
+    Map<String, List<String>> vomsCommandsMap = commandsParser
+      .parseCommands(params.getVomsCommands());
+
+    List<AttributeCertificate> acs = new ArrayList<AttributeCertificate>();
+
+    for (String vo : vomsCommandsMap.keySet()) {
+
+      List<String> fqans = vomsCommandsMap.get(vo);
+
+      VOMSACRequest request = new DefaultVOMSACRequest.Builder(vo)
+        .fqans(sortFQANsIfRequested(params, fqans))
+        .targets(params.getTargets()).lifetime(params.getAcLifetimeInSeconds())
+        .build();
+
+      VOMSACService acService = new DefaultVOMSACService.Builder(
+        certChainValidator)
+        .requestListener(requestListener)
+        .serverInfoStore(serverInfoStore)
+        .vomsesLookupStrategy(getVOMSESLookupStrategyFromParams(params))
+        .protocolListener(protocolListener)
+        .connectTimeout(
+          (int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
+        .readTimeout(
+          (int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
+        .build();
+
+      AttributeCertificate ac = acService.getVOMSAttributeCertificate(cred,
+        request);
+
+      if (ac != null)
+        acs.add(ac);
+    }
+
+    if (!vomsCommandsMap.keySet().isEmpty() && acs.isEmpty())
+      throw new VOMSError(
+        "User's request for VOMS attributes could not be fulfilled.");
+
+    return acs;
+  }
+
+  private LoadCredentialsStrategy strategyFromParams(ProxyInitParams params) {
+
+    if (params.isNoRegen()) {
+      return new LoadProxyCredential(loadCredentialsEventListener,
+        params.getCertFile());
+    }
+
+    if (params.getCertFile() != null && params.getKeyFile() == null)
+      return new LoadUserCredential(loadCredentialsEventListener,
+        params.getCertFile());
+
+    if (params.getCertFile() != null && params.getKeyFile() != null)
+      return new LoadUserCredential(loadCredentialsEventListener,
+        params.getCertFile(), params.getKeyFile());
+
+    return new DefaultLoadCredentialsStrategy(
+      System.getProperty(DefaultLoadCredentialsStrategy.HOME_PROPERTY),
+      DefaultLoadCredentialsStrategy.TMPDIR_PROPERTY,
+      loadCredentialsEventListener);
+
+  }
+
+  private X509Credential lookupCredential(ProxyInitParams params) {
+
+    PasswordFinder pf = null;
+
+    if (params.isReadPasswordFromStdin())
+      pf = PasswordFinders.getNoPromptInputStreamPasswordFinder(System.in,
+        System.out);
+    else
+      pf = PasswordFinders.getDefault();
+
+    LoadCredentialsStrategy loadCredStrategy = strategyFromParams(params);
+
+    return loadCredStrategy.loadCredentials(pf);
+  }
 
 }

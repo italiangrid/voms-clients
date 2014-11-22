@@ -21,35 +21,37 @@ import java.util.ResourceBundle;
 import org.italiangrid.voms.clients.options.VOMSCLIOptionBuilder.BundleKey;
 
 public enum CLIOptionsBundle {
-	common, proxyInit, proxyInfo, proxyDestroy;
+  common, proxyInit, proxyInfo, proxyDestroy;
 
-	private CLIOptionsBundle() {
-		String bundleName = VOMSCLIOptionBuilder.class.getPackage()
-				.getName() + "." + this.name() + "Options";
-		bundle = ResourceBundle.getBundle(bundleName);
-		if (bundle == null)
-			throw new IllegalStateException(
-					"Cannot load VOMS CLI options: options bundle not found: "
-							+ bundleName);
-	}
+  private CLIOptionsBundle() {
 
-	private ResourceBundle bundle;
+    String bundleName = VOMSCLIOptionBuilder.class.getPackage().getName() + "."
+      + this.name() + "Options";
+    bundle = ResourceBundle.getBundle(bundleName);
+    if (bundle == null)
+      throw new IllegalStateException(
+        "Cannot load VOMS CLI options: options bundle not found: " + bundleName);
+  }
 
-	public ResourceBundle getBundle() {
-		return bundle;
-	}
+  private ResourceBundle bundle;
 
-	public String getStringFromBundle(String longOpt, BundleKey key) {
-		String returnValue = null;
+  public ResourceBundle getBundle() {
 
-		try {
+    return bundle;
+  }
 
-			returnValue = getBundle().getString(longOpt + "." + key.name());
+  public String getStringFromBundle(String longOpt, BundleKey key) {
 
-		} catch (MissingResourceException e) {
-			// Swallow exception
-		}
+    String returnValue = null;
 
-		return returnValue;
-	}
+    try {
+
+      returnValue = getBundle().getString(longOpt + "." + key.name());
+
+    } catch (MissingResourceException e) {
+      // Swallow exception
+    }
+
+    return returnValue;
+  }
 }

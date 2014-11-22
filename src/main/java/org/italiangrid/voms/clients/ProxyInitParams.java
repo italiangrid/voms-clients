@@ -23,370 +23,421 @@ import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
 import eu.emi.security.authn.x509.proxy.ProxyType;
 
 /**
- * This class represents the parameters that drive the
- * {@link ProxyInitStrategy} when creating a VOMS proxy.
+ * This class represents the parameters that drive the {@link ProxyInitStrategy}
+ * when creating a VOMS proxy.
  * 
  * @author Andrea Ceccanti
  * 
  */
 public class ProxyInitParams {
 
-	public static final int DEFAULT_PROXY_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12); 
-	public static final int DEFAULT_AC_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12);
-	public static final int DEFAULT_KEY_SIZE = 1024;
-	
-	public static final int DEFAULT_CONNECT_TIMEOUT_IN_SECONDS = 2;
-	
-	private String certFile;
-	private String keyFile;
-	
-	private int keySize = DEFAULT_KEY_SIZE;
-	
-	private String trustAnchorsDir;
-	
-	private String generatedProxyFile;
+  public static final int DEFAULT_PROXY_LIFETIME = (int) TimeUnit.HOURS
+    .toSeconds(12);
+  public static final int DEFAULT_AC_LIFETIME = (int) TimeUnit.HOURS
+    .toSeconds(12);
+  public static final int DEFAULT_KEY_SIZE = 1024;
 
-	private String policyFile;
+  public static final int DEFAULT_CONNECT_TIMEOUT_IN_SECONDS = 2;
 
-	private String policyLanguage;
+  private String certFile;
+  private String keyFile;
 
-	private int pathLenConstraint = Integer.MAX_VALUE;
+  private int keySize = DEFAULT_KEY_SIZE;
 
-	private ProxyType proxyType = ProxyType.LEGACY;
+  private String trustAnchorsDir;
 
-	private int timeoutInSeconds = DEFAULT_CONNECT_TIMEOUT_IN_SECONDS;
+  private String generatedProxyFile;
 
-	private boolean verifyAC = true;
+  private String policyFile;
 
-	private boolean readPasswordFromStdin = false;
-	
-	private boolean limited = false;
+  private String policyLanguage;
 
-	private List<String> vomsCommands;
+  private int pathLenConstraint = Integer.MAX_VALUE;
 
-	private List<String> targets;
-	
-	private List<String> fqanOrder;
-	
-	private int proxyLifetimeInSeconds = DEFAULT_PROXY_LIFETIME;
-	
-	private int acLifetimeInSeconds = DEFAULT_AC_LIFETIME;
-	
-	private boolean validateUserCredential = false;
-	
-	private boolean noRegen = false;
-	
-	private List<String> vomsesLocations;
-	
-	private boolean enforcingChainIntegrity = true;
-	
-	private String vomsdir;
-	
-	
-	/**
-	 * @return the certFile
-	 */
-	public String getCertFile() {
-		return certFile;
-	}
+  private ProxyType proxyType = ProxyType.LEGACY;
 
-	/**
-	 * @param certFile
-	 *            the certFile to set
-	 */
-	public void setCertFile(String certFile) {
-		this.certFile = certFile;
-	}
+  private int timeoutInSeconds = DEFAULT_CONNECT_TIMEOUT_IN_SECONDS;
 
-	/**
-	 * @return the keyFile
-	 */
-	public String getKeyFile() {
-		return keyFile;
-	}
+  private boolean verifyAC = true;
 
-	/**
-	 * @param keyFile
-	 *            the keyFile to set
-	 */
-	public void setKeyFile(String keyFile) {
-		this.keyFile = keyFile;
-	}
+  private boolean readPasswordFromStdin = false;
 
-	/**
-	 * @return the generatedProxyFile
-	 */
-	public String getGeneratedProxyFile() {
-		return generatedProxyFile;
-	}
+  private boolean limited = false;
 
-	/**
-	 * @param generatedProxyFile
-	 *            the generatedProxyFile to set
-	 */
-	public void setGeneratedProxyFile(String generatedProxyFile) {
-		this.generatedProxyFile = generatedProxyFile;
-	}
+  private List<String> vomsCommands;
 
-	
+  private List<String> targets;
 
-	/**
-	 * @return the policyFile
-	 */
-	public String getPolicyFile() {
-		return policyFile;
-	}
+  private List<String> fqanOrder;
 
-	/**
-	 * @param policyFile
-	 *            the policyFile to set
-	 */
-	public void setPolicyFile(String policyFile) {
-		this.policyFile = policyFile;
-	}
+  private int proxyLifetimeInSeconds = DEFAULT_PROXY_LIFETIME;
 
-	/**
-	 * @return the policyLanguage
-	 */
-	public String getPolicyLanguage() {
-		return policyLanguage;
-	}
+  private int acLifetimeInSeconds = DEFAULT_AC_LIFETIME;
 
-	/**
-	 * @param policyLanguage
-	 *            the policyLanguage to set
-	 */
-	public void setPolicyLanguage(String policyLanguage) {
-		this.policyLanguage = policyLanguage;
-	}
+  private boolean validateUserCredential = false;
 
-	/**
-	 * @return the pathLenConstraint
-	 */
-	public int getPathLenConstraint() {
-		return pathLenConstraint;
-	}
+  private boolean noRegen = false;
 
-	/**
-	 * @param pathLenConstraint
-	 *            the pathLenConstraint to set
-	 */
-	public void setPathLenConstraint(int pathLenConstraint) {
-		this.pathLenConstraint = pathLenConstraint;
-	}
+  private List<String> vomsesLocations;
 
-	/**
-	 * @return the proxyType
-	 */
-	public ProxyType getProxyType() {
-		return proxyType;
-	}
+  private boolean enforcingChainIntegrity = true;
 
-	/**
-	 * @param proxyType
-	 *            the proxyType to set
-	 */
-	public void setProxyType(ProxyType proxyType) {
-		this.proxyType = proxyType;
-	}
+  private String vomsdir;
 
-	/**
-	 * @return the timeoutInSeconds
-	 */
-	public int getTimeoutInSeconds() {
-		return timeoutInSeconds;
-	}
+  /**
+   * @return the certFile
+   */
+  public String getCertFile() {
 
-	/**
-	 * @param timeoutInSeconds
-	 *            the timeoutInSeconds to set
-	 */
-	public void setTimeoutInSeconds(int timeoutInSeconds) {
-		this.timeoutInSeconds = timeoutInSeconds;
-	}
+    return certFile;
+  }
 
-	/**
-	 * @return the verifyAC
-	 */
-	public boolean verifyAC() {
-		return verifyAC;
-	}
+  /**
+   * @param certFile
+   *          the certFile to set
+   */
+  public void setCertFile(String certFile) {
 
-	/**
-	 * @param verifyAC
-	 *            the verifyAC to set
-	 */
-	public void setVerifyAC(boolean verifyAC) {
-		this.verifyAC = verifyAC;
-	}
+    this.certFile = certFile;
+  }
 
-	/**
-	 * @return the vomsCommands
-	 */
-	public List<String> getVomsCommands() {
-		return vomsCommands;
-	}
+  /**
+   * @return the keyFile
+   */
+  public String getKeyFile() {
 
-	/**
-	 * @param vomsCommands
-	 *            the vomsCommands to set
-	 */
-	public void setVomsCommands(List<String> vomsCommands) {
-		this.vomsCommands = vomsCommands;
-	}
+    return keyFile;
+  }
 
-	/**
-	 * @return the readPasswordFromStdin
-	 */
-	public boolean isReadPasswordFromStdin() {
-		return readPasswordFromStdin;
-	}
+  /**
+   * @param keyFile
+   *          the keyFile to set
+   */
+  public void setKeyFile(String keyFile) {
 
-	/**
-	 * @param readPasswordFromStdin
-	 *            the readPasswordFromStdin to set
-	 */
-	public void setReadPasswordFromStdin(boolean readPasswordFromStdin) {
-		this.readPasswordFromStdin = readPasswordFromStdin;
-	}
+    this.keyFile = keyFile;
+  }
 
-	/**
-	 * @return the targets
-	 */
-	public List<String> getTargets() {
-		return targets;
-	}
+  /**
+   * @return the generatedProxyFile
+   */
+  public String getGeneratedProxyFile() {
 
-	/**
-	 * @param targets
-	 *            the targets to set
-	 */
-	public void setTargets(List<String> targets) {
-		this.targets = targets;
-	}
+    return generatedProxyFile;
+  }
 
-	/**
-	 * @return the limited
-	 */
-	public boolean isLimited() {
-		return limited;
-	}
+  /**
+   * @param generatedProxyFile
+   *          the generatedProxyFile to set
+   */
+  public void setGeneratedProxyFile(String generatedProxyFile) {
 
-	/**
-	 * @param limited the limited to set
-	 */
-	public void setLimited(boolean limited) {
-		this.limited = limited;
-	}
+    this.generatedProxyFile = generatedProxyFile;
+  }
 
-	/**
-	 * @return the proxyLifetimeInSeconds
-	 */
-	public int getProxyLifetimeInSeconds() {
-		return proxyLifetimeInSeconds;
-	}
+  /**
+   * @return the policyFile
+   */
+  public String getPolicyFile() {
 
-	/**
-	 * @param proxyLifetimeInSeconds the proxyLifetimeInSeconds to set
-	 */
-	public void setProxyLifetimeInSeconds(int proxyLifetimeInSeconds) {
-		this.proxyLifetimeInSeconds = proxyLifetimeInSeconds;
-	}
+    return policyFile;
+  }
 
-	/**
-	 * @return the acLifetimeInSeconds
-	 */
-	public int getAcLifetimeInSeconds() {
-		return acLifetimeInSeconds;
-	}
+  /**
+   * @param policyFile
+   *          the policyFile to set
+   */
+  public void setPolicyFile(String policyFile) {
 
-	/**
-	 * @param acLifetimeInSeconds the acLifetimeInSeconds to set
-	 */
-	public void setAcLifetimeInSeconds(int acLifetimeInSeconds) {
-		this.acLifetimeInSeconds = acLifetimeInSeconds;
-	}
+    this.policyFile = policyFile;
+  }
 
-	/**
-	 * @return the noRegen
-	 */
-	public boolean isNoRegen() {
-		return noRegen;
-	}
+  /**
+   * @return the policyLanguage
+   */
+  public String getPolicyLanguage() {
 
-	/**
-	 * @param noRegen the noRegen to set
-	 */
-	public void setNoRegen(boolean noRegen) {
-		this.noRegen = noRegen;
-	}
+    return policyLanguage;
+  }
 
-	public String getTrustAnchorsDir() {
-		return trustAnchorsDir;
-	}
+  /**
+   * @param policyLanguage
+   *          the policyLanguage to set
+   */
+  public void setPolicyLanguage(String policyLanguage) {
 
-	public void setTrustAnchorsDir(String trustAnchorsDir) {
-		this.trustAnchorsDir = trustAnchorsDir;
-	}
+    this.policyLanguage = policyLanguage;
+  }
 
-	public boolean validateUserCredential() {
-		return validateUserCredential;
-	}
+  /**
+   * @return the pathLenConstraint
+   */
+  public int getPathLenConstraint() {
 
-	public void setValidateUserCredential(boolean validateUserCredential) {
-		this.validateUserCredential = validateUserCredential;
-	}
+    return pathLenConstraint;
+  }
 
-	/**
-	 * @return the keySize
-	 */
-	public int getKeySize() {
-		return keySize;
-	}
+  /**
+   * @param pathLenConstraint
+   *          the pathLenConstraint to set
+   */
+  public void setPathLenConstraint(int pathLenConstraint) {
 
-	/**
-	 * @param keySize the keySize to set
-	 */
-	public void setKeySize(int keySize) {
-		this.keySize = keySize;
-	}
+    this.pathLenConstraint = pathLenConstraint;
+  }
 
-	/**
-	 * @return the fqanOrder
-	 */
-	public List<String> getFqanOrder() {
-		return fqanOrder;
-	}
+  /**
+   * @return the proxyType
+   */
+  public ProxyType getProxyType() {
 
-	/**
-	 * @param fqanOrder the fqanOrder to set
-	 */
-	public void setFqanOrder(List<String> fqanOrder) {
-		this.fqanOrder = fqanOrder;
-	}
+    return proxyType;
+  }
 
-	public List<String> getVomsesLocations() {
-		return vomsesLocations;
-	}
+  /**
+   * @param proxyType
+   *          the proxyType to set
+   */
+  public void setProxyType(ProxyType proxyType) {
 
-	public void setVomsesLocations(List<String> vomsesLocations) {
-		this.vomsesLocations = vomsesLocations;
-	}
+    this.proxyType = proxyType;
+  }
 
-	public boolean isEnforcingChainIntegrity() {
-		return enforcingChainIntegrity;
-	}
+  /**
+   * @return the timeoutInSeconds
+   */
+  public int getTimeoutInSeconds() {
 
-	public void setEnforcingChainIntegrity(boolean enforcingChainIntegrity) {
-		this.enforcingChainIntegrity = enforcingChainIntegrity;
-	}
+    return timeoutInSeconds;
+  }
 
-	public String getVomsdir() {
-		return vomsdir;
-	}
+  /**
+   * @param timeoutInSeconds
+   *          the timeoutInSeconds to set
+   */
+  public void setTimeoutInSeconds(int timeoutInSeconds) {
 
-	public void setVomsdir(String vomsdir) {
-		this.vomsdir = vomsdir;
-	}
-	
+    this.timeoutInSeconds = timeoutInSeconds;
+  }
+
+  /**
+   * @return the verifyAC
+   */
+  public boolean verifyAC() {
+
+    return verifyAC;
+  }
+
+  /**
+   * @param verifyAC
+   *          the verifyAC to set
+   */
+  public void setVerifyAC(boolean verifyAC) {
+
+    this.verifyAC = verifyAC;
+  }
+
+  /**
+   * @return the vomsCommands
+   */
+  public List<String> getVomsCommands() {
+
+    return vomsCommands;
+  }
+
+  /**
+   * @param vomsCommands
+   *          the vomsCommands to set
+   */
+  public void setVomsCommands(List<String> vomsCommands) {
+
+    this.vomsCommands = vomsCommands;
+  }
+
+  /**
+   * @return the readPasswordFromStdin
+   */
+  public boolean isReadPasswordFromStdin() {
+
+    return readPasswordFromStdin;
+  }
+
+  /**
+   * @param readPasswordFromStdin
+   *          the readPasswordFromStdin to set
+   */
+  public void setReadPasswordFromStdin(boolean readPasswordFromStdin) {
+
+    this.readPasswordFromStdin = readPasswordFromStdin;
+  }
+
+  /**
+   * @return the targets
+   */
+  public List<String> getTargets() {
+
+    return targets;
+  }
+
+  /**
+   * @param targets
+   *          the targets to set
+   */
+  public void setTargets(List<String> targets) {
+
+    this.targets = targets;
+  }
+
+  /**
+   * @return the limited
+   */
+  public boolean isLimited() {
+
+    return limited;
+  }
+
+  /**
+   * @param limited
+   *          the limited to set
+   */
+  public void setLimited(boolean limited) {
+
+    this.limited = limited;
+  }
+
+  /**
+   * @return the proxyLifetimeInSeconds
+   */
+  public int getProxyLifetimeInSeconds() {
+
+    return proxyLifetimeInSeconds;
+  }
+
+  /**
+   * @param proxyLifetimeInSeconds
+   *          the proxyLifetimeInSeconds to set
+   */
+  public void setProxyLifetimeInSeconds(int proxyLifetimeInSeconds) {
+
+    this.proxyLifetimeInSeconds = proxyLifetimeInSeconds;
+  }
+
+  /**
+   * @return the acLifetimeInSeconds
+   */
+  public int getAcLifetimeInSeconds() {
+
+    return acLifetimeInSeconds;
+  }
+
+  /**
+   * @param acLifetimeInSeconds
+   *          the acLifetimeInSeconds to set
+   */
+  public void setAcLifetimeInSeconds(int acLifetimeInSeconds) {
+
+    this.acLifetimeInSeconds = acLifetimeInSeconds;
+  }
+
+  /**
+   * @return the noRegen
+   */
+  public boolean isNoRegen() {
+
+    return noRegen;
+  }
+
+  /**
+   * @param noRegen
+   *          the noRegen to set
+   */
+  public void setNoRegen(boolean noRegen) {
+
+    this.noRegen = noRegen;
+  }
+
+  public String getTrustAnchorsDir() {
+
+    return trustAnchorsDir;
+  }
+
+  public void setTrustAnchorsDir(String trustAnchorsDir) {
+
+    this.trustAnchorsDir = trustAnchorsDir;
+  }
+
+  public boolean validateUserCredential() {
+
+    return validateUserCredential;
+  }
+
+  public void setValidateUserCredential(boolean validateUserCredential) {
+
+    this.validateUserCredential = validateUserCredential;
+  }
+
+  /**
+   * @return the keySize
+   */
+  public int getKeySize() {
+
+    return keySize;
+  }
+
+  /**
+   * @param keySize
+   *          the keySize to set
+   */
+  public void setKeySize(int keySize) {
+
+    this.keySize = keySize;
+  }
+
+  /**
+   * @return the fqanOrder
+   */
+  public List<String> getFqanOrder() {
+
+    return fqanOrder;
+  }
+
+  /**
+   * @param fqanOrder
+   *          the fqanOrder to set
+   */
+  public void setFqanOrder(List<String> fqanOrder) {
+
+    this.fqanOrder = fqanOrder;
+  }
+
+  public List<String> getVomsesLocations() {
+
+    return vomsesLocations;
+  }
+
+  public void setVomsesLocations(List<String> vomsesLocations) {
+
+    this.vomsesLocations = vomsesLocations;
+  }
+
+  public boolean isEnforcingChainIntegrity() {
+
+    return enforcingChainIntegrity;
+  }
+
+  public void setEnforcingChainIntegrity(boolean enforcingChainIntegrity) {
+
+    this.enforcingChainIntegrity = enforcingChainIntegrity;
+  }
+
+  public String getVomsdir() {
+
+    return vomsdir;
+  }
+
+  public void setVomsdir(String vomsdir) {
+
+    this.vomsdir = vomsdir;
+  }
+
 }
