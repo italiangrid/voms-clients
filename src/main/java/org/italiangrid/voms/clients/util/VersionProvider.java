@@ -22,6 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.bouncycastle.x509.X509CertificatePair;
+import org.italiangrid.voms.VOMSAttribute;
+import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
+
+import eu.emi.security.authn.x509.X509CertChainValidatorExt;
+
 /**
  * Util class for displaying version information.
  * 
@@ -37,22 +43,30 @@ public class VersionProvider {
    */
   public static void displayVersionInfo(String command) {
 
-    Properties properties = new Properties();
+    String version = ProxyInitStrategy.class.getPackage()
+      .getImplementationVersion();
 
-    InputStream inputStream = VersionProvider.class.getClassLoader()
-      .getResourceAsStream("version.properties");
-
-    try {
-
-      properties.load(inputStream);
-
-    } catch (IOException e) {
-
-      throw new RuntimeException(e);
+    if (version == null) {
+      version = "N/A";
     }
 
-    String version = properties.getProperty("version");
-    System.out.format("%s v. %s\n", command, version);
+    String apiVersion = getJavaAPIVersion();
+    System.out.format("%s v. %s (%s)\n", command, version, apiVersion);
   }
 
+  public static String getJavaAPIVersion() {
+
+    final String vomsAPIVersion  = VOMSAttribute.class.getPackage()
+      .getImplementationVersion();
+    
+    String canlVersion = X509CertChainValidatorExt.class.
+      getPackage().getImplementationVersion();
+    
+    String bcVersion = X509CertificatePair
+      .class.getPackage().getImplementationVersion();
+    
+    return String.format("voms-api-java/%s canl/%s bouncycastle/%s",
+      vomsAPIVersion, canlVersion, bcVersion);
+    
+  }
 }
