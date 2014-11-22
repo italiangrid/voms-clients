@@ -84,6 +84,8 @@ public class ProxyInitParams {
 
   private String vomsdir;
 
+  private boolean skipHostnameChecks = true;
+
   /**
    * @return the certFile
    */
@@ -440,4 +442,16 @@ public class ProxyInitParams {
     this.vomsdir = vomsdir;
   }
 
+  
+  public boolean isSkipHostnameChecks() {
+  
+    return skipHostnameChecks;
+  }
+
+  
+  public void setSkipHostnameChecks(boolean skipHostnameChecks) {
+  
+    this.skipHostnameChecks = skipHostnameChecks;
+  }
+  
 }

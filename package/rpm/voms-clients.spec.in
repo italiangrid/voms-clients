@@ -5,8 +5,8 @@
 %global _varlib /var/lib
 
 Name: voms-clients3
-Version: 3.0.5
-Release: 1%{?dist}
+Version: 3.0.6
+Release: 0%{?dist}
 Summary: The Virtual Organisation Membership Service command line clients
 
 Group: Applications/Internet

@@ -205,6 +205,10 @@ public class VomsProxyInit extends AbstractCLI {
     if (commandLineHasOption(ProxyInitOptions.VOMSDIR))
       params.setVomsdir(getOptionValue(ProxyInitOptions.VOMSDIR));
 
+    if (commandLineHasOption(ProxyInitOptions.SKIP_HOSTNAME_CHECKS)) {
+      params.setSkipHostnameChecks(true);
+    }
+
     return params;
 
   }

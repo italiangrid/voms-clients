@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>voms-clients</artifactId>
-  <version>3.0.5</version>
+  <version>3.0.6.rc0</version>
 
   <name>voms-clients</name>
   <description>VOMS service command-line clients</description>
@@ -44,7 +44,7 @@
     <junit.version>4.10</junit.version>
     <commons-io.version>2.0.1</commons-io.version>
     <commons-cli.version>1.2</commons-cli.version>
-    <voms-api-java.version>3.0.4</voms-api-java.version>
+    <voms-api-java.version>3.0.5.rc0</voms-api-java.version>
 
     <!-- Leave this defined as empty -->
     <voms-clients.libs />
@@ -81,14 +81,19 @@
   </developers>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${plugin.jar.version}</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
 
       <plugin>
         <groupId>com.mycila.maven-license-plugin</groupId>

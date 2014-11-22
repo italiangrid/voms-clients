@@ -534,6 +534,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
           (int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
         .readTimeout(
           (int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
+        .skipHostnameChecks(params.isSkipHostnameChecks())
         .build();
 
       AttributeCertificate ac = acService.getVOMSAttributeCertificate(cred,
