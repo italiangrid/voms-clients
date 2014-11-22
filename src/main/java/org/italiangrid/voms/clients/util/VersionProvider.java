@@ -49,20 +49,20 @@ public class VersionProvider {
     if (version == null) {
       version = "N/A";
     }
-
-    String apiVersion = getJavaAPIVersion();
-    System.out.format("%s v. %s (%s)\n", command, version, apiVersion);
+    
+    System.out.format("%s v. %s (%s)\n", command, version, 
+      getAPIVersionString());
   }
 
-  public static String getJavaAPIVersion() {
+  public static String getAPIVersionString() {
 
     final String vomsAPIVersion  = VOMSAttribute.class.getPackage()
       .getImplementationVersion();
     
-    String canlVersion = X509CertChainValidatorExt.class.
+    final String canlVersion = X509CertChainValidatorExt.class.
       getPackage().getImplementationVersion();
     
-    String bcVersion = X509CertificatePair
+    final String bcVersion = X509CertificatePair
       .class.getPackage().getImplementationVersion();
     
     return String.format("voms-api-java/%s canl/%s bouncycastle/%s",
