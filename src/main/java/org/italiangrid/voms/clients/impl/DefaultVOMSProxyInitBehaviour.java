@@ -405,15 +405,16 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 		
 		List<String> proxyCreationWarnings = new ArrayList<String>();
 		
-		String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
-		
-		String envProxyPath = System.getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
-
-		if (envProxyPath != null)
-			proxyFilePath = envProxyPath;
-		
-		if (params.getGeneratedProxyFile() != null)
-			proxyFilePath = params.getGeneratedProxyFile();
+        String proxyFilePath = null;
+        if (params.getGeneratedProxyFile() != null) {
+            proxyFilePath = params.getGeneratedProxyFile();
+        } else {
+            String envProxyPath = System.getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
+            if (envProxyPath != null)
+                proxyFilePath = envProxyPath;
+            else
+                proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
+        }
 		
 		ProxyCertificateOptions proxyOptions = new ProxyCertificateOptions(credential.getCertificateChain());
 		

@@ -16,11 +16,12 @@
 package org.italiangrid.voms.clients.util;
 
 import org.italiangrid.voms.credential.ProxyNamingPolicy;
+import org.italiangrid.voms.credential.impl.DefaultLoadCredentialsStrategy;
 import org.italiangrid.voms.credential.impl.DefaultProxyPathBuilder;
 
 public class VOMSProxyPathBuilder {
 	
-	private static final String TMP_PATH = "/tmp";
+	private static final String TMP_PATH = System.getProperty(DefaultLoadCredentialsStrategy.TMPDIR_PROPERTY);
 	
 	public static String buildProxyPath(){
 		
