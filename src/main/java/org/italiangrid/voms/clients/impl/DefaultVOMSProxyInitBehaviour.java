@@ -373,9 +373,11 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 			List<String> proxyCreationWarnings){
 		
 		Calendar cal = Calendar.getInstance();
+	    cal.add(Calendar.MINUTE, -5);
 		
 		Date proxyStartTime = cal.getTime();
 		
+        cal = Calendar.getInstance();
 		cal.add(Calendar.SECOND, options.getLifetime());
 		
 		Date proxyEndTime = cal.getTime();
