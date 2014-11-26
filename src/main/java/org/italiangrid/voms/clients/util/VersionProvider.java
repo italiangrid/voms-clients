@@ -18,10 +18,7 @@
  */
 package org.italiangrid.voms.clients.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
+import org.bouncycastle.cert.AttributeCertificateHolder;
 import org.bouncycastle.x509.X509CertificatePair;
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
@@ -49,24 +46,27 @@ public class VersionProvider {
     if (version == null) {
       version = "N/A";
     }
-    
-    System.out.format("%s v. %s (%s)\n", command, version, 
+
+    System.out.format("%s v. %s (%s)\n", command, version,
       getAPIVersionString());
   }
 
   public static String getAPIVersionString() {
 
-    final String vomsAPIVersion  = VOMSAttribute.class.getPackage()
+    final String vomsAPIVersion = VOMSAttribute.class.getPackage()
       .getImplementationVersion();
-    
-    final String canlVersion = X509CertChainValidatorExt.class.
-      getPackage().getImplementationVersion();
-    
-    final String bcVersion = X509CertificatePair
-      .class.getPackage().getImplementationVersion();
-    
-    return String.format("voms-api-java/%s canl/%s bouncycastle/%s",
-      vomsAPIVersion, canlVersion, bcVersion);
-    
+
+    final String canlVersion = X509CertChainValidatorExt.class.getPackage()
+      .getImplementationVersion();
+
+    final String bcVersion = X509CertificatePair.class.getPackage()
+      .getImplementationVersion();
+
+    final String bcMailVersion = AttributeCertificateHolder.class.getPackage()
+      .getImplementationVersion();
+
+    return String.format("voms-api-java/%s canl/%s bouncycastle/%s bcmail/%s",
+      vomsAPIVersion, canlVersion, bcVersion, bcMailVersion);
+
   }
 }
