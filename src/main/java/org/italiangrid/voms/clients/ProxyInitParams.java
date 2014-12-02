@@ -84,7 +84,7 @@ public class ProxyInitParams {
 
   private String vomsdir;
 
-  private boolean skipHostnameChecks = true;
+  private boolean skipHostnameChecks = false;
 
   /**
    * @return the certFile
