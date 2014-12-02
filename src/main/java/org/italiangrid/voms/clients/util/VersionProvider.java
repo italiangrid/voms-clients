@@ -53,6 +53,8 @@ public class VersionProvider {
 
   public static String getAPIVersionString() {
 
+    StringBuilder version = new StringBuilder();
+
     final String vomsAPIVersion = VOMSAttribute.class.getPackage()
       .getImplementationVersion();
 
@@ -65,8 +67,18 @@ public class VersionProvider {
     final String bcMailVersion = AttributeCertificateHolder.class.getPackage()
       .getImplementationVersion();
 
-    return String.format("voms-api-java/%s canl/%s bouncycastle/%s bcmail/%s",
-      vomsAPIVersion, canlVersion, bcVersion, bcMailVersion);
+    version.append(String.format("voms-api-java/%s canl/%s", vomsAPIVersion,
+      canlVersion));
+
+    if (bcVersion != null) {
+      version.append(String.format(" bouncycastle/%s", bcVersion));
+    }
+
+    if (bcMailVersion != null) {
+      version.append(String.format(" bcmail/%s", bcMailVersion));
+    }
+
+    return version.toString();
 
   }
 }
