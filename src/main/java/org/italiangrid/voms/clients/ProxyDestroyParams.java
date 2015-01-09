@@ -17,7 +17,7 @@ package org.italiangrid.voms.clients;
 
 /**
  * 
- * Holder for parameters used by the {@link VomsProxyDestroy} class. 
+ * Holder for parameters used by the {@link VomsProxyDestroy} class.
  * 
  * @author valerioventuri
  *
@@ -39,13 +39,16 @@ public class ProxyDestroyParams {
    * @return the dryRun
    */
   public boolean isDryRun() {
+
     return dryRun;
   }
 
   /**
-   * @param dryRun the dryRun to set
+   * @param dryRun
+   *          the dryRun to set
    */
   public void setDryRun(boolean dryRun) {
+
     this.dryRun = dryRun;
   }
 
@@ -53,14 +56,17 @@ public class ProxyDestroyParams {
    * @return the proxyFile
    */
   public String getProxyFile() {
+
     return proxyFile;
   }
 
   /**
-   * @param proxyFile the proxyFile to set
+   * @param proxyFile
+   *          the proxyFile to set
    */
   public void setProxyFile(String proxyFile) {
+
     this.proxyFile = proxyFile;
   }
-  
+
 }

@@ -43,63 +43,68 @@ public class VomsProxyDestroy extends AbstractCLI {
    * 
    */
   private ProxyDestroyListenerHelper listenerHelper;
-  
-	/**
-	 * The main.
-	 * 
-	 * @param args an array of {@link String} containing commman line options.
-	 */
-	public static void main(String[] args) {
 
-		new VomsProxyDestroy(args);
-	}
+  /**
+   * The main.
+   * 
+   * @param args
+   *          an array of {@link String} containing commman line options.
+   */
+  public static void main(String[] args) {
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param args an array of {@link String} containing command line options.
-	 */
-	public VomsProxyDestroy(String[] args) {
-	  super(COMMAND_NAME);
-	  
-		initOptions();
-		parseOptionsFromCommandLine(args);
-	  listenerHelper = new ProxyDestroyListenerHelper(logger);
-		execute();
-	}
+    new VomsProxyDestroy(args);
+  }
 
-	/**
-	 * Initialize options.
-	 * 
-	 */
-	private void initOptions() {
+  /**
+   * Constructor.
+   * 
+   * @param args
+   *          an array of {@link String} containing command line options.
+   */
+  public VomsProxyDestroy(String[] args) {
 
-	  List<CLIOption> options = new ArrayList<CLIOption>();
-    
+    super(COMMAND_NAME);
+
+    initOptions();
+    parseOptionsFromCommandLine(args);
+    listenerHelper = new ProxyDestroyListenerHelper(logger);
+    execute();
+  }
+
+  /**
+   * Initialize options.
+   * 
+   */
+  private void initOptions() {
+
+    List<CLIOption> options = new ArrayList<CLIOption>();
+
     options.addAll(Arrays.asList(ProxyDestroyOptions.values()));
-    
+
     initOptions(options);
-	}
+  }
 
-	@Override
-	protected void execute() {
-	  
-	  ProxyDestroyParams params = getProxyDestroyParamsFromCommandLine(commandLine);
+  @Override
+  protected void execute() {
 
-	  new DefaultProxyDestroyBehaviour(listenerHelper).destroyProxy(params);
-	}
+    ProxyDestroyParams params = getProxyDestroyParamsFromCommandLine(commandLine);
 
-	/**
-	 * Get option values from a {@link CommandLine} object to build a {@link ProxyDestroyParams} object
-	 * containing the parameters for voms-proxy-destroy. 
-	 * 
-	 * @param commandLine
-	 * @return the parameters for the {@link VomsProxyDestroy} command
-	 */
-	private ProxyDestroyParams getProxyDestroyParamsFromCommandLine(CommandLine commandLine) {
-	  
-	  ProxyDestroyParams params = new ProxyDestroyParams();
-    
+    new DefaultProxyDestroyBehaviour(listenerHelper).destroyProxy(params);
+  }
+
+  /**
+   * Get option values from a {@link CommandLine} object to build a
+   * {@link ProxyDestroyParams} object containing the parameters for
+   * voms-proxy-destroy.
+   * 
+   * @param commandLine
+   * @return the parameters for the {@link VomsProxyDestroy} command
+   */
+  private ProxyDestroyParams getProxyDestroyParamsFromCommandLine(
+    CommandLine commandLine) {
+
+    ProxyDestroyParams params = new ProxyDestroyParams();
+
     if (commandLineHasOption(ProxyDestroyOptions.DRY)) {
       params.setDryRun(true);
     }
@@ -107,8 +112,8 @@ public class VomsProxyDestroy extends AbstractCLI {
     if (commandLineHasOption(ProxyDestroyOptions.FILE)) {
       params.setProxyFile(getOptionValue(ProxyDestroyOptions.FILE));
     }
-    
+
     return params;
-	}
-	
+  }
+
 }

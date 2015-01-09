@@ -27,37 +27,39 @@ import org.italiangrid.voms.VOMSError;
 
 public class InputStreamPasswordFinder implements PasswordFinder {
 
-	InputStream is;
-	PrintStream os;
-	
-	String promptMessage;
+  InputStream is;
+  PrintStream os;
 
-	public InputStreamPasswordFinder(String prompt, InputStream is, OutputStream os) {
-		this.promptMessage = prompt;
-		this.is = is;
-		this.os = new PrintStream(os);
-	}
+  String promptMessage;
 
-	public char[] getPassword() {
-		try {
+  public InputStreamPasswordFinder(String prompt, InputStream is,
+    OutputStream os) {
 
-			if (promptMessage!= null){
-				os.print(promptMessage);
-				os.flush();
-			}
-			
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(is));
-			String passwordLine = reader.readLine();
-			if (passwordLine != null)
-				return passwordLine.toCharArray();
-			return null;
+    this.promptMessage = prompt;
+    this.is = is;
+    this.os = new PrintStream(os);
+  }
 
-		} catch (IOException e) {
+  public char[] getPassword() {
 
-			throw new VOMSError("Error reading password from input stream: "
-					+ e.getMessage(), e);
-		}
-	}
+    try {
+
+      if (promptMessage != null) {
+        os.print(promptMessage);
+        os.flush();
+      }
+
+      BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+      String passwordLine = reader.readLine();
+      if (passwordLine != null)
+        return passwordLine.toCharArray();
+      return null;
+
+    } catch (IOException e) {
+
+      throw new VOMSError("Error reading password from input stream: "
+        + e.getMessage(), e);
+    }
+  }
 
 }

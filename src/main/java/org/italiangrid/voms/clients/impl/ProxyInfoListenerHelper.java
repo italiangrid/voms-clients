@@ -27,14 +27,16 @@ import org.italiangrid.voms.clients.util.MessageLogger;
 
 public class ProxyInfoListenerHelper extends ProxyInitListenerHelper {
 
-	private MessageLogger logger;
+  private MessageLogger logger;
 
-	public ProxyInfoListenerHelper(MessageLogger logger) {
-		super(logger);
-	}
+  public ProxyInfoListenerHelper(MessageLogger logger) {
 
-	public void notifyProxyNotFound() {
-		logger.error("\nProxy file doesn't exist\n");
-	}
+    super(logger);
+  }
+
+  public void notifyProxyNotFound() {
+
+    logger.error("\nProxy file doesn't exist\n");
+  }
 
 }

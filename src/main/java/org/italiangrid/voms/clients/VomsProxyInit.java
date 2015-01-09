@@ -44,248 +44,275 @@ import eu.emi.security.authn.x509.proxy.ProxyType;
  * 
  */
 public class VomsProxyInit extends AbstractCLI {
-	
-	private static final String COMMAND_NAME = "voms-proxy-init";
-	
-	private static final int[] SUPPORTED_KEY_SIZES = {512,1024,2048,4096};
 
-	private static final int EXIT_ERROR_CODE = 1;
-	
-	public static void main(String[] args) {
-		new VomsProxyInit(args);	
-	}
-	
-	/** The implementation of the VOMS proxy init behaviour **/
-	private ProxyInitStrategy proxyInitBehaviour;
+  private static final String COMMAND_NAME = "voms-proxy-init";
 
-	private ProxyInitListenerHelper listenerHelper; 
+  private static final int[] SUPPORTED_KEY_SIZES = { 512, 1024, 2048, 4096 };
 
-	public VomsProxyInit(String[] args) {
-		super(COMMAND_NAME);
-		
-		try{
-			initOptions();
-			parseOptionsFromCommandLine(args);
-			listenerHelper = new ProxyInitListenerHelper(logger);
-			execute();
-		}catch(Throwable t){
-			if (logger != null)
-				logger.error(t);
-			else{
-				System.err.println(t.getMessage());
-				t.printStackTrace(System.err);
-			}
-			System.exit(EXIT_ERROR_CODE);
-		}
-	}
+  private static final int EXIT_ERROR_CODE = 1;
 
-	private ProxyInitStrategy getProxyInitBehaviour(){
-		
-		return new DefaultVOMSProxyInitBehaviour(new DefaultVOMSCommandsParser(), 
-				listenerHelper);
-	}
-	
-	private int parseKeySize(String keySizeParam){
-		try{
-			
-			int keySize = Integer.parseInt(keySizeParam);
-			
-			if (Arrays.binarySearch(SUPPORTED_KEY_SIZES, keySize) < 0)
-				throw new VOMSError("Unsupported key size:"+keySize);
-			
-			return keySize;
-			
-		}catch(NumberFormatException e){
-			throw new VOMSError("Invalid input for key size parameter. Please provide a valid key size value.",e);
-		}
-	}
-	private ProxyInitParams getProxyInitParamsFromCommandLine(
-			CommandLine line) {
+  public static void main(String[] args) {
 
-		ProxyInitParams params = new ProxyInitParams();
-		
-		if (commandLineHasOption(ProxyInitOptions.KEY_SIZE)){
-			params.setKeySize(parseKeySize(getOptionValue(ProxyInitOptions.KEY_SIZE)));
-		}
-		
-		if (commandLineHasOption(ProxyInitOptions.ENABLE_STDIN_PWD))
-			params.setReadPasswordFromStdin(true);
+    new VomsProxyInit(args);
+  }
 
-		if (commandLineHasOption(ProxyInitOptions.LIMITED_PROXY))
-			params.setLimited(true);
+  /** The implementation of the VOMS proxy init behaviour **/
+  private ProxyInitStrategy proxyInitBehaviour;
 
-		if (commandLineHasOption(ProxyInitOptions.PATHLEN_CONSTRAINT))
-			params.setPathLenConstraint(Integer.parseInt(getOptionValue(ProxyInitOptions.PATHLEN_CONSTRAINT)));
-		
-		if (commandLineHasOption(ProxyInitOptions.CERT_LOCATION))
-			params.setCertFile(getOptionValue(ProxyInitOptions.CERT_LOCATION));
+  private ProxyInitListenerHelper listenerHelper;
 
-		if (commandLineHasOption(ProxyInitOptions.KEY_LOCATION))
-			params.setKeyFile(getOptionValue(ProxyInitOptions.KEY_LOCATION));
+  public VomsProxyInit(String[] args) {
 
-		if (commandLineHasOption(ProxyInitOptions.PROXY_LOCATION))
-			params.setGeneratedProxyFile(getOptionValue(ProxyInitOptions.PROXY_LOCATION));
-		
-		if (commandLineHasOption(ProxyInitOptions.VALIDITY)){
-			int lifetimeInSeconds = parseLifeTimeInHoursAndMinutesString(getOptionValue(ProxyInitOptions.VALIDITY), 
-					ProxyInitOptions.VALIDITY);
-		
-			params.setAcLifetimeInSeconds(lifetimeInSeconds);
-			params.setProxyLifetimeInSeconds(lifetimeInSeconds);
-		}
-		
-		if (commandLineHasOption(ProxyInitOptions.AC_LIFETIME))
-			params.setAcLifetimeInSeconds(parseLifeTimeInHoursAndMinutesString(
-					getOptionValue(ProxyInitOptions.AC_LIFETIME), 
-					ProxyInitOptions.AC_LIFETIME));
-		
-		if (commandLineHasOption((ProxyInitOptions.PROXY_LIFETIME_IN_HOURS)))
-			params.setProxyLifetimeInSeconds(parseLifetimeInHoursString(getOptionValue(ProxyInitOptions.PROXY_LIFETIME_IN_HOURS), 
-					ProxyInitOptions.PROXY_LIFETIME_IN_HOURS));
-		
-		if (commandLineHasOption(ProxyInitOptions.VOMS_COMMAND))
-			params.setVomsCommands(getOptionValues(ProxyInitOptions.VOMS_COMMAND));
-		
-		if (commandLineHasOption(ProxyInitOptions.VERIFY_CERT))
-			params.setValidateUserCredential(true);
-		
-		if (commandLineHasOption(ProxyInitOptions.PROXY_NOREGEN))
-			params.setNoRegen(true);
-		
-		if (commandLineHasOption(ProxyInitOptions.SKIP_AC_VERIFICATION))
-			params.setVerifyAC(false);
-		
-		if (commandLineHasOption(ProxyInitOptions.SKIP_INTEGRITY_CHECKS))
-			params.setEnforcingChainIntegrity(false);
-		
-		if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
-			params.setFqanOrder(fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
+    super(COMMAND_NAME);
 
-		if (commandLineHasOption(ProxyInitOptions.RFC_PROXY))
-			params.setProxyType(ProxyType.RFC3820);
-		
-		if (commandLineHasOption(ProxyInitOptions.PROXY_VERSION))
-			params.setProxyType(proxyTypeFromVersion(getOptionValue(ProxyInitOptions.PROXY_VERSION)));
-		
-		if (commandLineHasOption(ProxyInitOptions.TARGET_HOSTNAME))
-			params.setTargets(Arrays.asList(getOptionValue(ProxyInitOptions.TARGET_HOSTNAME)));
-	
-		if (commandLineHasOption(ProxyInitOptions.VOMSES_LOCATION))
-			params.setVomsesLocations(getOptionValues(ProxyInitOptions.VOMSES_LOCATION));
-			
-		if (commandLineHasOption(ProxyInitOptions.IGNORE_WARNINGS))
-			listenerHelper = new ProxyInitListenerHelper(logger, WARNING_POLICY.ignoreWarnings);
-		
-		if (commandLineHasOption(ProxyInitOptions.FAIL_ON_WARN))
-			listenerHelper = new ProxyInitListenerHelper(logger, WARNING_POLICY.failOnWarnings);
-		
-		if (commandLineHasOption(ProxyInitOptions.TIMEOUT))
-			params.setTimeoutInSeconds(parseConnectionTimeout(getOptionValue(ProxyInitOptions.TIMEOUT)));
+    try {
+      initOptions();
+      parseOptionsFromCommandLine(args);
+      listenerHelper = new ProxyInitListenerHelper(logger);
+      execute();
+    } catch (Throwable t) {
+      if (logger != null)
+        logger.error(t);
+      else {
+        System.err.println(t.getMessage());
+        t.printStackTrace(System.err);
+      }
+      System.exit(EXIT_ERROR_CODE);
+    }
+  }
 
-		if (commandLineHasOption(ProxyInitOptions.TRUSTED_CERT_LOCATION))
-			params.setTrustAnchorsDir(getOptionValue(ProxyInitOptions.TRUSTED_CERT_LOCATION));
-		
-		if (commandLineHasOption(ProxyInitOptions.VOMSDIR))
-			params.setVomsdir(getOptionValue(ProxyInitOptions.VOMSDIR));
-		
-		return params;
+  private ProxyInitStrategy getProxyInitBehaviour() {
 
-	}
+    return new DefaultVOMSProxyInitBehaviour(new DefaultVOMSCommandsParser(),
+      listenerHelper);
+  }
 
-	private ProxyType proxyTypeFromVersion(String version){
-		try{
-			int versionNumber = Integer.parseInt(version);
-			
-			if (versionNumber == 2)
-				return ProxyType.LEGACY;
-			else if (versionNumber == 3)
-				return ProxyType.DRAFT_RFC;
-			else if (versionNumber == 4)
-				return ProxyType.RFC3820;
-			
-			throw new VOMSError("Please specify a valid value for proxyversion: (2-> legacy, 3-> draft rfc, 4-> rfc).");
-		}catch(NumberFormatException e){
-			throw new VOMSError("Please specify a valid value for proxyversion.");
-		}
-	}
-	
-	private void initOptions() {
+  private int parseKeySize(String keySizeParam) {
 
-		List<CLIOption> options = new ArrayList<CLIOption>();
-		
-		options.addAll(Arrays.asList(CommonOptions.values()));
-		options.addAll(Arrays.asList(ProxyInitOptions.values()));
-		
-		initOptions(options);
-	}
-	
-	private List<String> fqansSanityChecks(List<String> fqans){
-		
-		for (String f: fqans)
-			VOMSFQANNamingScheme.checkSyntax(f);
-		
-		return fqans;
-	}
-	
-	private int parseLifetimeInHoursString(String proxyLifetimeProperty, CLIOption option){
-		
-		try{
-			return TimeUtils.parseLifetimeInHours(proxyLifetimeProperty);
-		}catch (ParseException e){
-			throw new VOMSError("Invalid format for the time interval option '"
-					+ option.getLongOptionName()
-					+ "'. It should follow the hh pattern.",e);
-		}
-		
-	}
-	private int parseLifeTimeInHoursAndMinutesString(String acLifetimeProperty,
-			CLIOption option) {
+    try {
 
-		try {
-			
-			return TimeUtils.parseLifetimeInHoursAndMinutes(acLifetimeProperty);
+      int keySize = Integer.parseInt(keySizeParam);
 
-		} catch (ParseException e) {
-			throw new VOMSError("Invalid format for the time interval option '"
-					+ option.getLongOptionName()
-					+ "'. It should follow the hh:mm pattern.",e);
-		}
-	}
+      if (Arrays.binarySearch(SUPPORTED_KEY_SIZES, keySize) < 0)
+        throw new VOMSError("Unsupported key size:" + keySize);
 
-	private int parseConnectionTimeout(String timeoutStringValue){
-		int timeoutInSeconds = 0;
-		
-		try{
-			timeoutInSeconds = Integer.parseInt(timeoutStringValue);
-			
-			if (timeoutInSeconds < 0)
-				throw new VOMSError("Invalid value for the timeout option. It should be a positive integer.");
-			
-		}catch(NumberFormatException e){
-			throw new VOMSError("Invalid value for the timeout option. It should be a positive integer.");
-		}
-		
-		
-		return timeoutInSeconds;
-	}
-	@Override
-	protected void execute() {
-		ProxyInitParams params = getProxyInitParamsFromCommandLine(commandLine);
+      return keySize;
 
-		try {
+    } catch (NumberFormatException e) {
+      throw new VOMSError(
+        "Invalid input for key size parameter. Please provide a valid key size value.",
+        e);
+    }
+  }
 
-			proxyInitBehaviour = getProxyInitBehaviour();
-			proxyInitBehaviour.initProxy(params);
-			
-			if (listenerHelper.hadValidationErrors()){
-			  System.exit(EXIT_ERROR_CODE);
-			}
+  private ProxyInitParams getProxyInitParamsFromCommandLine(CommandLine line) {
 
-		} catch (Throwable t) {
-			logger.error(t);
-			System.exit(EXIT_ERROR_CODE);
-		}
-	}
+    ProxyInitParams params = new ProxyInitParams();
+
+    if (commandLineHasOption(ProxyInitOptions.KEY_SIZE)) {
+      params
+        .setKeySize(parseKeySize(getOptionValue(ProxyInitOptions.KEY_SIZE)));
+    }
+
+    if (commandLineHasOption(ProxyInitOptions.ENABLE_STDIN_PWD))
+      params.setReadPasswordFromStdin(true);
+
+    if (commandLineHasOption(ProxyInitOptions.LIMITED_PROXY))
+      params.setLimited(true);
+
+    if (commandLineHasOption(ProxyInitOptions.PATHLEN_CONSTRAINT))
+      params.setPathLenConstraint(Integer
+        .parseInt(getOptionValue(ProxyInitOptions.PATHLEN_CONSTRAINT)));
+
+    if (commandLineHasOption(ProxyInitOptions.CERT_LOCATION))
+      params.setCertFile(getOptionValue(ProxyInitOptions.CERT_LOCATION));
+
+    if (commandLineHasOption(ProxyInitOptions.KEY_LOCATION))
+      params.setKeyFile(getOptionValue(ProxyInitOptions.KEY_LOCATION));
+
+    if (commandLineHasOption(ProxyInitOptions.PROXY_LOCATION))
+      params
+        .setGeneratedProxyFile(getOptionValue(ProxyInitOptions.PROXY_LOCATION));
+
+    if (commandLineHasOption(ProxyInitOptions.VALIDITY)) {
+      int lifetimeInSeconds = parseLifeTimeInHoursAndMinutesString(
+        getOptionValue(ProxyInitOptions.VALIDITY), ProxyInitOptions.VALIDITY);
+
+      params.setAcLifetimeInSeconds(lifetimeInSeconds);
+      params.setProxyLifetimeInSeconds(lifetimeInSeconds);
+    }
+
+    if (commandLineHasOption(ProxyInitOptions.AC_LIFETIME))
+      params.setAcLifetimeInSeconds(parseLifeTimeInHoursAndMinutesString(
+        getOptionValue(ProxyInitOptions.AC_LIFETIME),
+        ProxyInitOptions.AC_LIFETIME));
+
+    if (commandLineHasOption((ProxyInitOptions.PROXY_LIFETIME_IN_HOURS)))
+      params.setProxyLifetimeInSeconds(parseLifetimeInHoursString(
+        getOptionValue(ProxyInitOptions.PROXY_LIFETIME_IN_HOURS),
+        ProxyInitOptions.PROXY_LIFETIME_IN_HOURS));
+
+    if (commandLineHasOption(ProxyInitOptions.VOMS_COMMAND))
+      params.setVomsCommands(getOptionValues(ProxyInitOptions.VOMS_COMMAND));
+
+    if (commandLineHasOption(ProxyInitOptions.VERIFY_CERT))
+      params.setValidateUserCredential(true);
+
+    if (commandLineHasOption(ProxyInitOptions.PROXY_NOREGEN))
+      params.setNoRegen(true);
+
+    if (commandLineHasOption(ProxyInitOptions.SKIP_AC_VERIFICATION))
+      params.setVerifyAC(false);
+
+    if (commandLineHasOption(ProxyInitOptions.SKIP_INTEGRITY_CHECKS))
+      params.setEnforcingChainIntegrity(false);
+
+    if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
+      params
+        .setFqanOrder(fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
+
+    if (commandLineHasOption(ProxyInitOptions.RFC_PROXY))
+      params.setProxyType(ProxyType.RFC3820);
+
+    if (commandLineHasOption(ProxyInitOptions.PROXY_VERSION))
+      params
+        .setProxyType(proxyTypeFromVersion(getOptionValue(ProxyInitOptions.PROXY_VERSION)));
+
+    if (commandLineHasOption(ProxyInitOptions.TARGET_HOSTNAME))
+      params.setTargets(Arrays
+        .asList(getOptionValue(ProxyInitOptions.TARGET_HOSTNAME)));
+
+    if (commandLineHasOption(ProxyInitOptions.VOMSES_LOCATION))
+      params
+        .setVomsesLocations(getOptionValues(ProxyInitOptions.VOMSES_LOCATION));
+
+    if (commandLineHasOption(ProxyInitOptions.IGNORE_WARNINGS))
+      listenerHelper = new ProxyInitListenerHelper(logger,
+        WARNING_POLICY.ignoreWarnings);
+
+    if (commandLineHasOption(ProxyInitOptions.FAIL_ON_WARN))
+      listenerHelper = new ProxyInitListenerHelper(logger,
+        WARNING_POLICY.failOnWarnings);
+
+    if (commandLineHasOption(ProxyInitOptions.TIMEOUT))
+      params
+        .setTimeoutInSeconds(parseConnectionTimeout(getOptionValue(ProxyInitOptions.TIMEOUT)));
+
+    if (commandLineHasOption(ProxyInitOptions.TRUSTED_CERT_LOCATION))
+      params
+        .setTrustAnchorsDir(getOptionValue(ProxyInitOptions.TRUSTED_CERT_LOCATION));
+
+    if (commandLineHasOption(ProxyInitOptions.VOMSDIR))
+      params.setVomsdir(getOptionValue(ProxyInitOptions.VOMSDIR));
+
+    if (commandLineHasOption(ProxyInitOptions.SKIP_HOSTNAME_CHECKS)) {
+      params.setSkipHostnameChecks(true);
+    }
+
+    return params;
+
+  }
+
+  private ProxyType proxyTypeFromVersion(String version) {
+
+    try {
+      int versionNumber = Integer.parseInt(version);
+
+      if (versionNumber == 2)
+        return ProxyType.LEGACY;
+      else if (versionNumber == 3)
+        return ProxyType.DRAFT_RFC;
+      else if (versionNumber == 4)
+        return ProxyType.RFC3820;
+
+      throw new VOMSError(
+        "Please specify a valid value for proxyversion: (2-> legacy, 3-> draft rfc, 4-> rfc).");
+    } catch (NumberFormatException e) {
+      throw new VOMSError("Please specify a valid value for proxyversion.");
+    }
+  }
+
+  private void initOptions() {
+
+    List<CLIOption> options = new ArrayList<CLIOption>();
+
+    options.addAll(Arrays.asList(CommonOptions.values()));
+    options.addAll(Arrays.asList(ProxyInitOptions.values()));
+
+    initOptions(options);
+  }
+
+  private List<String> fqansSanityChecks(List<String> fqans) {
+
+    for (String f : fqans)
+      VOMSFQANNamingScheme.checkSyntax(f);
+
+    return fqans;
+  }
+
+  private int parseLifetimeInHoursString(String proxyLifetimeProperty,
+    CLIOption option) {
+
+    try {
+      return TimeUtils.parseLifetimeInHours(proxyLifetimeProperty);
+    } catch (ParseException e) {
+      throw new VOMSError("Invalid format for the time interval option '"
+        + option.getLongOptionName() + "'. It should follow the hh pattern.", e);
+    }
+
+  }
+
+  private int parseLifeTimeInHoursAndMinutesString(String acLifetimeProperty,
+    CLIOption option) {
+
+    try {
+
+      return TimeUtils.parseLifetimeInHoursAndMinutes(acLifetimeProperty);
+
+    } catch (ParseException e) {
+      throw new VOMSError(
+        "Invalid format for the time interval option '"
+          + option.getLongOptionName()
+          + "'. It should follow the hh:mm pattern.", e);
+    }
+  }
+
+  private int parseConnectionTimeout(String timeoutStringValue) {
+
+    int timeoutInSeconds = 0;
+
+    try {
+      timeoutInSeconds = Integer.parseInt(timeoutStringValue);
+
+      if (timeoutInSeconds < 0)
+        throw new VOMSError(
+          "Invalid value for the timeout option. It should be a positive integer.");
+
+    } catch (NumberFormatException e) {
+      throw new VOMSError(
+        "Invalid value for the timeout option. It should be a positive integer.");
+    }
+
+    return timeoutInSeconds;
+  }
+
+  @Override
+  protected void execute() {
+
+    ProxyInitParams params = getProxyInitParamsFromCommandLine(commandLine);
+
+    try {
+
+      proxyInitBehaviour = getProxyInitBehaviour();
+      proxyInitBehaviour.initProxy(params);
+
+      if (listenerHelper.hadValidationErrors()) {
+        System.exit(EXIT_ERROR_CODE);
+      }
+
+    } catch (Throwable t) {
+      logger.error(t);
+      System.exit(EXIT_ERROR_CODE);
+    }
+  }
 }
-
-

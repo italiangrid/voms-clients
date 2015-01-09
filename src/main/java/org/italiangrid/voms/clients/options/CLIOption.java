@@ -19,7 +19,8 @@ import org.apache.commons.cli.Option;
 
 public interface CLIOption {
 
-	public Option getOption();
-	public String getLongOptionName();
-	
+  public Option getOption();
+
+  public String getLongOptionName();
+
 }

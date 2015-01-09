@@ -28,10 +28,10 @@ public interface ProxyDestroyListenerAdapter {
    * 
    */
   public void notifyProxyNotFound();
-  
+
   /**
    * 
    */
   public void warnProxyToRemove(String proxyFile);
-  
+
 }

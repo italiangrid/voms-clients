@@ -18,9 +18,12 @@
  */
 package org.italiangrid.voms.clients.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import org.bouncycastle.cert.AttributeCertificateHolder;
+import org.bouncycastle.x509.X509CertificatePair;
+import org.italiangrid.voms.VOMSAttribute;
+import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
+
+import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 
 /**
  * Util class for displaying version information.
@@ -30,29 +33,52 @@ import java.util.Properties;
  */
 public class VersionProvider {
 
-	/**
-	 * Display version information.
-	 * 
-	 * @param command
-	 */
-	public static void displayVersionInfo(String command) {
+  /**
+   * Display version information.
+   * 
+   * @param command
+   */
+  public static void displayVersionInfo(String command) {
 
-		Properties properties = new Properties();
+    String version = ProxyInitStrategy.class.getPackage()
+      .getImplementationVersion();
 
-		InputStream inputStream = VersionProvider.class.getClassLoader()
-				.getResourceAsStream("version.properties");
+    if (version == null) {
+      version = "N/A";
+    }
 
-		try {
+    System.out.format("%s v. %s (%s)\n", command, version,
+      getAPIVersionString());
+  }
 
-			properties.load(inputStream);
+  public static String getAPIVersionString() {
 
-		} catch (IOException e) {
+    StringBuilder version = new StringBuilder();
 
-			throw new RuntimeException(e);
-		}
+    final String vomsAPIVersion = VOMSAttribute.class.getPackage()
+      .getImplementationVersion();
 
-		String version = properties.getProperty("version");
-		System.out.format("%s v. %s\n", command, version);
-	}
+    final String canlVersion = X509CertChainValidatorExt.class.getPackage()
+      .getImplementationVersion();
 
+    final String bcVersion = X509CertificatePair.class.getPackage()
+      .getImplementationVersion();
+
+    final String bcMailVersion = AttributeCertificateHolder.class.getPackage()
+      .getImplementationVersion();
+
+    version.append(String.format("voms-api-java/%s canl/%s", vomsAPIVersion,
+      canlVersion));
+
+    if (bcVersion != null) {
+      version.append(String.format(" bouncycastle/%s", bcVersion));
+    }
+
+    if (bcMailVersion != null) {
+      version.append(String.format(" bcmail/%s", bcMailVersion));
+    }
+
+    return version.toString();
+
+  }
 }

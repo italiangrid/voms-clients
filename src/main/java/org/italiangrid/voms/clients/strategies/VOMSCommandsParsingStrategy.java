@@ -20,6 +20,6 @@ import java.util.Map;
 
 public interface VOMSCommandsParsingStrategy {
 
-	public Map<String, List<String>> parseCommands(List<String> commands);
+  public Map<String, List<String>> parseCommands(List<String> commands);
 
 }

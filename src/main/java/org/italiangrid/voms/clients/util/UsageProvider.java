@@ -30,13 +30,15 @@ public class UsageProvider {
   /**
    * Displays usage.
    * 
-   * @param cmdLineSyntax the string that will be displayed on top of the usage message
-   * @param options the command options
+   * @param cmdLineSyntax
+   *          the string that will be displayed on top of the usage message
+   * @param options
+   *          the command options
    */
   public static void displayUsage(String cmdLineSyntax, Options options) {
-    
+
     HelpFormatter helpFormatter = new HelpFormatter();
     helpFormatter.printHelp(cmdLineSyntax, options);
   }
-  
+
 }

@@ -29,28 +29,33 @@ import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
  *
  */
 public class DefaultProxyDestroyBehaviour implements ProxyDestroyBehaviour {
-  
+
   /**
    * The {@link ProxyDestroyListenerAdapter}.
    * 
    */
   private ProxyDestroyListenerAdapter listener;
-  
+
   /**
    * Constructor that takes a {@link ProxyDestroyListenerAdapter}.
    * 
    * @param listener
    */
   public DefaultProxyDestroyBehaviour(ProxyDestroyListenerAdapter listener) {
+
     this.listener = listener;
   }
-  
-  /* (non-Javadoc)
-   * @see org.italiangrid.voms.clients.ProxyDestroyBehaviourInt#destroyProxy(org.italiangrid.voms.clients.ProxyDestroyParams)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.italiangrid.voms.clients.ProxyDestroyBehaviourInt#destroyProxy(org.
+   * italiangrid.voms.clients.ProxyDestroyParams)
    */
   @Override
   public void destroyProxy(ProxyDestroyParams params) {
-    
+
     if (params.getProxyFile() == null) {
 
       params.setProxyFile(VOMSProxyPathBuilder.buildProxyPath());
@@ -68,12 +73,12 @@ public class DefaultProxyDestroyBehaviour implements ProxyDestroyBehaviour {
     if (params.isDryRun()) {
 
       listener.warnProxyToRemove(params.getProxyFile());
-      
+
       System.exit(0);
     }
-      
-    file.delete(); 
-    
+
+    file.delete();
+
   }
 
 }

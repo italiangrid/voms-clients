@@ -26,154 +26,168 @@ import java.util.EnumSet;
  */
 
 public class ProxyInfoParams {
-	
-	public enum PrintOption {
 
-		SUBJECT,
+  public enum PrintOption {
 
-		ISSUER,
+    SUBJECT,
 
-		PROXY_EXISTS,
+    ISSUER,
 
-		AC_EXISTS,
+    PROXY_EXISTS,
 
-		CHAIN,
+    AC_EXISTS,
 
-		IDENTITY,
+    CHAIN,
 
-		TYPE,
+    IDENTITY,
 
-		TIMELEFT,
+    TYPE,
 
-		KEYSIZE,
+    TIMELEFT,
 
-		ALL_OPTIONS,
+    KEYSIZE,
 
-		TEXT,
+    ALL_OPTIONS,
 
-		PROXY_PATH,
+    TEXT,
 
-		VONAME,
+    PROXY_PATH,
 
-		FQAN,
+    VONAME,
 
-		ACSUBJECT,
+    FQAN,
 
-		ACISSUER,
+    ACSUBJECT,
 
-		ACTIMELEFT,
+    ACISSUER,
 
-		ACSERIAL,
+    ACTIMELEFT,
 
-		SERVER_URI,
+    ACSERIAL,
 
-		KEYUSAGE,
+    SERVER_URI,
 
-		PROXY_TIME_VALIDITY,
+    KEYUSAGE,
 
-		PROXY_HOURS_VALIDITY,
+    PROXY_TIME_VALIDITY,
 
-		PROXY_STRENGTH_VALIDITY;
-	}
+    PROXY_HOURS_VALIDITY,
 
-	private final EnumSet<PrintOption> setOfPrintOptions = EnumSet
-			.noneOf(PrintOption.class);
-	
-	public final EnumSet<PrintOption> acOptions = EnumSet.of(PrintOption.AC_EXISTS, 
-			PrintOption.ACISSUER,
-			PrintOption.ACSERIAL,
-			PrintOption.ACSUBJECT,
-			PrintOption.ACTIMELEFT,
-			PrintOption.SERVER_URI,
-			PrintOption.VONAME,
-			PrintOption.FQAN);
-			
-	/**
-	 * Name of the proxy certificate file.
-	 */
+    PROXY_STRENGTH_VALIDITY;
+  }
 
-	private String proxyFile;
+  private final EnumSet<PrintOption> setOfPrintOptions = EnumSet
+    .noneOf(PrintOption.class);
 
-	private boolean verifyAC = true;
+  public final EnumSet<PrintOption> acOptions = EnumSet.of(
+    PrintOption.AC_EXISTS, PrintOption.ACISSUER, PrintOption.ACSERIAL,
+    PrintOption.ACSUBJECT, PrintOption.ACTIMELEFT, PrintOption.SERVER_URI,
+    PrintOption.VONAME, PrintOption.FQAN);
 
-	private String ACVO;
+  /**
+   * Name of the proxy certificate file.
+   */
 
-	private String keyLength;
+  private String proxyFile;
 
-	private String validTime;
+  private boolean verifyAC = true;
 
-	private String validHours;
+  private String ACVO;
 
-	public String getProxyFile() {
-		return proxyFile;
-	}
+  private String keyLength;
 
-	public void setProxyFile(String proxyFile) {
-		this.proxyFile = proxyFile;
-	}
+  private String validTime;
 
-	public boolean isVerifyAC() {
-		return verifyAC;
-	}
+  private String validHours;
 
-	public void setVerifyAC(boolean verifyAC) {
-		this.verifyAC = verifyAC;
-	}
+  public String getProxyFile() {
 
-	public void addPrintOption(PrintOption opt) {
-		setOfPrintOptions.add(opt);
-	}
+    return proxyFile;
+  }
 
-	public boolean containsOption(PrintOption opt) {
-		return setOfPrintOptions.contains(opt);
-	}
+  public void setProxyFile(String proxyFile) {
 
-	public boolean hasACOptions(){
-		for (PrintOption p: acOptions)
-			if (setOfPrintOptions.contains(p))
-				return true;
-		
-		return false;
-	}
-	public String getACVO() {
-		return ACVO;
-	}
+    this.proxyFile = proxyFile;
+  }
 
-	public void setACVO(String aCVO) {
-		ACVO = aCVO;
-	}
+  public boolean isVerifyAC() {
 
-	public String getKeyLength() {
-		return keyLength;
-	}
+    return verifyAC;
+  }
 
-	public void setKeyLength(String keyLength) {
-		this.keyLength = keyLength;
-	}
+  public void setVerifyAC(boolean verifyAC) {
 
-	public String getValidTime() {
-		return validTime;
-	}
+    this.verifyAC = verifyAC;
+  }
 
-	public void setValidTime(String validTime) {
-		this.validTime = validTime;
-	}
+  public void addPrintOption(PrintOption opt) {
 
-	public String getValidHours() {
-		return validHours;
-	}
+    setOfPrintOptions.add(opt);
+  }
 
-	public void setValidHours(String validHours) {
-		this.validHours = validHours;
-	}
+  public boolean containsOption(PrintOption opt) {
 
-	public boolean isEmpty() {
-		return setOfPrintOptions.isEmpty();
-	}
+    return setOfPrintOptions.contains(opt);
+  }
 
-	public int getNumberOfOptions() {
-		return setOfPrintOptions.size();
+  public boolean hasACOptions() {
 
-	}
+    for (PrintOption p : acOptions)
+      if (setOfPrintOptions.contains(p))
+        return true;
+
+    return false;
+  }
+
+  public String getACVO() {
+
+    return ACVO;
+  }
+
+  public void setACVO(String aCVO) {
+
+    ACVO = aCVO;
+  }
+
+  public String getKeyLength() {
+
+    return keyLength;
+  }
+
+  public void setKeyLength(String keyLength) {
+
+    this.keyLength = keyLength;
+  }
+
+  public String getValidTime() {
+
+    return validTime;
+  }
+
+  public void setValidTime(String validTime) {
+
+    this.validTime = validTime;
+  }
+
+  public String getValidHours() {
+
+    return validHours;
+  }
+
+  public void setValidHours(String validHours) {
+
+    this.validHours = validHours;
+  }
+
+  public boolean isEmpty() {
+
+    return setOfPrintOptions.isEmpty();
+  }
+
+  public int getNumberOfOptions() {
+
+    return setOfPrintOptions.size();
+
+  }
 
 }
