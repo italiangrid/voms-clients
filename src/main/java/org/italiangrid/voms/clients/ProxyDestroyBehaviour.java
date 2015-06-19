@@ -27,7 +27,7 @@ public interface ProxyDestroyBehaviour {
    * 
    * The method implementing the voms-proxy-destroy behaviour.
    * 
-   * @param params
+   * @param params Parameters
    */
   void destroyProxy(ProxyDestroyParams params);
 

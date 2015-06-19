@@ -31,6 +31,8 @@ public interface ProxyDestroyListenerAdapter {
 
   /**
    * 
+   * 
+   * @param proxyFile Proxy file
    */
   public void warnProxyToRemove(String proxyFile);
 
