@@ -37,6 +37,7 @@ public class VersionProvider {
    * Display version information.
    * 
    * @param command
+   *    a command string
    */
   public static void displayVersionInfo(String command) {
 

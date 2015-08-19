@@ -30,7 +30,8 @@ public interface ProxyDestroyListenerAdapter {
   public void notifyProxyNotFound();
 
   /**
-   * 
+   * @param proxyFile
+   *          the name of the proxy that is about to be removed
    */
   public void warnProxyToRemove(String proxyFile);
 
