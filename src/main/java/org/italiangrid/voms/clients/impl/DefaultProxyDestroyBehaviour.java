@@ -40,6 +40,8 @@ public class DefaultProxyDestroyBehaviour implements ProxyDestroyBehaviour {
    * Constructor that takes a {@link ProxyDestroyListenerAdapter}.
    * 
    * @param listener
+   *          The listener that will receive events related to proxy destroy
+   *          events
    */
   public DefaultProxyDestroyBehaviour(ProxyDestroyListenerAdapter listener) {
 
