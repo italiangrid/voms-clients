@@ -83,9 +83,9 @@ import eu.emi.security.authn.x509.proxy.ProxyUtils;
 
 /**
  * The default VOMS proxy init behaviour.
- * 
+ *
  * @author andreaceccanti
- * 
+ *
  */
 public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
@@ -444,11 +444,12 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     if (params.isLimited())
       limitProxy(proxyOptions);
 
-    if (acs != null && !acs.isEmpty())
-      proxyOptions.setAttributeCertificates(acs
-        .toArray(new AttributeCertificate[acs.size()]));
-
     try {
+      if (acs != null && !acs.isEmpty())
+        proxyOptions.setAttributeCertificates(acs
+          .toArray(new AttributeCertificate[acs.size()]));
+
+    
 
       ProxyCertificate proxy = ProxyGenerator.generate(proxyOptions,
         credential.getKey());
