@@ -146,8 +146,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
   protected void validateUserCredential(ProxyInitParams params,
     X509Credential cred) {
 
-    ValidationResult result = certChainValidator.validate(cred
-      .getCertificateChain());
+    ValidationResult result = certChainValidator
+      .validate(cred.getCertificateChain());
     if (!result.isValid())
       throw new VOMSError("User credential is not valid!");
 
@@ -156,7 +156,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
   private void init(ProxyInitParams params) {
 
     boolean hasVOMSCommands = params.getVomsCommands() != null
-      && !params.getVomsCommands().isEmpty();
+      && !params.getVomsCommands()
+        .isEmpty();
 
     if (hasVOMSCommands || params.validateUserCredential()) {
 
@@ -177,7 +178,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     VOMSServerInfoStore serverInfoStore = null;
 
     // Fail fast if VO is not configured correctly
-    if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()) {
+    if (params.getVomsCommands() != null && !params.getVomsCommands()
+      .isEmpty()) {
       serverInfoStore = initServerInfoStore(params);
       checkCommands(params, serverInfoStore);
     }
@@ -191,13 +193,15 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     List<AttributeCertificate> acs = Collections.emptyList();
 
-    if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()) {
+    if (params.getVomsCommands() != null && !params.getVomsCommands()
+      .isEmpty()) {
       initCertChainValidator(params);
       acs = getAttributeCertificates(params, cred, serverInfoStore);
     }
 
-    if (params.verifyAC() && !acs.isEmpty())
+    if (params.verifyAC() && !acs.isEmpty()) {
       verifyACs(params, acs);
+    }
 
     createProxy(params, cred, acs);
   }
@@ -208,7 +212,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       .parseCommands(params.getVomsCommands());
 
     for (String voOrAlias : vomsCommandsMap.keySet()) {
-      if (sis.getVOMSServerInfo(voOrAlias).isEmpty()) {
+      if (sis.getVOMSServerInfo(voOrAlias)
+        .isEmpty()) {
 
         String msg = String.format("VOMS server for VO %s is not known! "
           + "Check your vomses configuration.", voOrAlias);
@@ -221,10 +226,12 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     VOMSServerInfoStore sis = null;
 
-    if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()) {
+    if (params.getVomsCommands() != null && !params.getVomsCommands()
+      .isEmpty()) {
       sis = new DefaultVOMSServerInfoStore.Builder()
         .lookupStrategy(getVOMSESLookupStrategyFromParams(params))
-        .storeListener(serverInfoStoreListener).build();
+        .storeListener(serverInfoStoreListener)
+        .build();
     }
 
     return sis;
@@ -238,8 +245,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     errorTemplate = errorTemplate + " (%s)";
 
     if (!f.exists()) {
-      Throwable t = new FileNotFoundException(String.format(errorTemplate,
-        "file not found"));
+      Throwable t = new FileNotFoundException(
+        String.format(errorTemplate, "file not found"));
       throw new VOMSError(t.getMessage(), t);
     }
 
@@ -267,8 +274,10 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       CertificateValidatorBuilder builder = new CertificateValidatorBuilder();
 
       certChainValidator = builder.trustAnchorsDir(trustAnchorsDir)
-        .storeUpdateListener(storeUpdateListener).lazyAnchorsLoading(true)
-        .validationErrorListener(certChainValidationErrorListener).build();
+        .storeUpdateListener(storeUpdateListener)
+        .lazyAnchorsLoading(true)
+        .validationErrorListener(certChainValidationErrorListener)
+        .build();
     }
   }
 
@@ -296,7 +305,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     return vomsValidator;
   }
 
-  private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
+  private void verifyACs(ProxyInitParams params,
+    List<AttributeCertificate> acs) {
 
     VOMSACValidator acValidator = initVOMSValidator(params);
     acValidator.validateACs(acs);
@@ -328,8 +338,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     if (ProxyUtils.isProxy(issuingCredential.getCertificateChain())) {
 
-      ProxyType issuingProxyType = extendedProxyTypeAsProxyType(ProxyHelper
-        .getProxyType(issuingCredential.getCertificateChain()[0]));
+      ProxyType issuingProxyType = extendedProxyTypeAsProxyType(
+        ProxyHelper.getProxyType(issuingCredential.getCertificateChain()[0]));
 
       if (!issuingProxyType.equals(options.getType())) {
         proxyCreationWarnings.add("forced " + issuingProxyType.name()
@@ -339,11 +349,11 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
       try {
 
-        boolean issuingProxyIsLimited = ProxyHelper.isLimited(issuingCredential
-          .getCertificateChain()[0]);
+        boolean issuingProxyIsLimited = ProxyHelper
+          .isLimited(issuingCredential.getCertificateChain()[0]);
         if (issuingProxyIsLimited && !options.isLimited()) {
-          proxyCreationWarnings
-            .add("forced the creation of a limited proxy to be compatible with the type of the issuing proxy.");
+          proxyCreationWarnings.add(
+            "forced the creation of a limited proxy to be compatible with the type of the issuing proxy.");
           limitProxy(options);
         }
 
@@ -360,7 +370,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       ProxyChainInfo ci;
       try {
         ci = new ProxyChainInfo(issuingCredential.getCertificateChain());
-        if (ci.getProxyType().equals(ProxyChainType.MIXED))
+        if (ci.getProxyType()
+          .equals(ProxyChainType.MIXED))
           throw new VOMSError(
             "Cannot generate a proxy certificate starting from a mixed type proxy chain.");
 
@@ -388,8 +399,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     if (proxyEndTime.after(issuingCredentialEndTime)) {
 
-      proxyCreationWarnings.add("proxy lifetime limited to issuing "
-        + "credential lifetime.");
+      proxyCreationWarnings
+        .add("proxy lifetime limited to issuing " + "credential lifetime.");
       options.setValidityBounds(proxyStartTime, issuingCredentialEndTime);
     }
   }
@@ -398,8 +409,10 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     proxyOptions.setLimited(true);
 
-    if (proxyOptions.getType().equals(ProxyType.RFC3820)
-      || proxyOptions.getType().equals(ProxyType.DRAFT_RFC))
+    if (proxyOptions.getType()
+      .equals(ProxyType.RFC3820)
+      || proxyOptions.getType()
+        .equals(ProxyType.DRAFT_RFC))
       proxyOptions.setPolicy(new ProxyPolicy(ProxyPolicy.LIMITED_PROXY_OID));
 
   }
@@ -434,8 +447,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
       checkMixedProxyChain(credential);
 
-      ensureProxyTypeIsCompatibleWithIssuingCredential(proxyOptions,
-        credential, proxyCreationWarnings);
+      ensureProxyTypeIsCompatibleWithIssuingCredential(proxyOptions, credential,
+        proxyCreationWarnings);
 
       ensureProxyLifetimeIsConsistentWithIssuingCredential(proxyOptions,
         credential, proxyCreationWarnings);
@@ -445,31 +458,33 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       limitProxy(proxyOptions);
 
     try {
-      if (acs != null && !acs.isEmpty())
+      if (acs != null && !acs.isEmpty()) {
         proxyOptions.setAttributeCertificates(acs
           .toArray(new AttributeCertificate[acs.size()]));
+      }
 
-    
 
       ProxyCertificate proxy = ProxyGenerator.generate(proxyOptions,
         credential.getKey());
 
       CredentialsUtils.saveProxyCredentials(proxyFilePath,
         proxy.getCredential());
+
       proxyCreationListener.proxyCreated(proxyFilePath, proxy,
         proxyCreationWarnings);
 
     } catch (Throwable t) {
 
-      throw new VOMSError(
-        "Error creating proxy certificate: " + t.getMessage(), t);
+      throw new VOMSError("Error creating proxy certificate: " + t.getMessage(),
+        t);
     }
   }
 
   protected List<String> sortFQANsIfRequested(ProxyInitParams params,
     List<String> unsortedFQANs) {
 
-    if (params.getFqanOrder() != null && !params.getFqanOrder().isEmpty()) {
+    if (params.getFqanOrder() != null && !params.getFqanOrder()
+      .isEmpty()) {
 
       Set<String> fqans = new LinkedHashSet<String>();
       for (String fqan : params.getFqanOrder()) {
@@ -494,8 +509,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
   protected VOMSESLookupStrategy getVOMSESLookupStrategyFromParams(
     ProxyInitParams params) {
 
-    if (params.getVomsesLocations() != null
-      && !params.getVomsesLocations().isEmpty())
+    if (params.getVomsesLocations() != null && !params.getVomsesLocations()
+      .isEmpty())
       return new BaseVOMSESLookupStrategy(params.getVomsesLocations());
     else
       return new DefaultVOMSESLookupStrategy();
@@ -522,21 +537,21 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
       VOMSACRequest request = new DefaultVOMSACRequest.Builder(vo)
         .fqans(sortFQANsIfRequested(params, fqans))
-        .targets(params.getTargets()).lifetime(params.getAcLifetimeInSeconds())
+        .targets(params.getTargets())
+        .lifetime(params.getAcLifetimeInSeconds())
         .build();
 
       VOMSACService acService = new DefaultVOMSACService.Builder(
-        certChainValidator)
-        .requestListener(requestListener)
-        .serverInfoStore(serverInfoStore)
-        .vomsesLookupStrategy(getVOMSESLookupStrategyFromParams(params))
-        .protocolListener(protocolListener)
-        .connectTimeout(
-          (int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
-        .readTimeout(
-          (int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
-        .skipHostnameChecks(params.isSkipHostnameChecks())
-        .build();
+        certChainValidator).requestListener(requestListener)
+          .serverInfoStore(serverInfoStore)
+          .vomsesLookupStrategy(getVOMSESLookupStrategyFromParams(params))
+          .protocolListener(protocolListener)
+          .connectTimeout(
+            (int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
+          .readTimeout(
+            (int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
+          .skipHostnameChecks(params.isSkipHostnameChecks())
+          .build();
 
       AttributeCertificate ac = acService.getVOMSAttributeCertificate(cred,
         request);
@@ -545,7 +560,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
         acs.add(ac);
     }
 
-    if (!vomsCommandsMap.keySet().isEmpty() && acs.isEmpty())
+    if (!vomsCommandsMap.keySet()
+      .isEmpty() && acs.isEmpty())
       throw new VOMSError(
         "User's request for VOMS attributes could not be fulfilled.");
 

@@ -39,8 +39,7 @@ import eu.emi.security.authn.x509.proxy.ProxyType;
  * 
  * This class implements a command-line voms-proxy-init client.
  * 
- * @author Andrea Ceccanti
- * @author Daniele Andreotti
+ * @author Andrea Ceccanti @author Daniele Andreotti
  * 
  */
 public class VomsProxyInit extends AbstractCLI {
@@ -121,8 +120,8 @@ public class VomsProxyInit extends AbstractCLI {
       params.setLimited(true);
 
     if (commandLineHasOption(ProxyInitOptions.PATHLEN_CONSTRAINT))
-      params.setPathLenConstraint(Integer
-        .parseInt(getOptionValue(ProxyInitOptions.PATHLEN_CONSTRAINT)));
+      params.setPathLenConstraint(
+        Integer.parseInt(getOptionValue(ProxyInitOptions.PATHLEN_CONSTRAINT)));
 
     if (commandLineHasOption(ProxyInitOptions.CERT_LOCATION))
       params.setCertFile(getOptionValue(ProxyInitOptions.CERT_LOCATION));
@@ -168,19 +167,19 @@ public class VomsProxyInit extends AbstractCLI {
       params.setEnforcingChainIntegrity(false);
 
     if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
-      params
-        .setFqanOrder(fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
+      params.setFqanOrder(
+        fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
 
-    if (commandLineHasOption(ProxyInitOptions.RFC_PROXY))
-      params.setProxyType(ProxyType.RFC3820);
+    if (commandLineHasOption(ProxyInitOptions.LEGACY_PROXY))
+      params.setProxyType(ProxyType.LEGACY);
 
     if (commandLineHasOption(ProxyInitOptions.PROXY_VERSION))
-      params
-        .setProxyType(proxyTypeFromVersion(getOptionValue(ProxyInitOptions.PROXY_VERSION)));
+      params.setProxyType(
+        proxyTypeFromVersion(getOptionValue(ProxyInitOptions.PROXY_VERSION)));
 
     if (commandLineHasOption(ProxyInitOptions.TARGET_HOSTNAME))
-      params.setTargets(Arrays
-        .asList(getOptionValue(ProxyInitOptions.TARGET_HOSTNAME)));
+      params.setTargets(
+        Arrays.asList(getOptionValue(ProxyInitOptions.TARGET_HOSTNAME)));
 
     if (commandLineHasOption(ProxyInitOptions.VOMSES_LOCATION))
       params
@@ -195,12 +194,12 @@ public class VomsProxyInit extends AbstractCLI {
         WARNING_POLICY.failOnWarnings);
 
     if (commandLineHasOption(ProxyInitOptions.TIMEOUT))
-      params
-        .setTimeoutInSeconds(parseConnectionTimeout(getOptionValue(ProxyInitOptions.TIMEOUT)));
+      params.setTimeoutInSeconds(
+        parseConnectionTimeout(getOptionValue(ProxyInitOptions.TIMEOUT)));
 
     if (commandLineHasOption(ProxyInitOptions.TRUSTED_CERT_LOCATION))
-      params
-        .setTrustAnchorsDir(getOptionValue(ProxyInitOptions.TRUSTED_CERT_LOCATION));
+      params.setTrustAnchorsDir(
+        getOptionValue(ProxyInitOptions.TRUSTED_CERT_LOCATION));
 
     if (commandLineHasOption(ProxyInitOptions.VOMSDIR))
       params.setVomsdir(getOptionValue(ProxyInitOptions.VOMSDIR));
@@ -256,8 +255,10 @@ public class VomsProxyInit extends AbstractCLI {
     try {
       return TimeUtils.parseLifetimeInHours(proxyLifetimeProperty);
     } catch (ParseException e) {
-      throw new VOMSError("Invalid format for the time interval option '"
-        + option.getLongOptionName() + "'. It should follow the hh pattern.", e);
+      throw new VOMSError(
+        "Invalid format for the time interval option '"
+          + option.getLongOptionName() + "'. It should follow the hh pattern.",
+        e);
     }
 
   }
@@ -270,10 +271,9 @@ public class VomsProxyInit extends AbstractCLI {
       return TimeUtils.parseLifetimeInHoursAndMinutes(acLifetimeProperty);
 
     } catch (ParseException e) {
-      throw new VOMSError(
-        "Invalid format for the time interval option '"
-          + option.getLongOptionName()
-          + "'. It should follow the hh:mm pattern.", e);
+      throw new VOMSError("Invalid format for the time interval option '"
+        + option.getLongOptionName() + "'. It should follow the hh:mm pattern.",
+        e);
     }
   }
 
