@@ -18,13 +18,12 @@ package org.italiangrid.voms.clients;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.italiangrid.voms.clients.strategies.ProxyInitStrategy;
-
 import eu.emi.security.authn.x509.proxy.ProxyType;
 
 /**
- * This class represents the parameters that drive the {@link ProxyInitStrategy}
- * when creating a VOMS proxy.
+ * This class represents the parameters that drive the {@link
+ * org.italiangrid.voms.clients.strategies.ProxyInitStrategy} when creating a
+ * VOMS proxy.
  * 
  * @author Andrea Ceccanti
  * 
@@ -54,7 +53,7 @@ public class ProxyInitParams {
 
   private int pathLenConstraint = Integer.MAX_VALUE;
 
-  private ProxyType proxyType = ProxyType.LEGACY;
+  private ProxyType proxyType = ProxyType.RFC3820;
 
   private int timeoutInSeconds = DEFAULT_CONNECT_TIMEOUT_IN_SECONDS;
 
@@ -95,8 +94,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param certFile
-   *          the certFile to set
+   * @param certFile the certFile to set
    */
   public void setCertFile(String certFile) {
 
@@ -112,8 +110,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param keyFile
-   *          the keyFile to set
+   * @param keyFile the keyFile to set
    */
   public void setKeyFile(String keyFile) {
 
@@ -129,8 +126,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param generatedProxyFile
-   *          the generatedProxyFile to set
+   * @param generatedProxyFile the generatedProxyFile to set
    */
   public void setGeneratedProxyFile(String generatedProxyFile) {
 
@@ -146,8 +142,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param policyFile
-   *          the policyFile to set
+   * @param policyFile the policyFile to set
    */
   public void setPolicyFile(String policyFile) {
 
@@ -163,8 +158,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param policyLanguage
-   *          the policyLanguage to set
+   * @param policyLanguage the policyLanguage to set
    */
   public void setPolicyLanguage(String policyLanguage) {
 
@@ -180,8 +174,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param pathLenConstraint
-   *          the pathLenConstraint to set
+   * @param pathLenConstraint the pathLenConstraint to set
    */
   public void setPathLenConstraint(int pathLenConstraint) {
 
@@ -197,8 +190,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param proxyType
-   *          the proxyType to set
+   * @param proxyType the proxyType to set
    */
   public void setProxyType(ProxyType proxyType) {
 
@@ -214,8 +206,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param timeoutInSeconds
-   *          the timeoutInSeconds to set
+   * @param timeoutInSeconds the timeoutInSeconds to set
    */
   public void setTimeoutInSeconds(int timeoutInSeconds) {
 
@@ -231,8 +222,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param verifyAC
-   *          the verifyAC to set
+   * @param verifyAC the verifyAC to set
    */
   public void setVerifyAC(boolean verifyAC) {
 
@@ -248,8 +238,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param vomsCommands
-   *          the vomsCommands to set
+   * @param vomsCommands the vomsCommands to set
    */
   public void setVomsCommands(List<String> vomsCommands) {
 
@@ -265,8 +254,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param readPasswordFromStdin
-   *          the readPasswordFromStdin to set
+   * @param readPasswordFromStdin the readPasswordFromStdin to set
    */
   public void setReadPasswordFromStdin(boolean readPasswordFromStdin) {
 
@@ -282,8 +270,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param targets
-   *          the targets to set
+   * @param targets the targets to set
    */
   public void setTargets(List<String> targets) {
 
@@ -299,8 +286,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param limited
-   *          the limited to set
+   * @param limited the limited to set
    */
   public void setLimited(boolean limited) {
 
@@ -316,8 +302,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param proxyLifetimeInSeconds
-   *          the proxyLifetimeInSeconds to set
+   * @param proxyLifetimeInSeconds the proxyLifetimeInSeconds to set
    */
   public void setProxyLifetimeInSeconds(int proxyLifetimeInSeconds) {
 
@@ -333,8 +318,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param acLifetimeInSeconds
-   *          the acLifetimeInSeconds to set
+   * @param acLifetimeInSeconds the acLifetimeInSeconds to set
    */
   public void setAcLifetimeInSeconds(int acLifetimeInSeconds) {
 
@@ -350,8 +334,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param noRegen
-   *          the noRegen to set
+   * @param noRegen the noRegen to set
    */
   public void setNoRegen(boolean noRegen) {
 
@@ -387,8 +370,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param keySize
-   *          the keySize to set
+   * @param keySize the keySize to set
    */
   public void setKeySize(int keySize) {
 
@@ -404,8 +386,7 @@ public class ProxyInitParams {
   }
 
   /**
-   * @param fqanOrder
-   *          the fqanOrder to set
+   * @param fqanOrder the fqanOrder to set
    */
   public void setFqanOrder(List<String> fqanOrder) {
 
@@ -442,16 +423,14 @@ public class ProxyInitParams {
     this.vomsdir = vomsdir;
   }
 
-  
   public boolean isSkipHostnameChecks() {
-  
+
     return skipHostnameChecks;
   }
 
-  
   public void setSkipHostnameChecks(boolean skipHostnameChecks) {
-  
+
     this.skipHostnameChecks = skipHostnameChecks;
   }
-  
+
 }
