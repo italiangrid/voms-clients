@@ -5,8 +5,8 @@
 %global _varlib /var/lib
 
 Name: voms-clients3
-Version: 3.0.6
-Release: 1%{?dist}
+Version: 3.0.7
+Release: 0%{?dist}
 Summary: The Virtual Organisation Membership Service command line clients
 
 Group: Applications/Internet
@@ -164,8 +164,11 @@ if [ $1 -eq 0 ] ; then
 fi
 
 %changelog
+* Wed Sep 7 2016 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.7-1
+- Packaging 3.0.7 version
+
 * Tue Dec 10 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.6-1
-- Packaing 3.0.6 version
+- Packaging 3.0.6 version
 
 * Mon Jan 27 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.5-1
 - Fix for https://issues.infn.it/jira/browse/VOMS-495. New packaging installable
