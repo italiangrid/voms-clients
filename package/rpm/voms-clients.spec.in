@@ -6,7 +6,7 @@
 
 Name: voms-clients3
 Version: 3.0.7
-Release: 0%{?dist}
+Release: 1%{?dist}
 Summary: The Virtual Organisation Membership Service command line clients
 
 Group: Applications/Internet
