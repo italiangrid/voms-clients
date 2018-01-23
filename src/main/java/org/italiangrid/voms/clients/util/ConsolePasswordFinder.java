@@ -17,7 +17,7 @@ package org.italiangrid.voms.clients.util;
 
 import java.io.Console;
 
-import org.bouncycastle.openssl.PasswordFinder;
+import eu.emi.security.authn.x509.helpers.PasswordSupplier;
 import org.italiangrid.voms.VOMSError;
 
 /**
@@ -25,7 +25,7 @@ import org.italiangrid.voms.VOMSError;
  * @author andreaceccanti
  * 
  */
-public class ConsolePasswordFinder implements PasswordFinder {
+public class ConsolePasswordFinder implements PasswordSupplier {
 
   private String promptMessage;
 

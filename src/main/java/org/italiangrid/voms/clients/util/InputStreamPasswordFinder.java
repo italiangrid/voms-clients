@@ -22,10 +22,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import org.bouncycastle.openssl.PasswordFinder;
+import eu.emi.security.authn.x509.helpers.PasswordSupplier;
 import org.italiangrid.voms.VOMSError;
 
-public class InputStreamPasswordFinder implements PasswordFinder {
+public class InputStreamPasswordFinder implements PasswordSupplier {
 
   InputStream is;
   PrintStream os;

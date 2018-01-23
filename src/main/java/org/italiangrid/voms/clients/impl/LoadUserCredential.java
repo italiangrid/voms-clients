@@ -15,7 +15,7 @@
  */
 package org.italiangrid.voms.clients.impl;
 
-import org.bouncycastle.openssl.PasswordFinder;
+import eu.emi.security.authn.x509.helpers.PasswordSupplier;
 import org.italiangrid.voms.credential.LoadCredentialsEventListener;
 import org.italiangrid.voms.credential.impl.AbstractLoadCredentialsStrategy;
 
@@ -44,7 +44,7 @@ public class LoadUserCredential extends AbstractLoadCredentialsStrategy {
   }
 
   @Override
-  public X509Credential loadCredentials(PasswordFinder passwordFinder) {
+  public X509Credential loadCredentials(PasswordSupplier passwordFinder) {
 
     if (pkcs12File != null)
       return loadPKCS12Credential(pkcs12File, passwordFinder);

@@ -15,7 +15,7 @@
  */
 package org.italiangrid.voms.clients.impl;
 
-import org.bouncycastle.openssl.PasswordFinder;
+import eu.emi.security.authn.x509.helpers.PasswordSupplier;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
 import org.italiangrid.voms.credential.LoadCredentialsEventListener;
 import org.italiangrid.voms.credential.impl.AbstractLoadCredentialsStrategy;
@@ -39,7 +39,7 @@ public class LoadProxyCredential extends AbstractLoadCredentialsStrategy {
   }
 
   @Override
-  public X509Credential loadCredentials(PasswordFinder passwordFinder) {
+  public X509Credential loadCredentials(PasswordSupplier passwordFinder) {
 
     if (proxyFile == null) {
       String envProxyPath = System.getenv(X509_USER_PROXY);

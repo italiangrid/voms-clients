@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.bouncycastle.asn1.x509.AttributeCertificate;
-import org.bouncycastle.openssl.PasswordFinder;
+import eu.emi.security.authn.x509.helpers.PasswordSupplier;
 import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.VOMSValidators;
 import org.italiangrid.voms.ac.VOMSACValidator;
@@ -592,7 +592,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
   private X509Credential lookupCredential(ProxyInitParams params) {
 
-    PasswordFinder pf = null;
+    PasswordSupplier pf = null;
 
     if (params.isReadPasswordFromStdin())
       pf = PasswordFinders.getNoPromptInputStreamPasswordFinder(System.in,
