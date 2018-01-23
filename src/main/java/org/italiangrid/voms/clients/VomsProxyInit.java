@@ -1,17 +1,15 @@
 /**
  * Copyright (c) Istituto Nazionale di Fisica Nucleare, 2006-2014.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.italiangrid.voms.clients;
 
@@ -46,7 +44,7 @@ public class VomsProxyInit extends AbstractCLI {
 
   private static final String COMMAND_NAME = "voms-proxy-init";
 
-  private static final int[] SUPPORTED_KEY_SIZES = { 512, 1024, 2048, 4096 };
+  private static final int[] SUPPORTED_KEY_SIZES = {512, 1024, 2048, 4096};
 
   private static final int EXIT_ERROR_CODE = 1;
 
@@ -82,8 +80,10 @@ public class VomsProxyInit extends AbstractCLI {
 
   private ProxyInitStrategy getProxyInitBehaviour() {
 
-    return new DefaultVOMSProxyInitBehaviour(new DefaultVOMSCommandsParser(),
-      listenerHelper);
+    DefaultVOMSProxyInitBehaviour proxyInitBehaviour =
+        new DefaultVOMSProxyInitBehaviour(new DefaultVOMSCommandsParser(), listenerHelper);
+
+    return proxyInitBehaviour;
   }
 
   private int parseKeySize(String keySizeParam) {
@@ -99,8 +99,7 @@ public class VomsProxyInit extends AbstractCLI {
 
     } catch (NumberFormatException e) {
       throw new VOMSError(
-        "Invalid input for key size parameter. Please provide a valid key size value.",
-        e);
+          "Invalid input for key size parameter. Please provide a valid key size value.", e);
     }
   }
 
@@ -109,8 +108,7 @@ public class VomsProxyInit extends AbstractCLI {
     ProxyInitParams params = new ProxyInitParams();
 
     if (commandLineHasOption(ProxyInitOptions.KEY_SIZE)) {
-      params
-        .setKeySize(parseKeySize(getOptionValue(ProxyInitOptions.KEY_SIZE)));
+      params.setKeySize(parseKeySize(getOptionValue(ProxyInitOptions.KEY_SIZE)));
     }
 
     if (commandLineHasOption(ProxyInitOptions.ENABLE_STDIN_PWD))
@@ -121,7 +119,7 @@ public class VomsProxyInit extends AbstractCLI {
 
     if (commandLineHasOption(ProxyInitOptions.PATHLEN_CONSTRAINT))
       params.setPathLenConstraint(
-        Integer.parseInt(getOptionValue(ProxyInitOptions.PATHLEN_CONSTRAINT)));
+          Integer.parseInt(getOptionValue(ProxyInitOptions.PATHLEN_CONSTRAINT)));
 
     if (commandLineHasOption(ProxyInitOptions.CERT_LOCATION))
       params.setCertFile(getOptionValue(ProxyInitOptions.CERT_LOCATION));
@@ -130,12 +128,11 @@ public class VomsProxyInit extends AbstractCLI {
       params.setKeyFile(getOptionValue(ProxyInitOptions.KEY_LOCATION));
 
     if (commandLineHasOption(ProxyInitOptions.PROXY_LOCATION))
-      params
-        .setGeneratedProxyFile(getOptionValue(ProxyInitOptions.PROXY_LOCATION));
+      params.setGeneratedProxyFile(getOptionValue(ProxyInitOptions.PROXY_LOCATION));
 
     if (commandLineHasOption(ProxyInitOptions.VALIDITY)) {
       int lifetimeInSeconds = parseLifeTimeInHoursAndMinutesString(
-        getOptionValue(ProxyInitOptions.VALIDITY), ProxyInitOptions.VALIDITY);
+          getOptionValue(ProxyInitOptions.VALIDITY), ProxyInitOptions.VALIDITY);
 
       params.setAcLifetimeInSeconds(lifetimeInSeconds);
       params.setProxyLifetimeInSeconds(lifetimeInSeconds);
@@ -143,13 +140,12 @@ public class VomsProxyInit extends AbstractCLI {
 
     if (commandLineHasOption(ProxyInitOptions.AC_LIFETIME))
       params.setAcLifetimeInSeconds(parseLifeTimeInHoursAndMinutesString(
-        getOptionValue(ProxyInitOptions.AC_LIFETIME),
-        ProxyInitOptions.AC_LIFETIME));
+          getOptionValue(ProxyInitOptions.AC_LIFETIME), ProxyInitOptions.AC_LIFETIME));
 
     if (commandLineHasOption((ProxyInitOptions.PROXY_LIFETIME_IN_HOURS)))
-      params.setProxyLifetimeInSeconds(parseLifetimeInHoursString(
-        getOptionValue(ProxyInitOptions.PROXY_LIFETIME_IN_HOURS),
-        ProxyInitOptions.PROXY_LIFETIME_IN_HOURS));
+      params.setProxyLifetimeInSeconds(
+          parseLifetimeInHoursString(getOptionValue(ProxyInitOptions.PROXY_LIFETIME_IN_HOURS),
+              ProxyInitOptions.PROXY_LIFETIME_IN_HOURS));
 
     if (commandLineHasOption(ProxyInitOptions.VOMS_COMMAND))
       params.setVomsCommands(getOptionValues(ProxyInitOptions.VOMS_COMMAND));
@@ -167,39 +163,31 @@ public class VomsProxyInit extends AbstractCLI {
       params.setEnforcingChainIntegrity(false);
 
     if (commandLineHasOption(ProxyInitOptions.FQANS_ORDERING))
-      params.setFqanOrder(
-        fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
+      params.setFqanOrder(fqansSanityChecks(getOptionValues(ProxyInitOptions.FQANS_ORDERING)));
 
     if (commandLineHasOption(ProxyInitOptions.LEGACY_PROXY))
       params.setProxyType(ProxyType.LEGACY);
 
     if (commandLineHasOption(ProxyInitOptions.PROXY_VERSION))
-      params.setProxyType(
-        proxyTypeFromVersion(getOptionValue(ProxyInitOptions.PROXY_VERSION)));
+      params.setProxyType(proxyTypeFromVersion(getOptionValue(ProxyInitOptions.PROXY_VERSION)));
 
     if (commandLineHasOption(ProxyInitOptions.TARGET_HOSTNAME))
-      params.setTargets(
-        Arrays.asList(getOptionValue(ProxyInitOptions.TARGET_HOSTNAME)));
+      params.setTargets(Arrays.asList(getOptionValue(ProxyInitOptions.TARGET_HOSTNAME)));
 
     if (commandLineHasOption(ProxyInitOptions.VOMSES_LOCATION))
-      params
-        .setVomsesLocations(getOptionValues(ProxyInitOptions.VOMSES_LOCATION));
+      params.setVomsesLocations(getOptionValues(ProxyInitOptions.VOMSES_LOCATION));
 
     if (commandLineHasOption(ProxyInitOptions.IGNORE_WARNINGS))
-      listenerHelper = new ProxyInitListenerHelper(logger,
-        WARNING_POLICY.ignoreWarnings);
+      listenerHelper = new ProxyInitListenerHelper(logger, WARNING_POLICY.ignoreWarnings);
 
     if (commandLineHasOption(ProxyInitOptions.FAIL_ON_WARN))
-      listenerHelper = new ProxyInitListenerHelper(logger,
-        WARNING_POLICY.failOnWarnings);
+      listenerHelper = new ProxyInitListenerHelper(logger, WARNING_POLICY.failOnWarnings);
 
     if (commandLineHasOption(ProxyInitOptions.TIMEOUT))
-      params.setTimeoutInSeconds(
-        parseConnectionTimeout(getOptionValue(ProxyInitOptions.TIMEOUT)));
+      params.setTimeoutInSeconds(parseConnectionTimeout(getOptionValue(ProxyInitOptions.TIMEOUT)));
 
     if (commandLineHasOption(ProxyInitOptions.TRUSTED_CERT_LOCATION))
-      params.setTrustAnchorsDir(
-        getOptionValue(ProxyInitOptions.TRUSTED_CERT_LOCATION));
+      params.setTrustAnchorsDir(getOptionValue(ProxyInitOptions.TRUSTED_CERT_LOCATION));
 
     if (commandLineHasOption(ProxyInitOptions.VOMSDIR))
       params.setVomsdir(getOptionValue(ProxyInitOptions.VOMSDIR));
@@ -225,7 +213,7 @@ public class VomsProxyInit extends AbstractCLI {
         return ProxyType.RFC3820;
 
       throw new VOMSError(
-        "Please specify a valid value for proxyversion: (2-> legacy, 3-> draft rfc, 4-> rfc).");
+          "Please specify a valid value for proxyversion: (2-> legacy, 3-> draft rfc, 4-> rfc).");
     } catch (NumberFormatException e) {
       throw new VOMSError("Please specify a valid value for proxyversion.");
     }
@@ -249,22 +237,18 @@ public class VomsProxyInit extends AbstractCLI {
     return fqans;
   }
 
-  private int parseLifetimeInHoursString(String proxyLifetimeProperty,
-    CLIOption option) {
+  private int parseLifetimeInHoursString(String proxyLifetimeProperty, CLIOption option) {
 
     try {
       return TimeUtils.parseLifetimeInHours(proxyLifetimeProperty);
     } catch (ParseException e) {
-      throw new VOMSError(
-        "Invalid format for the time interval option '"
-          + option.getLongOptionName() + "'. It should follow the hh pattern.",
-        e);
+      throw new VOMSError("Invalid format for the time interval option '"
+          + option.getLongOptionName() + "'. It should follow the hh pattern.", e);
     }
 
   }
 
-  private int parseLifeTimeInHoursAndMinutesString(String acLifetimeProperty,
-    CLIOption option) {
+  private int parseLifeTimeInHoursAndMinutesString(String acLifetimeProperty, CLIOption option) {
 
     try {
 
@@ -272,8 +256,7 @@ public class VomsProxyInit extends AbstractCLI {
 
     } catch (ParseException e) {
       throw new VOMSError("Invalid format for the time interval option '"
-        + option.getLongOptionName() + "'. It should follow the hh:mm pattern.",
-        e);
+          + option.getLongOptionName() + "'. It should follow the hh:mm pattern.", e);
     }
   }
 
@@ -286,11 +269,10 @@ public class VomsProxyInit extends AbstractCLI {
 
       if (timeoutInSeconds < 0)
         throw new VOMSError(
-          "Invalid value for the timeout option. It should be a positive integer.");
+            "Invalid value for the timeout option. It should be a positive integer.");
 
     } catch (NumberFormatException e) {
-      throw new VOMSError(
-        "Invalid value for the timeout option. It should be a positive integer.");
+      throw new VOMSError("Invalid value for the timeout option. It should be a positive integer.");
     }
 
     return timeoutInSeconds;
