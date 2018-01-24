@@ -1,13 +1,14 @@
 language: java
+sudo: required
 
 jdk:
   - openjdk8
   - oraclejdk8
+
 dist: trusty
 
-script:
+install:
   - curl https://raw.githubusercontent.com/italiangrid/build-settings/master/maven/cnaf-mirror-settings.xml -o $HOME/.m2/settings.xml
-  - mvn -U -B clean install 
 
 cache:
   directories:
