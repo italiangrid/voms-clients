@@ -29,14 +29,14 @@
 
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/share/java</outputDirectory>
+      <outputDirectory>/share/java/voms-clients</outputDirectory>
     </dependencySet>
   </dependencySets>
 
   <fileSets>
     <fileSet>
       <directory>${project.build.directory}</directory>
-      <outputDirectory>/share/java</outputDirectory>
+      <outputDirectory>/share/java/voms-clients</outputDirectory>
       <includes>
         <include>*.jar</include>
       </includes>
