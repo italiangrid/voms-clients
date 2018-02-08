@@ -11,12 +11,10 @@ Command-line clients for Virtual Organization Membership Service (VOMS), i.e.:
 
 ## Build
 
-You will need maven and Java >= 6.
+You will need maven and Java >= 8.
 To build the clients, type:
 
   mvn package
-
-To build RPM packages, see instructions in the `package/rpm` directory.
 
 ## Install
 
@@ -28,17 +26,6 @@ You may want to add the bin directory to your path to be able to directly call v
 ```bash
 export PATH=$PATH:<install_dir>/bin
 ```
-
-### Install from RPMs packages
-
-RPMs for the latest stable release can be found on the EMI repository:
-
-- [CentOS/SL 6](http://emisoft.web.cern.ch/emisoft/dist/EMI/3/sl6/x86_64/updates/repoview/voms-clients3.html)
-- [CentOS/SL 5](http://emisoft.web.cern.ch/emisoft/dist/EMI/3/sl5/x86_64/updates/repoview/voms-clients3.html)
-
-RPMs for the latest development build can be found at the following URLs:
-- [CentOS/SL 6](http://radiohead.cnaf.infn.it:9999/job/voms-clients-rpm_develop_SL6/lastSuccessfulBuild)
-- [CentOS/SL 5](http://radiohead.cnaf.infn.it:9999/job/voms-clients-rpm_develop_SL5/lastSuccessfulBuild)
 
 ## Quickstart
 
