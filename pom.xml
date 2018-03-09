@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>voms-clients</artifactId>
-  <version>3.3.0</version>
+  <version>3.3.1-SNAPSHOT</version>
 
   <name>voms-clients</name>
   <description>VOMS service command-line clients</description>
@@ -44,7 +44,7 @@
     <junit.version>4.10</junit.version>
     <commons-io.version>2.0.1</commons-io.version>
     <commons-cli.version>1.2</commons-cli.version>
-    <voms-api-java.version>3.3.0</voms-api-java.version>
+    <voms-api-java.version>3.3.1-SNAPSHOT</voms-api-java.version>
 
     <!-- Leave this defined as empty -->
     <voms-clients.libs />
