@@ -36,7 +36,7 @@ public class ProxyInitParams {
     .toSeconds(12);
   public static final int DEFAULT_KEY_SIZE = 1024;
 
-  public static final int DEFAULT_CONNECT_TIMEOUT_IN_SECONDS = 2;
+  public static final int DEFAULT_CONNECT_TIMEOUT_IN_SECONDS = 10;
 
   private String certFile;
   private String keyFile;
