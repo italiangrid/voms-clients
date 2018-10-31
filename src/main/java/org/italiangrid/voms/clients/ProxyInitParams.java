@@ -34,7 +34,7 @@ public class ProxyInitParams {
     .toSeconds(12);
   public static final int DEFAULT_AC_LIFETIME = (int) TimeUnit.HOURS
     .toSeconds(12);
-  public static final int DEFAULT_KEY_SIZE = 1024;
+  public static final int DEFAULT_KEY_SIZE = 2048;
 
   public static final int DEFAULT_CONNECT_TIMEOUT_IN_SECONDS = 10;
 

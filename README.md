@@ -108,7 +108,7 @@ subject   : /C=IT/O=INFN/OU=Personal Certificate/L=CNAF/CN=Andrea Ceccanti/CN=pr
 issuer    : /C=IT/O=INFN/OU=Personal Certificate/L=CNAF/CN=Andrea Ceccanti
 identity  : /C=IT/O=INFN/OU=Personal Certificate/L=CNAF/CN=Andrea Ceccanti
 type      : proxy
-strength  : 1024
+strength  : 2048
 path      : /tmp/x509up_u501
 timeleft  : 11:59:48
 key usage : digitalSignature keyEncipherment dataEncipherment
@@ -122,7 +122,7 @@ subject   : /C=IT/O=INFN/OU=Personal Certificate/L=CNAF/CN=Andrea Ceccanti/CN=pr
 issuer    : /C=IT/O=INFN/OU=Personal Certificate/L=CNAF/CN=Andrea Ceccanti
 identity  : /C=IT/O=INFN/OU=Personal Certificate/L=CNAF/CN=Andrea Ceccanti
 type      : proxy
-strength  : 1024
+strength  : 2048
 path      : /tmp/x509up_u501
 timeleft  : 12:04:48
 key usage : digitalSignature keyEncipherment dataEncipherment 
