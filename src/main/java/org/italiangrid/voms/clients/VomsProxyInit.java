@@ -198,6 +198,9 @@ public class VomsProxyInit extends AbstractCLI {
       params.setSkipHostnameChecks(true);
     }
 
+    if (commandLineHasOption(ProxyInitOptions.ENABLE_LEGACY_PROTOCOL)) {
+      params.setEnableLegacyProtocol(true);
+    }
     return params;
 
   }
@@ -233,8 +236,9 @@ public class VomsProxyInit extends AbstractCLI {
 
   private List<String> fqansSanityChecks(List<String> fqans) {
 
-    for (String f : fqans)
+    for (String f : fqans) {
       VOMSFQANNamingScheme.checkSyntax(f);
+    }
 
     return fqans;
   }

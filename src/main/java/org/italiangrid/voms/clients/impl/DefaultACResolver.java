@@ -132,6 +132,7 @@ public class DefaultACResolver implements ACResolverStrategy {
             .connectTimeout((int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
             .readTimeout((int) TimeUnit.SECONDS.toMillis(params.getTimeoutInSeconds()))
             .skipHostnameChecks(params.isSkipHostnameChecks())
+            .legacyProtocolEnabled(params.isEnableLegacyProtocol())
             .build();
 
       AttributeCertificate ac = acService.getVOMSAttributeCertificate(userCredential, request);
