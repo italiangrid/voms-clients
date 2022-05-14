@@ -20,6 +20,7 @@ import java.io.File;
 import org.italiangrid.voms.clients.ProxyDestroyBehaviour;
 import org.italiangrid.voms.clients.ProxyDestroyParams;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
+import org.italiangrid.voms.credential.VOMSEnvironmentVariables;
 
 /**
  * 
@@ -57,13 +58,18 @@ public class DefaultProxyDestroyBehaviour implements ProxyDestroyBehaviour {
    */
   @Override
   public void destroyProxy(ProxyDestroyParams params) {
+    String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
 
-    if (params.getProxyFile() == null) {
+    String envProxyPath = System
+      .getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
 
-      params.setProxyFile(VOMSProxyPathBuilder.buildProxyPath());
-    }
+    if (envProxyPath != null)
+      proxyFilePath = envProxyPath;
 
-    File file = new File(params.getProxyFile());
+    if (params.getProxyFile() != null)
+      proxyFilePath = params.getProxyFile();
+
+    File file = new File(proxyFilePath);
 
     if (!file.exists()) {
 
@@ -74,7 +80,7 @@ public class DefaultProxyDestroyBehaviour implements ProxyDestroyBehaviour {
 
     if (params.isDryRun()) {
 
-      listener.warnProxyToRemove(params.getProxyFile());
+      listener.warnProxyToRemove(proxyFilePath);
 
       System.exit(0);
     }
