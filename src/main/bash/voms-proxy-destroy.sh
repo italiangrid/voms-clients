@@ -1,5 +1,6 @@
 #!/bin/bash
 #set -x
+set -eu -o pipefail
 
 VOMSCLIENTS_LIBS="${voms-clients.libs-}"
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -exu -o pipefail
 name=voms-clients
 
 base_dir=../../
