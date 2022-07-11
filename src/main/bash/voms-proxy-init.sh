@@ -6,16 +6,7 @@ VOMSCLIENTS_LIBS="${voms-clients.libs-}"
 
 if [ -z "$VOMSCLIENTS_LIBS" ]; then
 
-  PRG="$0"
-  while [ -h "$PRG" ]; do
-    ls="$(ls -ld "$PRG")"
-    link="$(expr "$ls" : '.*-> \(.*\)$')"
-    if expr "$link" : '/.*' > /dev/null; then
-      PRG="$link"
-    else
-      PRG="$(dirname "$PRG")/$link"
-    fi
-  done
+  PRG="$(realpath "$0")"
 
   PRGDIR="$(dirname "$PRG")"
 
@@ -25,7 +16,7 @@ if [ -z "$VOMSCLIENTS_LIBS" ]; then
 fi
 
 # ':' separated list of jars, for the classpath
-VOMSCLIENTS_CP="$(ls -1 $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':')"
+VOMSCLIENTS_CP="$(find "$VOMSCLIENTS_LIBS" -name "*.jar" -printf '%p:')"
 
 # the class implementing voms-proxy-init
 VOMSPROXYINIT_CLASS="org.italiangrid.voms.clients.VomsProxyInit"
