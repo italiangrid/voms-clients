@@ -47,7 +47,7 @@ public enum ProxyInitOptions implements CLIOption {
   VOMSDIR("vomsdir"),
   VOMSES_LOCATION("vomses"),
   SKIP_INTEGRITY_CHECKS("skip_chain_integrity_checks"),
-  SKIP_HOSTNAME_CHECKS("skip_hostname_checks");
+  SKIP_HOSTNAME_CHECKS("skip_hostname_checks"), ENABLE_LEGACY_PROTOCOL("enable_legacy_protocol");
 
   private Option option;
 

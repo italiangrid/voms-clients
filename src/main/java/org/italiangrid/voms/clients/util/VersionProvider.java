@@ -72,11 +72,11 @@ public class VersionProvider {
       canlVersion));
 
     if (bcVersion != null) {
-      version.append(String.format(" bouncycastle/%s", bcVersion));
+      version.append(String.format(" bcprov/%s", bcVersion));
     }
 
     if (bcMailVersion != null) {
-      version.append(String.format(" bcmail/%s", bcMailVersion));
+      version.append(String.format(" bcpkix/%s", bcMailVersion));
     }
 
     return version.toString();

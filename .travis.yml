@@ -1,13 +1,15 @@
 language: java
+sudo: required
+
 jdk:
-  - openjdk6
-  - openjdk7
-  - oraclejdk7
+  - openjdk8
   - oraclejdk8
+  - openjdk11
+  - oraclejdk11
 os:
   - linux
 
-notifications:
-    slack:
-          secure: NEqqRKfphFroJt3420x+ojawfPQqQFk4mw17z4/RwpGxlR3kftW17s198TCFVyiBn0OF55BA6w7s/JL4PqG5BCH10B8/+ulbKrQh3LNSr3cQxvPs4AhI+BIq4pvK01sLS/wNxCzj0LI1mOg7L8BnJlioOJyHHBCeadqxdyPf5Uk=
+dist: trusty
 
+install:
+  - curl https://raw.githubusercontent.com/italiangrid/build-settings/master/maven/cnaf-mirror-settings.xml -o $HOME/.m2/settings.xml

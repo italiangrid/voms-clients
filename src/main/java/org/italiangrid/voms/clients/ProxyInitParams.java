@@ -21,22 +21,19 @@ import java.util.concurrent.TimeUnit;
 import eu.emi.security.authn.x509.proxy.ProxyType;
 
 /**
- * This class represents the parameters that drive the {@link
- * org.italiangrid.voms.clients.strategies.ProxyInitStrategy} when creating a
- * VOMS proxy.
+ * This class represents the parameters that drive the
+ * {@link org.italiangrid.voms.clients.strategies.ProxyInitStrategy} when creating a VOMS proxy.
  * 
  * @author Andrea Ceccanti
  * 
  */
 public class ProxyInitParams {
 
-  public static final int DEFAULT_PROXY_LIFETIME = (int) TimeUnit.HOURS
-    .toSeconds(12);
-  public static final int DEFAULT_AC_LIFETIME = (int) TimeUnit.HOURS
-    .toSeconds(12);
-  public static final int DEFAULT_KEY_SIZE = 1024;
+  public static final int DEFAULT_PROXY_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12);
+  public static final int DEFAULT_AC_LIFETIME = (int) TimeUnit.HOURS.toSeconds(12);
+  public static final int DEFAULT_KEY_SIZE = 2048;
 
-  public static final int DEFAULT_CONNECT_TIMEOUT_IN_SECONDS = 2;
+  public static final int DEFAULT_CONNECT_TIMEOUT_IN_SECONDS = 10;
 
   private String certFile;
   private String keyFile;
@@ -84,6 +81,8 @@ public class ProxyInitParams {
   private String vomsdir;
 
   private boolean skipHostnameChecks = false;
+
+  private boolean enableLegacyProtocol = false;
 
   /**
    * @return the certFile
@@ -431,6 +430,14 @@ public class ProxyInitParams {
   public void setSkipHostnameChecks(boolean skipHostnameChecks) {
 
     this.skipHostnameChecks = skipHostnameChecks;
+  }
+
+  public boolean isEnableLegacyProtocol() {
+    return enableLegacyProtocol;
+  }
+
+  public void setEnableLegacyProtocol(boolean enableLegacyProtocol) {
+    this.enableLegacyProtocol = enableLegacyProtocol;
   }
 
 }

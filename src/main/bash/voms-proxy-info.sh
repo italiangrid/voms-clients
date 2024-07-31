@@ -20,8 +20,7 @@ if [ "x$VOMSCLIENTS_LIBS" == "x" ]; then
 
   VOMSCLIENTS_HOME=`cd "$PRGDIR/.." ; pwd`
 
-  VOMSCLIENTS_LIBS=$VOMSCLIENTS_HOME/share/java
-
+  VOMSCLIENTS_LIBS=$VOMSCLIENTS_HOME/share/java/voms-clients
 fi
 
 # ':' separated list of jars, for the classpath
@@ -31,6 +30,6 @@ VOMSCLIENTS_CP=`ls -1 $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 VOMSPROXYINFO_CLASS="org.italiangrid.voms.clients.VomsProxyInfo"
 
 # JVM options
-VOMS_CLIENTS_JAVA_OPTIONS=${VOMS_CLIENTS_JAVA_OPTIONS:-"-XX:+UseSerialGC -Xmx16m"}
+VOMS_CLIENTS_JAVA_OPTIONS=${VOMS_CLIENTS_JAVA_OPTIONS:-"-XX:+UseSerialGC -Xmx16m -Djava.net.preferIPv6Addresses=true"}
 
 java $VOMS_CLIENTS_JAVA_OPTIONS -cp $VOMSCLIENTS_CP $VOMSPROXYINFO_CLASS "$@"
