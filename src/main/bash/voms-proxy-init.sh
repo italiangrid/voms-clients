@@ -30,6 +30,6 @@ VOMSCLIENTS_CP=`ls -1 $VOMSCLIENTS_LIBS/*.jar | tr '\n' ':'`
 VOMSPROXYINIT_CLASS="org.italiangrid.voms.clients.VomsProxyInit"
 
 # JVM options
-VOMS_CLIENTS_JAVA_OPTIONS=${VOMS_CLIENTS_JAVA_OPTIONS:-"-XX:+UseSerialGC -Xmx16m -Djava.net.preferIPv6Addresses=true"}
+VOMS_CLIENTS_JAVA_OPTIONS=${VOMS_CLIENTS_JAVA_OPTIONS:-"-XX:+UseSerialGC -Xmx16m"}
 
 java $VOMS_CLIENTS_JAVA_OPTIONS -cp $VOMSCLIENTS_CP $VOMSPROXYINIT_CLASS "$@"
