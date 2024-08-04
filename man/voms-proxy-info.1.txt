@@ -5,7 +5,7 @@ VOMS-PROXY-INFO(1)
 
 == NAME
 
-voms-proxy-info - prints informations about a proxy with VOMS extensions
+voms-proxy-info - prints information about a proxy with VOMS extensions
 
 
 == SYNOPSIS
