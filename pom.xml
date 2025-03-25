@@ -9,7 +9,7 @@ SPDX-License-Identifier: Apache-2.0
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>voms-clients</artifactId>
-  <version>3.3.4</version>
+  <version>3.3.5</version>
 
   <name>voms-clients</name>
   <description>VOMS service command-line clients</description>
@@ -48,10 +48,10 @@ SPDX-License-Identifier: Apache-2.0
     <plugin.nexus-staging.version>1.6.3</plugin.nexus-staging.version>
     <plugin.asciidoctor.version>3.1.1</plugin.asciidoctor.version>
 
-    <junit.version>4.10</junit.version>
-    <commons-io.version>2.0.1</commons-io.version>
-    <commons-cli.version>1.2</commons-cli.version>
-    <voms-api-java.version>3.3.3</voms-api-java.version>
+    <junit.version>4.13.2</junit.version>
+    <commons-io.version>2.18.0</commons-io.version>
+    <commons-cli.version>1.9.0</commons-cli.version>
+    <voms-api-java.version>3.3.4-SNAPSHOT</voms-api-java.version>
 
     <!-- Leave this defined as empty -->
     <voms-clients.libs />
@@ -131,8 +131,8 @@ SPDX-License-Identifier: Apache-2.0
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${plugin.compiler.version}</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>17</source>
+          <target>17</target>
         </configuration>
       </plugin>
 
@@ -163,7 +163,7 @@ SPDX-License-Identifier: Apache-2.0
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${plugin.javadoc.version}</version>
         <configuration>
-          <source>1.8</source>
+          <source>17</source>
           <outputDirectory>${project.build.directory}/javadoc</outputDirectory>
           <reportOutputDirectory>${project.reporting.outputDirectory}/javadoc</reportOutputDirectory>
         </configuration>
