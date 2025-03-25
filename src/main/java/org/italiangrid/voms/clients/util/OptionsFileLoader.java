@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -43,7 +44,7 @@ public class OptionsFileLoader {
 
       InputStream inputStream = new FileInputStream(optionFile);
 
-      IOUtils.copy(inputStream, stringWriter);
+      IOUtils.copy(inputStream, stringWriter, Charset.defaultCharset());
 
     } catch (FileNotFoundException e) {
 
