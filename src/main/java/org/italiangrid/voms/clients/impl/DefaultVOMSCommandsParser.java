@@ -12,11 +12,33 @@ import java.util.Map;
 
 import org.italiangrid.voms.clients.strategies.VOMSCommandsParsingStrategy;
 
+/**
+ * Default implementation of the {@link VOMSCommandsParsingStrategy} interface.
+ * This class is responsible for parsing VOMS commands into a structured format.
+ */
 public class DefaultVOMSCommandsParser implements VOMSCommandsParsingStrategy {
 
+  /**
+   * The character used to separate VO names from FQANs in command strings.
+   */
   public static final String COMMAND_SEPARATOR = ":";
+
+  /**
+   * The string representing a request for all available attributes.
+   */
   public static final String ALL_COMMAND_STRING = "all";
 
+  /**
+   * Parses a list of VOMS commands and organizes them into a map.
+   *
+   * @param commands A list of strings representing VOMS commands, where each
+   *                 command follows the format "vo[:fqan]".
+   * @return A map where the keys are VO names and the values are lists of
+   *         requested FQANs. If "all" is specified, no FQANs are added.
+   *         Returns {@code null} if the input list is {@code null}, or an
+   *         empty map if the input list is empty.
+   */
+  @Override
   public Map<String, List<String>> parseCommands(List<String> commands) {
 
     if (commands == null)
