@@ -53,7 +53,7 @@ Virtual Organization Membership Service (VOMS) Java command line clients Documen
 %prep
 
 %build
-mvn %{?mvn_settings} -U -Dmaven.test.skip=true clean package
+mvn %{?mvn_settings} -U -Dmaven.test.skip=true clean generate-resources package
 
 %install
 rm -rf %{buildroot}

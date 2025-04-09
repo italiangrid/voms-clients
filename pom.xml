@@ -46,6 +46,7 @@ SPDX-License-Identifier: Apache-2.0
     <plugin.javadoc.version>2.9.1</plugin.javadoc.version>
     <plugin.gpg.version>1.5</plugin.gpg.version>
     <plugin.nexus-staging.version>1.6.3</plugin.nexus-staging.version>
+    <plugin.asciidoctor.version>3.1.1</plugin.asciidoctor.version>
 
     <junit.version>4.10</junit.version>
     <commons-io.version>2.0.1</commons-io.version>
@@ -203,6 +204,25 @@ SPDX-License-Identifier: Apache-2.0
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
         <version>${plugin.deploy.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>${plugin.asciidoctor.version}</version>
+        <configuration>
+          <backend>manpage</backend>
+          <sourceDirectory>man</sourceDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>asciidoc-to-html</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>process-asciidoc</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
