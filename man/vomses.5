@@ -1,88 +1,92 @@
+.\" SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+.\"
+.\" SPDX-License-Identifier: Apache-2.0
+
 '\" t
 .\"     Title: vomses
-.\"    Author: [see the "AUTHORS" section]
-.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 05/28/2014
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 2.0.23
+.\"      Date: 2025-04-09
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "VOMSES" "5" "05/28/2014" "\ \&" "\ \&"
-.\" -----------------------------------------------------------------
-.\" * Define some portability stuff
-.\" -----------------------------------------------------------------
-.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\" http://bugs.debian.org/507673
-.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
-.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.TH "VOMSES" "5" "2025-04-09" "\ \&" "\ \&"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
-.\" -----------------------------------------------------------------
-.\" * set default formatting
-.\" -----------------------------------------------------------------
-.\" disable hyphenation
+.ss \n[.ss] 0
 .nh
-.\" disable justification (adjust text to left margin only)
 .ad l
-.\" -----------------------------------------------------------------
-.\" * MAIN CONTENT STARTS HERE *
-.\" -----------------------------------------------------------------
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
 .SH "NAME"
 vomses \- The VOMS server contact table
 .SH "SYNOPSIS"
 .sp
-\fB/etc/vomses\fR
+\fB/etc/vomses\fP
 .sp
-\fB~/\&.glite/vomses\fR
+\fB~/.glite/vomses\fP
 .SH "DESCRIPTION"
 .sp
-This manual page describes the format of \fIvomses\fR files\&. \fIvomses\fR files contain contact information for VOMS servers and are typically organized in the \fB/etc/vomses\fR directory\&. A \fIvomses\fR file is a simple text file which contains one or more lines formatted as follows:
+This manual page describes the format of \fIvomses\fP files.
+\fIvomses\fP files contain contact information for VOMS servers and are typically organized in the \fB/etc/vomses\fP directory.
+A \fIvomses\fP file is a simple text file which contains one or more lines formatted as follows:
 .sp
 "alias" "hostname" "port" "server DN" "vo_name"
 .sp
 Where:
 .sp
-\fBalias\fR: an alias that can be used for this VOMS server (this is typically identical to the vo_name)
+\fBalias\fP: an alias that can be used for this VOMS server (this is typically identical to the vo_name)
 .sp
-\fBhostname\fR: the hostname where the VOMS server is running
+\fBhostname\fP: the hostname where the VOMS server is running
 .sp
-\fBvo_name\fR: the name of the VO served by the VOMS server
+\fBvo_name\fP: the name of the VO served by the VOMS server
 .sp
-\fBport\fR: the port where the VOMS server is listening for incoming requests
+\fBport\fP: the port where the VOMS server is listening for incoming requests
 .sp
-\fBserver DN\fR: the certificate subject of the VOMS server
+\fBserver DN\fP: the certificate subject of the VOMS server
 .sp
-System wide VOMSES configuration is maintained in the \fB/etc/vomses\fR file or directory\&. If \fB/etc/vomses\fR is a directory, all the files contained in such directory are parsed looking for VOMS contact information\&.
+System wide VOMSES configuration is maintained in the \fB/etc/vomses\fP file or directory.
+If \fB/etc/vomses\fP is a directory, all the files contained in such directory are parsed looking for VOMS
+contact information.
 .sp
-A user can define its custom \fBvomses\fR configuration in the \fB~/\&.glite/vomses\fR file or directory, which will be parsed in the same way as just described\&.
+A user can define its custom \fBvomses\fP configuration in the \fB~/.glite/vomses\fP file or directory, which
+will be parsed in the same way as just described.
 .SH "EXAMPLES"
 .sp
-The following is an example of valid vomes file for the \fBcms\fR VO:
+The following is an example of valid vomes file for the \fBcms\fP VO:
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
-"cms" "lcg\-voms\&.cern\&.ch" "15002" "/DC=ch/DC=cern/OU=computers/CN=lcg\-voms\&.cern\&.ch" "cms"
-"cms" "voms\&.cern\&.ch" "15002" "/DC=ch/DC=cern/OU=computers/CN=voms\&.cern\&.ch" "cms"
+.fam C
+"cms" "lcg\-voms.cern.ch" "15002" "/DC=ch/DC=cern/OU=computers/CN=lcg\-voms.cern.ch" "cms"
+"cms" "voms.cern.ch" "15002" "/DC=ch/DC=cern/OU=computers/CN=voms.cern.ch" "cms"
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .SH "BUGS"
 .sp
-To report bugs or ask for support, use GGUS: https://ggus\&.eu/pages/home\&.php
+To report bugs or ask for support, use GGUS: \c
+.URL "https://ggus.eu/pages/home.php" "" ""
 .SH "AUTHORS"
 .sp
-Enrico Vianello <enrico\&.vianello@cnaf\&.infn\&.it>
+Enrico Vianello \c
+.MTO "enrico.vianello\(atcnaf.infn.it" "" ""
 .sp
-Francesco Giacomini <francesco\&.giacomini@cnaf\&.infn\&.it>
+Francesco Giacomini \c
+.MTO "francesco.giacomini\(atcnaf.infn.it" "" ""
 .SH "SEE ALSO"
 .sp
 voms\-proxy\-destroy(1), voms\-proxy\-info(1), vomsdir(5)
-.SH "COPYING"
-.sp
-SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
-.sp
-SPDX-License-Identifier: Apache-2.0
-.sp

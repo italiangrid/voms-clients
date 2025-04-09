@@ -1,32 +1,36 @@
+.\" SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+.\"
+.\" SPDX-License-Identifier: Apache-2.0
+
 '\" t
 .\"     Title: voms-proxy-destroy
-.\"    Author: [see the "AUTHOR" section]
-.\" Generator: DocBook XSL Stylesheets v1.77.1 <http://docbook.sf.net/>
-.\"      Date: 11/09/2012
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 2.0.23
+.\"      Date: 2025-04-09
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "VOMS\-PROXY\-DESTROY" "1" "11/09/2012" "\ \&" "\ \&"
-.\" -----------------------------------------------------------------
-.\" * Define some portability stuff
-.\" -----------------------------------------------------------------
-.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\" http://bugs.debian.org/507673
-.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
-.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.TH "VOMS\-PROXY\-DESTROY" "1" "2025-04-09" "\ \&" "\ \&"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
-.\" -----------------------------------------------------------------
-.\" * set default formatting
-.\" -----------------------------------------------------------------
-.\" disable hyphenation
+.ss \n[.ss] 0
 .nh
-.\" disable justification (adjust text to left margin only)
 .ad l
-.\" -----------------------------------------------------------------
-.\" * MAIN CONTENT STARTS HERE *
-.\" -----------------------------------------------------------------
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
 .SH "NAME"
 voms-proxy-destroy \- destroys a VOMS proxy
 .SH "SYNOPSIS"
@@ -34,38 +38,34 @@ voms-proxy-destroy \- destroys a VOMS proxy
 voms\-proxy\-destroy
 .SH "DESCRIPTION"
 .sp
-The voms\-proxy\-destroy command is intended to be used after a proxy is no longer useful, to destroy it\&.
+The voms\-proxy\-destroy command is intended to be used after a proxy is no longer useful, to destroy it.
 .SH "OPTIONS"
 .sp
-Options may be specified indifferently with either a "\-" or "\-\-" prefix\&.
+Options  may be specified indifferently with either a "\-" or "\-\-" prefix.
 .sp
-\fB\-h\fR, \fB\-help\fR Displays usage
+\fB\-h\fP, \fB\-help\fP Displays usage
 .sp
-\fB\-v\fR, \fB\-version\fR Displays version
+\fB\-v\fP, \fB\-version\fP Displays version
 .sp
-\fB\-debug\fR Enables extra debug output
+\fB\-debug\fP Enables extra debug output
 .sp
-\fB\-q\fR, \fB\-\-quiet\fR Quiet mode, minimal output
+\fB\-q\fP, \fB\-\-quiet\fP Quiet mode, minimal output
 .sp
-\fB\-f\fR, \fB\-file\fR <proxyfile> The name of the file containing the proxy, in case it is in a non\-standard place\&.
+\fB\-f\fP, \fB\-file\fP <proxyfile> The name of the file containing the proxy, in case it is in a non\-standard place.
 .sp
-\fB\-dry\fR Doesn\(cqt actually destroy the proxy\&.
+\fB\-dry\fP Doesn\(cqt actually destroy the proxy.
 .sp
-\fB\-c\fR, \fB\-conf\fR <file> Read options from file\&.
+\fB\-c\fP, \fB\-conf\fP <file> Read options from file.
 .SH "BUGS"
 .sp
-https://savannah\&.cern\&.ch/bugs/?group=jra1mdw
+.URL "https://savannah.cern.ch/bugs/?group=jra1mdw" "" ""
 .SH "AUTHOR"
 .sp
-Enrico Vianello <enrico\&.vianello@cnaf\&.infn\&.it>
+Enrico Vianello \c
+.MTO "enrico.vianello\(atcnaf.infn.it" "" ""
 .sp
-Francesco Giacomini <francesco\&.giacomini@cnaf\&.infn\&.it>
+Francesco Giacomini \c
+.MTO "francesco.giacomini\(atcnaf.infn.it" "" ""
 .SH "SEE ALSO"
 .sp
 voms\-proxy\-init(1), voms\-proxy\-info(1)
-.SH "COPYING"
-.sp
-SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
-.sp
-SPDX-License-Identifier: Apache-2.0
-.sp

@@ -1,47 +1,52 @@
+.\" SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+.\"
+.\" SPDX-License-Identifier: Apache-2.0
+
 '\" t
 .\"     Title: vomsdir
-.\"    Author: [see the "AUTHORS" section]
-.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
-.\"      Date: 11/20/2012
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 2.0.23
+.\"      Date: 2025-04-09
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "VOMSDIR" "5" "11/20/2012" "\ \&" "\ \&"
-.\" -----------------------------------------------------------------
-.\" * Define some portability stuff
-.\" -----------------------------------------------------------------
-.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\" http://bugs.debian.org/507673
-.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
-.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.TH "VOMSDIR" "5" "2025-04-09" "\ \&" "\ \&"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
-.\" -----------------------------------------------------------------
-.\" * set default formatting
-.\" -----------------------------------------------------------------
-.\" disable hyphenation
+.ss \n[.ss] 0
 .nh
-.\" disable justification (adjust text to left margin only)
 .ad l
-.\" -----------------------------------------------------------------
-.\" * MAIN CONTENT STARTS HERE *
-.\" -----------------------------------------------------------------
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
 .SH "NAME"
 vomsdir \- The structure of the vomsdir VOMS server trust anchor directory
 .SH "SYNOPSIS"
 .sp
-\fB/etc/grid\-security/vomsdir\fR
+\fB/etc/grid\-security/vomsdir\fP
 .SH "DESCRIPTION"
 .sp
-This manual page describes the structure of the \fIvomsdir\fR VOMS server trust anchor directory\&. The function of this directory is to keep local information about trusted VOMS servers which is used to verify the signatures on the attributes issued by VOMS servers\&.
+This manual page describes the structure of the \fIvomsdir\fP VOMS server trust anchor
+directory. The function of this directory is to keep local information about trusted VOMS servers
+which is used to verify the signatures on the attributes issued by VOMS servers.
 .sp
-The \fIvomsdir\fR directory is structured as follows:
+The \fIvomsdir\fP directory is structured as follows:
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 <vomsdir>
    |
    |\-\-vo1
@@ -50,127 +55,116 @@ The \fIvomsdir\fR directory is structured as follows:
    |
    |\-\-vo3
    |
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-A subdirectory is created for each of the trusted VOs\&. Inside each VO directory two types of files can be found:
-.sp
-.RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-
-\fBLSC files\fR
-An LSC file contains a description of the certificate chain of the certificate used by a VOMS server to sign VOMS attributes\&.
-.RE
+A subdirectory is created for each of the trusted VOs. Inside each VO directory two types of
+files can be found:
 .sp
 .RS 4
 .ie n \{\
 \h'-04'\(bu\h'+03'\c
 .\}
 .el \{\
-.sp -1
-.IP \(bu 2.3
+.  sp -1
+.  IP \(bu 2.3
 .\}
-
-\fBX509 certificates\fR
-The certificate used by a VOMS server to sign attributes\&.
+\fBLSC files\fP
+An LSC file contains a description of the certificate chain of the certificate used by a VOMS server
+to sign VOMS attributes.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+\fBX509 certificates\fP
+The certificate used by a VOMS server to sign attributes.
 .RE
 .sp
 These files are commonly named using the following pattern:
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
-<hostname>\&.lsc
-<hostname>\&.pem
+.fam C
+<hostname>.lsc
+<hostname>.pem
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-Where hostname is the host where the VOMS server is running\&.
+Where hostname is the host where the VOMS server is running.
 .sp
-When both lsc and pem files are present for a given VO and hostname, the lsc file takes precedence\&.
+When both lsc and pem files are present for a given VO and hostname, the lsc file takes precedence.
 .SS "LSC file syntax"
 .sp
-The LSC file contains a list of X\&.509 subject strings, one on each line, encoded in OpenSSL slash\-separated syntax, describing the certificate chain (up and including the CA that issued the certificate)\&. For instance, the voms\&.cnaf\&.infn\&.it VOMS server has the following LSC file:
+The LSC file contains a list of X.509 subject strings, one on each line, encoded in OpenSSL slash\-separated syntax,
+describing the certificate chain (up and including the CA that issued the certificate).
+For instance, the voms.cnaf.infn.it VOMS server has the following LSC file:
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
-/C=IT/O=INFN/OU=Host/L=CNAF/CN=voms\&.cnaf\&.infn\&.it
+.fam C
+/C=IT/O=INFN/OU=Host/L=CNAF/CN=voms.cnaf.infn.it
 /C=IT/O=INFN/CN=INFN CA
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .SH "EXAMPLES"
 .sp
-Assuming locally two VOs are trusted, the \fBcms\fR VO and the \fBcdf\fR VO, the \fB/etc/grid\-security/vomsdir\fR directory will be structured as follows:
+Assuming locally two VOs are trusted, the \fBcms\fP VO and the \fBcdf\fP VO, the \fB/etc/grid\-security/vomsdir\fP directory will be structured
+as follows:
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 /etc/grid\-security/vomsdir
 /etc/grid\-security/vomsdir/cms
 /etc/grid\-security/vomsdir/cdf
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-The \fB/etc/grid\-security/vomsdir/cms\fR directory will contain the following files:
+The \fB/etc/grid\-security/vomsdir/cms\fP directory will contain the following files:
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
-lcg\-voms\&.cern\&.ch\&.lsc
-voms\&.cern\&.ch\&.lsc
+.fam C
+lcg\-voms.cern.ch.lsc
+voms.cern.ch.lsc
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-The \fB/etc/grid\-security/vomsdir/cdf\fR directory will contain the following files:
+The \fB/etc/grid\-security/vomsdir/cdf\fP directory will contain the following files:
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
-voms\-01\&.pd\&.infn\&.it\&.lsc
-voms\&.cnaf\&.infn\&.it\&.lsc
-voms\&.fnal\&.gov\&.lsc
+.fam C
+voms\-01.pd.infn.it.lsc
+voms.cnaf.infn.it.lsc
+voms.fnal.gov.lsc
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-The LSC files will contain descriptions of the certificate chains used by VOMS servers to sign attribute certificates\&.
+The LSC files will contain descriptions of the certificate chains used by VOMS servers to sign attribute certificates.
 .SH "BUGS"
 .sp
-To report bugs or ask for support, use GGUS: https://ggus\&.eu/pages/home\&.php
+To report bugs or ask for support, use GGUS: \c
+.URL "https://ggus.eu/pages/home.php" "" ""
 .SH "AUTHORS"
 .sp
-Enrico Vianello <enrico\&.vianello@cnaf\&.infn\&.it>
+Enrico Vianello \c
+.MTO "enrico.vianello\(atcnaf.infn.it" "" ""
 .sp
-Francesco Giacomini <francesco\&.giacomini@cnaf\&.infn\&.it>
+Francesco Giacomini \c
+.MTO "francesco.giacomini\(atcnaf.infn.it" "" ""
 .SH "SEE ALSO"
 .sp
 voms\-proxy\-destroy(1), voms\-proxy\-info(1), voms\-lsc(5)
-.SH "COPYING"
-.sp
-SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
-.sp
-SPDX-License-Identifier: Apache-2.0
-.sp

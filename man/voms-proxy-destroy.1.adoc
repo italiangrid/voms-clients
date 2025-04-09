@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+//
+// SPDX-License-Identifier: Apache-2.0
+
 VOMS-PROXY-DESTROY(1)
 =====================
 :doctype: manpage
@@ -48,9 +52,3 @@ SEE ALSO
 --------
 voms-proxy-init(1), voms-proxy-info(1)
 
-COPYING
--------
-
-SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
-
-SPDX-License-Identifier: Apache-2.0
