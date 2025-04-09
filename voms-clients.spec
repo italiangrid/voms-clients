@@ -23,8 +23,8 @@ BuildRequires:  jpackage-utils
 
 Requires:  java-17-openjdk-headless
 
-Requires(post):    %{_bindir}/update-alternatives
-Requires(postun):  %{_bindir}/update-alternatives
+Requires(post):    %{_sbindir}/update-alternatives
+Requires(postun):  %{_sbindir}/update-alternatives
 
 Provides:  voms-clients = %{version}
 Provides:  voms-clients3 = %{version}
