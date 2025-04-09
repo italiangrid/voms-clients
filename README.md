@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # VOMS Clients
 
-[![Build Status](https://travis-ci.org/italiangrid/voms-clients.svg)](https://travis-ci.org/italiangrid/voms-clients)
+![Build Status](https://github.com/italiangrid/voms-clients/actions/workflows/maven.yaml/badge.svg)
 
 Command-line clients for Virtual Organization Membership Service (VOMS), i.e.:
 
