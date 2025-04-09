@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # VOMS Clients
 
 [![Build Status](https://travis-ci.org/italiangrid/voms-clients.svg)](https://travis-ci.org/italiangrid/voms-clients)
