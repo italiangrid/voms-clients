@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           dnf upgrade -y
-          [[ "${{ matrix.version }}" = 8 ]] && dnf module enable -y maven:3.8/common
+          dnf module enable -y maven:3.8/common
           dnf install -y git rpmdevtools rpmlint maven-openjdk17 jpackage-utils
       - name: Setup build tree
         run: |
