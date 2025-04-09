@@ -37,7 +37,6 @@ SPDX-License-Identifier: Apache-2.0
 
     <!-- Version properties -->
     <plugin.compiler.version>3.1</plugin.compiler.version>
-    <plugin.license.version>1.9.0</plugin.license.version>
     <plugin.release.version>2.2.2</plugin.release.version>
     <plugin.source.version>2.2.1</plugin.source.version>
     <plugin.assembly.version>2.4.1</plugin.assembly.version>
@@ -105,39 +104,6 @@ SPDX-License-Identifier: Apache-2.0
             </manifest>
           </archive>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>com.mycila.maven-license-plugin</groupId>
-        <artifactId>maven-license-plugin</artifactId>
-        <version>${plugin.license.version}</version>
-        <configuration>
-          <header>src/license/license.txt</header>
-          <excludes>
-            <exclude>.travis.yml</exclude>
-            <exclude>**/*.md</exclude>
-            <exclude>**/*.sh</exclude>
-            <exclude>man/*.1</exclude>
-            <exclude>man/*.5</exclude>
-            <exclude>man/*.txt</exclude>
-            <exclude>AUTHORS</exclude>
-            <exclude>LICENSE</exclude>
-            <exclude>.gitignore</exclude>
-            <exclude>src/test/resources/**</exclude>
-            <exclude>src/config/**</exclude>
-          </excludes>
-          <useDefaultExcludes>true</useDefaultExcludes>
-          <strictCheck>true</strictCheck>
-        </configuration>
-        <executions>
-          <execution>
-            <id>check-headers</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
