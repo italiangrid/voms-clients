@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #!/usr/bin/env groovy
 @Library('sd')_
 def kubeLabel = getKubeLabel()

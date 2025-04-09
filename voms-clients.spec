@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Remember to define the base_version and version_pom macros
 %{!?base_version: %global base_version 0.0.0}
 %{!?version_pom: %global version_pom 0.0.0}

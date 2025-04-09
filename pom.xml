@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -52,28 +58,19 @@
 
   <developers>
     <developer>
-      <id>aceccanti</id>
-      <name>Andrea Ceccanti</name>
-      <email>andrea.ceccanti@cnaf.infn.it</email>
-      <organization>INFN CNAF</organization>
+      <id>vianello</id>
+      <name>Enrico Vianello</name>
+      <email>enrico.vianello@cnaf.infn.it</email>
+      <organization>Istituto Nazionale di Fisica Nucleare</organization>
       <roles>
         <role>Developer</role>
       </roles>
     </developer>
     <developer>
-      <id>vventuri</id>
-      <name>Valerio Venturi</name>
-      <email>valerio.venturi@cnaf.infn.it</email>
-      <organization>INFN CNAF</organization>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>dandreotti</id>
-      <name>Daniele Andreotti</name>
-      <email>daniele.andreotti@cnaf.infn.it</email>
-      <organization>INFN CNAF</organization>
+      <id>giaco</id>
+      <name>Francesco Giacomini</name>
+      <email>francesco.giacomini@cnaf.infn.it</email>
+      <organization>Istituto Nazionale di Fisica Nucleare</organization>
       <roles>
         <role>Developer</role>
       </roles>
