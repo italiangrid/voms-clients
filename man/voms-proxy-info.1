@@ -1,419 +1,361 @@
+.\" SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+.\"
+.\" SPDX-License-Identifier: Apache-2.0
+
 '\" t
 .\"     Title: voms-proxy-info
-.\"    Author: [see the "AUTHORS" section]
-.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
-.\"      Date: 11/24/2012
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 2.0.23
+.\"      Date: 2025-04-09
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "VOMS\-PROXY\-INFO" "1" "11/24/2012" "\ \&" "\ \&"
-.\" -----------------------------------------------------------------
-.\" * Define some portability stuff
-.\" -----------------------------------------------------------------
-.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\" http://bugs.debian.org/507673
-.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
-.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.TH "VOMS\-PROXY\-INFO" "1" "2025-04-09" "\ \&" "\ \&"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
-.\" -----------------------------------------------------------------
-.\" * set default formatting
-.\" -----------------------------------------------------------------
-.\" disable hyphenation
+.ss \n[.ss] 0
 .nh
-.\" disable justification (adjust text to left margin only)
 .ad l
-.\" -----------------------------------------------------------------
-.\" * MAIN CONTENT STARTS HERE *
-.\" -----------------------------------------------------------------
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
 .SH "NAME"
 voms-proxy-info \- prints information about a proxy with VOMS extensions
 .SH "SYNOPSIS"
 .sp
-\fBvoms\-proxy\-info\fR [options]
+\fBvoms\-proxy\-info\fP [options]
 .SH "DESCRIPTION"
 .sp
-The voms\-proxy\-info command prints information about a proxy, including information about the VOMS extension\&.
+The voms\-proxy\-info command prints information about a proxy, including information about the VOMS extension.
 .sp
-The default location of the proxy is
+The default location of the proxy  is
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
  /tmp/x509up_u<user_id>
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-where user_id is the effective user id of the user running the command\&. A non\-standard location for the proxy can be specified using the \fB\-file\fR option\&.
+where user_id is the effective user id of the user running the command.
+A non\-standard location for the proxy can be specified using the \fB\-file\fP option.
 .SH "OPTIONS"
 .sp
-Options may be specified indifferently with either a "\-" or "\-\-" prefix\&.
+Options  may be specified indifferently with either a "\-" or "\-\-" prefix.
 .sp
-\fB\-\-acexists <voname>\fR
+\fB\-\-acexists <voname>\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Returns 0 if AC exists corresponding to voname, 1 otherwise
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-acissuer\fR
+\fB\-\-acissuer\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the DN of AC issuer (certificate signer)
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-acsubject\fR
+\fB\-\-acsubject\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the distinguished name (DN) of AC subject
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-actimeleft\fR
+\fB\-\-actimeleft\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints time (in seconds) until AC expires
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-all\fR
+\fB\-\-all\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 All proxy options in a human readable format
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-b,\-\-bits <B>\fR
+\fB\-b,\-\-bits <B>\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 [option to \-exists] strength requirement for proxy to be valid
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-chain\fR
+\fB\-\-chain\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints information about the whole proxy certificate chain (CA excluded)
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-conf <file>\fR
+\fB\-\-conf <file>\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Read options from <file>
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-debug\fR
+\fB\-\-debug\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Enables extra debug output
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-e,\-\-exists\fR
+\fB\-e,\-\-exists\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Returns 0 if valid proxy exists, 1 otherwise
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-file <proxyfile>\fR
+\fB\-\-file <proxyfile>\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Reads information from file <proxyfile>
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-fqan\fR
+\fB\-\-fqan\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints VOMS fully qualified attribute names (FQANs)
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-help\fR
+\fB\-\-help\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Displays helps and exits
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-hours <H>\fR
+\fB\-\-hours <H>\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 [option to \-exists] time requirement for proxy to be valid (deprecated, use \-valid instead)
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-identity\fR
+\fB\-\-identity\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the DN of the identity represented by the proxy
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-issuer\fR
+\fB\-\-issuer\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the proxy issuer DN
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-k,\-\-keyusage\fR
+\fB\-k,\-\-keyusage\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints content of the KeyUsage extension
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-p,\-\-path\fR
+\fB\-p,\-\-path\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the proxy file pathname
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-serial\fR
+\fB\-\-serial\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the AC serial number
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-strength\fR
+\fB\-\-strength\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the proxy key size (in bits)
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-subject\fR
+\fB\-\-subject\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the proxy subject Distinguished name (DN)
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-text\fR
+\fB\-\-text\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints all information regarding the certificate
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-timeleft\fR
+\fB\-\-timeleft\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints time (in seconds) until proxy expires
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-type\fR
+\fB\-\-type\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the proxy type (full or limited)
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-uri\fR
+\fB\-\-uri\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the URI of the VOMS server that issued the attributes
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-usage\fR
+\fB\-\-usage\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Displays helps and exits
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-valid <H:M>\fR
+\fB\-\-valid <H:M>\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 [option to \-exists] time requirement for proxy to be valid
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-version\fR
+\fB\-\-version\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Displays version
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .sp
-\fB\-\-vo\fR
+\fB\-\-vo\fP
 .sp
-.if n \{\
-.RS 4
-.\}
+.if n .RS 4
 .nf
+.fam C
 Prints the vo name
+.fam
 .fi
-.if n \{\
-.RE
-.\}
+.if n .RE
 .SH "BUGS"
 .sp
-To report bugs or ask for support, use GGUS: https://ggus\&.eu/pages/home\&.php
+To report bugs or ask for support, use GGUS: \c
+.URL "https://ggus.eu/pages/home.php" "" ""
 .SH "AUTHORS"
 .sp
-Enrico Vianello <enrico\&.vianello@cnaf\&.infn\&.it>
+Enrico Vianello \c
+.MTO "enrico.vianello\(atcnaf.infn.it" "" ""
 .sp
-Francesco Giacomini <francesco\&.giacomini@cnaf\&.infn\&.it>
+Francesco Giacomini \c
+.MTO "francesco.giacomini\(atcnaf.infn.it" "" ""
 .SH "SEE ALSO"
 .sp
 voms\-proxy\-destroy(1), voms\-proxy\-info(1), vomses(5), vomsdir(5)
-.SH "COPYING"
-.sp
-SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
-.sp
-SPDX-License-Identifier: Apache-2.0
-.sp

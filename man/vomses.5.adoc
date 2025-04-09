@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
+//
+// SPDX-License-Identifier: Apache-2.0
+
 VOMSES(5)
 =========
 :doctype: manpage
@@ -61,9 +65,3 @@ Francesco Giacomini <francesco.giacomini@cnaf.infn.it>
 == SEE ALSO
 
 voms-proxy-destroy(1), voms-proxy-info(1), vomsdir(5)
-
-== COPYING
-
-SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
-
-SPDX-License-Identifier: Apache-2.0
