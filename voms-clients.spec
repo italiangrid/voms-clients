@@ -172,7 +172,7 @@ fi
 * Wed Sep 7 2016 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.7-1
 - Packaging 3.0.7 version
 
-* Tue Dec 10 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.6-1
+* Wed Dec 10 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.6-1
 - Packaging 3.0.6 version
 
 * Mon Jan 27 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.5-1
