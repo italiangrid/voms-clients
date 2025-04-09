@@ -1,38 +1,30 @@
-%global pom_version @@POM_VERSION@@
-%global jar_names  voms-clients bcprov-1.46 bcmail-1.46 canl voms-api-java3 commons-io
+# Remember to define the base_version and version_pom macros
+%{!?base_version: %global base_version 0.0.0}
+%{!?version_pom: %global version_pom 0.0.0}
 
 %global orig_name voms-clients
-%global _varlib /var/lib
 
-Name: voms-clients3
-Version: 3.0.7
+Name: voms-clients-java
+Version: %{base_version}
 Release: 1%{?dist}
 Summary: The Virtual Organisation Membership Service command line clients
-
-Group: Applications/Internet
-License: ASL 2.0
-URL: https://github.com/andreaceccanti/voms-clients
-Source: %{name}-%{version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Group: System Environment/Libraries
+License: Apache-2.0
+URL: https://github.com/italiangrid/voms-clients
 
 BuildArch: noarch
 
-BuildRequires: apache-maven
-BuildRequires: jpackage-utils
-BuildRequires: java-1.6.0-openjdk-devel
+BuildRequires:  maven-openjdk17
+BuildRequires:  jpackage-utils
 
-Requires: java-1.6.0-openjdk
-Requires: voms-api-java3 >= 3.0.3
-Requires: jakarta-commons-io
+Requires:  java-17-openjdk-headless
 
-Requires: jpackage-utils
+Requires(post):    %{_bindir}/update-alternatives
+Requires(postun):  %{_bindir}/update-alternatives
 
-Requires(post):         %{_sbindir}/update-alternatives
-Requires(postun):       %{_sbindir}/update-alternatives
-
-Provides:       voms-clients = %{version}
-Conflicts:      voms-clients <= 2.0.11-1
-
+Provides:  voms-clients = %{version}
+Provides:  voms-clients3 = %{version}
+Conflicts:  voms-clients <= 2.0.11-1
 
 %description
 The Virtual Organization Membership Service (VOMS) is an attribute authority
@@ -45,47 +37,50 @@ authorization purposes.
 This package provides the command line clients for VOMS, voms-proxy-init, 
 voms-proxy-destroy and voms-proxy-info. 
 
+%package    javadoc
+Summary:    Javadoc for the VOMS Java command line clients
+Group:      Documentation
+BuildArch:  noarch
+Requires:   %{name} = %{version}
+
+%description javadoc
+Virtual Organization Membership Service (VOMS) Java command line clients Documentation.
+
 %prep
-%setup -q -n voms-clients
 
 %build
-mvn -DskipTests -U -Dvoms-clients.libs=%{_varlib}/%{name}/lib clean package
+mvn %{?mvn_settings} -U -Dmaven.test.skip=true clean package
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_javadir}
+mkdir -p %{buildroot}%{_javadocdir}/%{name}-%{version_pom}
+mkdir -p %{buildroot}%{_sharedstatedir}/%{name}/lib
 
-install -dm 755 $RPM_BUILD_ROOT%{_javadir}
-install -dm 755 $RPM_BUILD_ROOT%{_varlib}/%{name}/lib
+tar -C %{buildroot}/usr -xvzf target/%{orig_name}.tar.gz --strip 1 
 
-# Install all files but jar dependencies (these will be taken from the OS)
-tar -C $RPM_BUILD_ROOT/usr -xvzf target/%{orig_name}.tar.gz --strip 1 --exclude '*.jar'
+mv %{buildroot}%{_javadir}/%{orig_name}/*.jar $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}/lib
 
-# But install the voms-clients jar as well
-tar -C $RPM_BUILD_ROOT/usr -xvzf target/%{orig_name}.tar.gz --strip 1 '%{orig_name}/share/java/%{orig_name}-%{pom_version}.jar'
-
-# And the commons-cli, as the version on SL5 is buggy
-tar -C $RPM_BUILD_ROOT/%{_varlib}/%{name}/lib -xvzf  target/%{orig_name}.tar.gz --strip 3 --wildcards '%{orig_name}/share/java/commons-cli-*.jar'
-
-ln -s %{orig_name}-%{pom_version}.jar $RPM_BUILD_ROOT%{_javadir}/%{orig_name}.jar
-ln -s %{orig_name}-%{pom_version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
+ln -s %{_localstatedir}/lib/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{orig_name}.jar
+ln -s %{_localstatedir}/lib/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{name}.jar
 
 # Rename to voms-proxy-*3 to avoid clashes with old C clients
-mv $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-init $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-init3
-mv $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-info $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-info3
-mv $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-destroy $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-destroy3
+mv %{buildroot}/%{_bindir}/voms-proxy-init %{buildroot}/%{_bindir}/voms-proxy-init3
+mv %{buildroot}/%{_bindir}/voms-proxy-info %{buildroot}/%{_bindir}/voms-proxy-info3
+mv %{buildroot}/%{_bindir}/voms-proxy-destroy %{buildroot}/%{_bindir}/voms-proxy-destroy3
 
 # Rename manpages
-mv $RPM_BUILD_ROOT/%{_mandir}/man1/voms-proxy-init.1 $RPM_BUILD_ROOT/%{_mandir}/man1/voms-proxy-init3.1
-mv $RPM_BUILD_ROOT/%{_mandir}/man1/voms-proxy-info.1 $RPM_BUILD_ROOT/%{_mandir}/man1/voms-proxy-info3.1
-mv $RPM_BUILD_ROOT/%{_mandir}/man1/voms-proxy-destroy.1 $RPM_BUILD_ROOT/%{_mandir}/man1/voms-proxy-destroy3.1
+mv %{buildroot}/%{_mandir}/man1/voms-proxy-init.1 %{buildroot}/%{_mandir}/man1/voms-proxy-init3.1
+mv %{buildroot}/%{_mandir}/man1/voms-proxy-info.1 %{buildroot}/%{_mandir}/man1/voms-proxy-info3.1
+mv %{buildroot}/%{_mandir}/man1/voms-proxy-destroy.1 %{buildroot}/%{_mandir}/man1/voms-proxy-destroy3.1
 
 # Needed by alternatives. See http://fedoraproject.org/wiki/Packaging:Alternatives
-touch $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-init
-touch $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-info
-touch $RPM_BUILD_ROOT/%{_bindir}/voms-proxy-destroy
+touch %{buildroot}/%{_bindir}/voms-proxy-init
+touch %{buildroot}/%{_bindir}/voms-proxy-info
+touch %{buildroot}/%{_bindir}/voms-proxy-destroy
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
@@ -104,19 +99,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man5/vomses.5.gz
 %{_mandir}/man5/vomsdir.5.gz
 
-%{_javadir}/%{orig_name}-%{pom_version}.jar
 %{_javadir}/%{name}.jar
 %{_javadir}/%{orig_name}.jar
 
-%dir %{_varlib}/%{name}/lib
-%{_varlib}/%{name}/lib/*.jar
+%dir %{_sharedstatedir}/%{name}/lib
+%{_sharedstatedir}/%{name}/lib/*.jar
 
 %pre
 
 if [ $1 -eq 2 ] ; then
   ## Package upgrade, cleanup embedded dependencies
-  if [ -d "%{_varlib}/%{name}/lib" ]; then
-    rm -f %{_varlib}/%{name}/lib/*.jar
+  if [ -d "%{_sharedstatedir}/%{name}/lib" ]; then
+    rm -f %{_sharedstatedir}/%{name}/lib/*.jar
   fi
 
   ## Remove scripts if not managed with alternatives (pre v. 3.0.5)
@@ -130,18 +124,11 @@ fi
 %preun
 
 if [ $1 -eq 0 ] ; then
-    rm -f %{_varlib}/%{name}/lib/*.jar
-    rm -rf %{_varlib}/%{name}
+    rm -f %{_sharedstatedir}/%{name}/lib/*.jar
+    rm -rf %{_sharedstatedir}/%{name}
 fi
 
 %post
-
-jar_names="voms-clients bcprov-1.46 bcmail-1.46 canl voms-api-java3 commons-io"
-
-for jarname in ${jar_names}; do
-    [ -f %{_javadir}/$jarname.jar ] ||  ( echo "$jarname not found in %{_javadir}" && exit 1 )
-    ln -fs %{_javadir}/$jarname.jar %{_varlib}/%{name}/lib
-done
 
 %{_sbindir}/update-alternatives --install %{_bindir}/voms-proxy-init \
    voms-proxy-init %{_bindir}/voms-proxy-init3 90 \
@@ -164,10 +151,28 @@ if [ $1 -eq 0 ] ; then
 fi
 
 %changelog
+* Tue Mar 25 2025 Enrico Vianello <enrico.vianello at cnaf.infn.it> - 3.3.5-0
+- Packaging 3.3.5-0 version
+
+* Fri Aug 2 2024 Enrico Vianello <enrico.vianello at cnaf.infn.it> - 3.3.4
+- Packaging 3.3.4-1 version
+
+* Fri Jun 21 2024 Enrico Vianello <enrico.vianello at cnaf.infn.it> - 3.3.3-1
+- 3.3.3 packaging for EL9
+
+* Fri May 13 2022 Enrico Vianello <enrivo.vianello at cnaf.infn.it> - 3.3.3-0
+- Packaging 3.3.3 version
+
+* Fri Mar 9 2018 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.3.2-0
+- Packaging 3.3.2 version
+
+* Mon Dec 4 2017 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.3.0-0
+- Packaging 3.3.0 version
+
 * Wed Sep 7 2016 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.7-1
 - Packaging 3.0.7 version
 
-* Tue Dec 10 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.6-1
+* Wed Dec 10 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.6-1
 - Packaging 3.0.6 version
 
 * Mon Jan 27 2014 Andrea Ceccanti <andrea.ceccanti at cnaf.infn.it> - 3.0.5-1
@@ -190,3 +195,4 @@ fi
 
 * Wed Nov 14 2012 Valerio Venturi <valerio.venturi at cnaf.infn.it> - 3.0.0-1
 - New version of VOMS command line clients
+
