@@ -59,10 +59,10 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{name}/lib
 
 tar -C %{buildroot}/usr -xvzf target/%{orig_name}.tar.gz --strip 1 
 
-mv %{buildroot}%{_javadir}/%{orig_name}/*.jar $RPM_BUILD_ROOT%{_varlib}/%{name}/lib
+mv %{buildroot}%{_javadir}/%{orig_name}/*.jar $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}/lib
 
-ln -s %{_varlib}/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{orig_name}.jar
-ln -s %{_varlib}/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{name}.jar
+ln -s %{_localstatedir}/lib/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{orig_name}.jar
+ln -s %{_localstatedir}/lib/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{name}.jar
 
 # Rename to voms-proxy-*3 to avoid clashes with old C clients
 mv %{buildroot}/%{_bindir}/voms-proxy-init %{buildroot}/%{_bindir}/voms-proxy-init3
