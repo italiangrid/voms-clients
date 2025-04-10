@@ -53,35 +53,36 @@ Virtual Organization Membership Service (VOMS) Java command line clients Documen
 %prep
 
 %build
-mvn %{?mvn_settings} -U -Dmaven.test.skip=true clean generate-resources package
+mvn %{?mvn_settings} -U -Dmaven.test.skip=true -Dvoms-clients.libs=%{_sharedstatedir}/%{name}/lib clean generate-resources package
 
 %install
 rm -rf %{buildroot}
+
 mkdir -p %{buildroot}%{_javadir}
 mkdir -p %{buildroot}%{_javadocdir}/%{name}-%{version_pom}
 mkdir -p %{buildroot}%{_sharedstatedir}/%{name}/lib
 
-tar -C %{buildroot}/usr -xvzf target/%{orig_name}.tar.gz --strip 1 
+tar -C %{buildroot}%{_prefix} -xvzf target/%{orig_name}.tar.gz --strip 1 
 
-mv %{buildroot}%{_javadir}/%{orig_name}/*.jar $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}/lib
+mv %{buildroot}%{_javadir}/%{orig_name}/*.jar %{buildroot}%{_sharedstatedir}/%{name}/lib
 
-ln -s %{_localstatedir}/lib/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{orig_name}.jar
-ln -s %{_localstatedir}/lib/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{name}.jar
+ln -s %{_sharedstatedir}/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{orig_name}.jar
+ln -s %{_sharedstatedir}/%{name}/lib/%{orig_name}-%{pom_version}.jar %{buildroot}%{_javadir}/%{name}.jar
 
 # Rename to voms-proxy-*3 to avoid clashes with old C clients
-mv %{buildroot}/%{_bindir}/voms-proxy-init %{buildroot}/%{_bindir}/voms-proxy-init3
-mv %{buildroot}/%{_bindir}/voms-proxy-info %{buildroot}/%{_bindir}/voms-proxy-info3
-mv %{buildroot}/%{_bindir}/voms-proxy-destroy %{buildroot}/%{_bindir}/voms-proxy-destroy3
+mv %{buildroot}%{_bindir}/voms-proxy-init %{buildroot}%{_bindir}/voms-proxy-init3
+mv %{buildroot}%{_bindir}/voms-proxy-info %{buildroot}%{_bindir}/voms-proxy-info3
+mv %{buildroot}%{_bindir}/voms-proxy-destroy %{buildroot}%{_bindir}/voms-proxy-destroy3
 
 # Rename manpages
-mv %{buildroot}/%{_mandir}/man1/voms-proxy-init.1 %{buildroot}/%{_mandir}/man1/voms-proxy-init3.1
-mv %{buildroot}/%{_mandir}/man1/voms-proxy-info.1 %{buildroot}/%{_mandir}/man1/voms-proxy-info3.1
-mv %{buildroot}/%{_mandir}/man1/voms-proxy-destroy.1 %{buildroot}/%{_mandir}/man1/voms-proxy-destroy3.1
+mv %{buildroot}%{_mandir}/man1/voms-proxy-init.1 %{buildroot}%{_mandir}/man1/voms-proxy-init3.1
+mv %{buildroot}%{_mandir}/man1/voms-proxy-info.1 %{buildroot}%{_mandir}/man1/voms-proxy-info3.1
+mv %{buildroot}%{_mandir}/man1/voms-proxy-destroy.1 %{buildroot}%{_mandir}/man1/voms-proxy-destroy3.1
 
 # Needed by alternatives. See http://fedoraproject.org/wiki/Packaging:Alternatives
-touch %{buildroot}/%{_bindir}/voms-proxy-init
-touch %{buildroot}/%{_bindir}/voms-proxy-info
-touch %{buildroot}/%{_bindir}/voms-proxy-destroy
+touch %{buildroot}%{_bindir}/voms-proxy-init
+touch %{buildroot}%{_bindir}/voms-proxy-info
+touch %{buildroot}%{_bindir}/voms-proxy-destroy
 
 %clean
 rm -rf %{buildroot}
