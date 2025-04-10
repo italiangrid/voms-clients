@@ -101,4 +101,4 @@ jobs:
           # - Delete lines from the next one beginning with "## " until the end of the file
           # - Change all the "### " to "## " to use heading level 2 instead of level 3
           sed -e "1,/^## ${VERSION_POM}/d;/^## /,\$d;s/^### /## /g" CHANGELOG.md > RELEASE-CHANGELOG.md
-          gh release create v${VERSION_POM} --title "VOMS API Java ${VERSION_POM}" --notes-file RELEASE-CHANGELOG.md build-*/*
+          gh release create v${VERSION_POM} --title "VOMS Clients Java ${VERSION_POM}" --notes-file RELEASE-CHANGELOG.md build-*/*
