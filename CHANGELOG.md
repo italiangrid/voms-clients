@@ -12,6 +12,7 @@ SPDX-License-Identifier: Apache-2.0
 
 * Bump to Java 17
 * Bump to CANL 2.8.3 and Bouncy Castle 1.80, through the latest voms-api-java v3.3.5
+* Respect X509_USER_PROXY environment variable inside voms-proxy-destroy
 
 ## 3.3.4 (2024-09-12)
 
