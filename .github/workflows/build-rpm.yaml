@@ -23,7 +23,7 @@ jobs:
         run: |
           dnf upgrade -y
           dnf module enable -y maven:3.8
-          dnf install -y git rpmdevtools rpmlint java-1.8.0-openjdk-devel jpackage-utils
+          dnf install -y git rpmdevtools rpmlint maven java-1.8.0-openjdk-devel jpackage-utils
       - name: Setup build tree
         run: |
           echo "%_topdir $(pwd)/rpmbuild" >> ~/.rpmmacros
