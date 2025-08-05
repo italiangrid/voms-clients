@@ -6,6 +6,13 @@ SPDX-License-Identifier: Apache-2.0
 
 # Changelog
 
+## 3.3.6 (2025-08-05)
+
+### Changed
+
+* Back to SDK 1.8 as source and target
+* Move to VOMS API Java 3.3.6 which means Bouncy Castle 1.81
+
 ## 3.3.5 (2025-04-11)
 
 ### Changed
