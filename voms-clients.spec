@@ -18,10 +18,11 @@ URL: https://github.com/italiangrid/voms-clients
 
 BuildArch: noarch
 
-BuildRequires:  maven-openjdk17
+BuildRequires:  maven
+BuildRequires:  java-1.8.0-openjdk-devel
 BuildRequires:  jpackage-utils
 
-Requires:  java-17-openjdk-headless
+Requires:       java-headless >= 1.8
 
 Requires(post):    %{_sbindir}/update-alternatives
 Requires(postun):  %{_sbindir}/update-alternatives
