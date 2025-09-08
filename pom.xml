@@ -9,7 +9,7 @@ SPDX-License-Identifier: Apache-2.0
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>voms-clients</artifactId>
-  <version>3.3.6</version>
+  <version>3.3.7-SNAPSHOT</version>
 
   <name>voms-clients</name>
   <description>VOMS service command-line clients</description>
