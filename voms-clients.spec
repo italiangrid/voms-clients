@@ -18,11 +18,8 @@ URL: https://github.com/italiangrid/voms-clients
 
 BuildArch: noarch
 
-BuildRequires:  maven
-BuildRequires:  java-1.8.0-openjdk-devel
-BuildRequires:  jpackage-utils
-
-Requires:       java-headless >= 1.8
+BuildRequires: maven-openjdk21
+Requires: java-headless >= 1:1.8.0
 
 Requires(post):    %{_sbindir}/update-alternatives
 Requires(postun):  %{_sbindir}/update-alternatives
@@ -84,9 +81,6 @@ mv %{buildroot}%{_mandir}/man1/voms-proxy-destroy.1 %{buildroot}%{_mandir}/man1/
 touch %{buildroot}%{_bindir}/voms-proxy-init
 touch %{buildroot}%{_bindir}/voms-proxy-info
 touch %{buildroot}%{_bindir}/voms-proxy-destroy
-
-%clean
-rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
