@@ -297,23 +297,17 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     directorySanityChecks(vomsdir, "Invalid vomsdir location");
 
-    VOMSTrustStore trustStore = null;
-
     Map<String, List<String>> vomsCommandsMap =
         commandsParser.parseCommands(params.getVomsCommands());
 
-    if (vomsCommandsMap == null || vomsCommandsMap.isEmpty()) {
-      trustStore = new DefaultVOMSTrustStore(Arrays.asList(vomsdir), vomsTrustStoreListener);
+    List<String> VOs = new ArrayList<>();
 
-    } else {
-      List<String> VOs = new ArrayList<>();
-
-      for (String vo : vomsCommandsMap.keySet()) {
-        VOs.add(vo);
-
-      }
-      trustStore = new DefaultVOMSTrustStore(Arrays.asList(vomsdir), VOs, vomsTrustStoreListener);
+    for (String vo : vomsCommandsMap.keySet()) {
+      VOs.add(vo);
     }
+
+    VOMSTrustStore trustStore =
+        new DefaultVOMSTrustStore(Arrays.asList(vomsdir), VOs, vomsTrustStoreListener);
 
     vomsValidator =
         VOMSValidators.newValidator(trustStore, certChainValidator, validationResultListener);
