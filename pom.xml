@@ -9,7 +9,7 @@ SPDX-License-Identifier: Apache-2.0
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>voms-clients</artifactId>
-  <version>3.3.7-SNAPSHOT</version>
+  <version>3.3.7</version>
 
   <name>voms-clients</name>
   <description>VOMS service command-line clients</description>
@@ -53,7 +53,7 @@ SPDX-License-Identifier: Apache-2.0
     <junit.version>4.13.2</junit.version>
     <commons-io.version>2.18.0</commons-io.version>
     <commons-cli.version>1.9.0</commons-cli.version>
-    <voms-api-java.version>3.3.7-SNAPSHOT</voms-api-java.version>
+    <voms-api-java.version>3.3.7</voms-api-java.version>
 
     <!-- Leave this defined as empty -->
     <voms-clients.libs />
@@ -73,6 +73,15 @@ SPDX-License-Identifier: Apache-2.0
       <id>giaco</id>
       <name>Francesco Giacomini</name>
       <email>francesco.giacomini@cnaf.infn.it</email>
+      <organization>Istituto Nazionale di Fisica Nucleare</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>fagostin</id>
+      <name>Federica Agostini</name>
+      <email>federica.agostini@cnaf.infn.it</email>
       <organization>Istituto Nazionale di Fisica Nucleare</organization>
       <roles>
         <role>Developer</role>

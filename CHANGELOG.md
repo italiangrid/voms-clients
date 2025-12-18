@@ -6,6 +6,13 @@ SPDX-License-Identifier: Apache-2.0
 
 # Changelog
 
+## 3.3.7 (2025-12-18)
+
+* Support for AlmaLinux 10
+* Signed RPMs on VOMS repository
+* Support loading LSC files for selected VOs
+* Increase default heap memory for the command-line clients
+
 ## 3.3.6 (2025-08-05)
 
 ### Changed
