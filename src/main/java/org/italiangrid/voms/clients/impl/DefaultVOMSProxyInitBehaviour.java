@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.bouncycastle.asn1.x509.AttributeCertificate;
-import eu.emi.security.authn.x509.helpers.PasswordSupplier;
 import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.VOMSValidators;
 import org.italiangrid.voms.ac.VOMSACValidator;
@@ -63,6 +62,7 @@ import eu.emi.security.authn.x509.ValidationErrorListener;
 import eu.emi.security.authn.x509.ValidationResult;
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;
+import eu.emi.security.authn.x509.helpers.PasswordSupplier;
 import eu.emi.security.authn.x509.helpers.proxy.ExtendedProxyType;
 import eu.emi.security.authn.x509.helpers.proxy.ProxyHelper;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
@@ -157,11 +157,11 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
   }
 
   protected void buildACResolver() {
-    
+
     if (!Objects.isNull(FAKE.getSystemPropertyValue())) {
       acResolver = new FakeACResolver(requestListener);
     }
-    
+
     if (Objects.isNull(acResolver)) {
       acResolver = new DefaultACResolver(commandsParser, certChainValidator, requestListener,
           protocolListener);
@@ -215,8 +215,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
         commandsParser.parseCommands(params.getVomsCommands());
 
     for (String voOrAlias : vomsCommandsMap.keySet()) {
-      if (sis.getVOMSServerInfo(voOrAlias)
-        .isEmpty()) {
+      if (sis.getVOMSServerInfo(voOrAlias).isEmpty()) {
 
         String msg = String.format(
             "VOMS server for VO %s is not known! " + "Check your vomses configuration.", voOrAlias);
@@ -229,8 +228,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     VOMSServerInfoStore sis = null;
 
-    if (params.getVomsCommands() != null && !params.getVomsCommands()
-      .isEmpty()) {
+    if (params.getVomsCommands() != null && !params.getVomsCommands().isEmpty()) {
       sis = new DefaultVOMSServerInfoStore.Builder()
         .lookupStrategy(getVOMSESLookupStrategyFromParams(params))
         .storeListener(serverInfoStoreListener)
@@ -288,7 +286,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     if (vomsValidator != null) {
       return vomsValidator;
     }
-    
+
     String vomsdir = DefaultVOMSTrustStore.DEFAULT_VOMS_DIR;
 
     if (System.getenv(VOMSEnvironmentVariables.X509_VOMS_DIR) != null)
@@ -299,8 +297,17 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     directorySanityChecks(vomsdir, "Invalid vomsdir location");
 
+    Map<String, List<String>> vomsCommandsMap =
+        commandsParser.parseCommands(params.getVomsCommands());
+
+    List<String> VOs = new ArrayList<>();
+
+    for (String vo : vomsCommandsMap.keySet()) {
+      VOs.add(vo);
+    }
+
     VOMSTrustStore trustStore =
-        new DefaultVOMSTrustStore(Arrays.asList(vomsdir), vomsTrustStoreListener);
+        new DefaultVOMSTrustStore(Arrays.asList(vomsdir), VOs, vomsTrustStoreListener);
 
     vomsValidator =
         VOMSValidators.newValidator(trustStore, certChainValidator, validationResultListener);
@@ -308,8 +315,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     return vomsValidator;
   }
 
-  private void verifyACs(ProxyInitParams params,
-    List<AttributeCertificate> acs) {
+  private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
 
     VOMSACValidator acValidator = initVOMSValidator(params);
     acValidator.validateACs(acs);
@@ -372,8 +378,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       ProxyChainInfo ci;
       try {
         ci = new ProxyChainInfo(issuingCredential.getCertificateChain());
-        if (ci.getProxyType()
-          .equals(ProxyChainType.MIXED))
+        if (ci.getProxyType().equals(ProxyChainType.MIXED))
           throw new VOMSError(
               "Cannot generate a proxy certificate starting from a mixed type proxy chain.");
 
@@ -473,8 +478,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
   protected List<String> sortFQANsIfRequested(ProxyInitParams params, List<String> unsortedFQANs) {
 
-    if (params.getFqanOrder() != null && !params.getFqanOrder()
-      .isEmpty()) {
+    if (params.getFqanOrder() != null && !params.getFqanOrder().isEmpty()) {
 
       Set<String> fqans = new LinkedHashSet<String>();
       for (String fqan : params.getFqanOrder()) {
