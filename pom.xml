@@ -50,7 +50,7 @@ SPDX-License-Identifier: Apache-2.0
     <plugin.central-publishing.version>0.7.0</plugin.central-publishing.version>
     <plugin.asciidoctor.version>3.1.1</plugin.asciidoctor.version>
 
-    <junit.version>4.13.2</junit.version>
+    <junit.version>6.0.3</junit.version>
     <commons-io.version>2.18.0</commons-io.version>
     <commons-cli.version>1.9.0</commons-cli.version>
     <voms-api-java.version>3.3.7</voms-api-java.version>
@@ -219,8 +219,8 @@ SPDX-License-Identifier: Apache-2.0
 
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.italiangrid.voms.clients.impl.DefaultVOMSCommandsParser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TestVOMSCommandsParser {
 
@@ -23,7 +23,7 @@ public class TestVOMSCommandsParser {
     Map<String, List<String>> map = parser.parseCommands(Collections
       .<String> emptyList());
 
-    Assert.assertTrue(map.isEmpty());
+    Assertions.assertTrue(map.isEmpty());
   }
 
   @Test
@@ -33,7 +33,7 @@ public class TestVOMSCommandsParser {
 
     Map<String, List<String>> map = parser.parseCommands(null);
 
-    Assert.assertNull(map);
+    Assertions.assertNull(map);
 
   }
 
@@ -45,11 +45,11 @@ public class TestVOMSCommandsParser {
     Map<String, List<String>> map = parser
       .parseCommands(Arrays.asList("atlas"));
 
-    Assert.assertNotNull(map);
-    Assert.assertFalse(map.isEmpty());
-    Assert.assertTrue(map.size() == 1);
-    Assert.assertNotNull(map.get("atlas"));
-    Assert.assertTrue(map.get("atlas").isEmpty());
+    Assertions.assertNotNull(map);
+    Assertions.assertFalse(map.isEmpty());
+    Assertions.assertTrue(map.size() == 1);
+    Assertions.assertNotNull(map.get("atlas"));
+    Assertions.assertTrue(map.get("atlas").isEmpty());
   }
 
   @Test
@@ -60,13 +60,13 @@ public class TestVOMSCommandsParser {
     Map<String, List<String>> map = parser.parseCommands(Arrays
       .asList("atlas:/atlas/Role=production"));
 
-    Assert.assertNotNull(map);
-    Assert.assertFalse(map.isEmpty());
-    Assert.assertTrue(map.size() == 1);
-    Assert.assertNotNull(map.get("atlas"));
-    Assert.assertFalse(map.get("atlas").isEmpty());
-    Assert.assertTrue(map.get("atlas").size() == 1);
-    Assert.assertEquals("/atlas/Role=production", map.get("atlas").get(0));
+    Assertions.assertNotNull(map);
+    Assertions.assertFalse(map.isEmpty());
+    Assertions.assertTrue(map.size() == 1);
+    Assertions.assertNotNull(map.get("atlas"));
+    Assertions.assertFalse(map.get("atlas").isEmpty());
+    Assertions.assertTrue(map.get("atlas").size() == 1);
+    Assertions.assertEquals("/atlas/Role=production", map.get("atlas").get(0));
   }
 
   @Test
@@ -77,14 +77,14 @@ public class TestVOMSCommandsParser {
     Map<String, List<String>> map = parser.parseCommands(Arrays.asList(
       "atlas:/atlas/Role=production", "atlas:/atlas/Role=admin"));
 
-    Assert.assertNotNull(map);
-    Assert.assertFalse(map.isEmpty());
-    Assert.assertTrue(map.size() == 1);
-    Assert.assertNotNull(map.get("atlas"));
-    Assert.assertFalse(map.get("atlas").isEmpty());
-    Assert.assertTrue(map.get("atlas").size() == 2);
-    Assert.assertEquals("/atlas/Role=production", map.get("atlas").get(0));
-    Assert.assertEquals("/atlas/Role=admin", map.get("atlas").get(1));
+    Assertions.assertNotNull(map);
+    Assertions.assertFalse(map.isEmpty());
+    Assertions.assertTrue(map.size() == 1);
+    Assertions.assertNotNull(map.get("atlas"));
+    Assertions.assertFalse(map.get("atlas").isEmpty());
+    Assertions.assertTrue(map.get("atlas").size() == 2);
+    Assertions.assertEquals("/atlas/Role=production", map.get("atlas").get(0));
+    Assertions.assertEquals("/atlas/Role=admin", map.get("atlas").get(1));
   }
 
   @Test
@@ -95,14 +95,14 @@ public class TestVOMSCommandsParser {
     Map<String, List<String>> map = parser.parseCommands(Arrays.asList(
       "atlas:/atlas/Role=production", "atlas:/atlas/Role=admin", "atlas"));
 
-    Assert.assertNotNull(map);
-    Assert.assertFalse(map.isEmpty());
-    Assert.assertTrue(map.size() == 1);
-    Assert.assertNotNull(map.get("atlas"));
-    Assert.assertFalse(map.get("atlas").isEmpty());
-    Assert.assertTrue(map.get("atlas").size() == 2);
-    Assert.assertEquals("/atlas/Role=production", map.get("atlas").get(0));
-    Assert.assertEquals("/atlas/Role=admin", map.get("atlas").get(1));
+    Assertions.assertNotNull(map);
+    Assertions.assertFalse(map.isEmpty());
+    Assertions.assertTrue(map.size() == 1);
+    Assertions.assertNotNull(map.get("atlas"));
+    Assertions.assertFalse(map.get("atlas").isEmpty());
+    Assertions.assertTrue(map.get("atlas").size() == 2);
+    Assertions.assertEquals("/atlas/Role=production", map.get("atlas").get(0));
+    Assertions.assertEquals("/atlas/Role=admin", map.get("atlas").get(1));
   }
 
   @Test
@@ -113,18 +113,18 @@ public class TestVOMSCommandsParser {
     Map<String, List<String>> map = parser.parseCommands(Arrays.asList(
       "atlas:/atlas/Role=production", "atlas:/atlas/Role=admin", "cms",
       "cms:/cms/camaghe"));
-    Assert.assertNotNull(map);
-    Assert.assertFalse(map.isEmpty());
-    Assert.assertTrue(map.size() == 2);
-    Assert.assertNotNull(map.get("atlas"));
-    Assert.assertFalse(map.get("atlas").isEmpty());
-    Assert.assertNotNull(map.get("cms"));
-    Assert.assertFalse(map.get("cms").isEmpty());
-    Assert.assertTrue(map.get("atlas").size() == 2);
-    Assert.assertEquals("/atlas/Role=production", map.get("atlas").get(0));
-    Assert.assertEquals("/atlas/Role=admin", map.get("atlas").get(1));
-    Assert.assertTrue(map.get("cms").size() == 1);
-    Assert.assertEquals("/cms/camaghe", map.get("cms").get(0));
+    Assertions.assertNotNull(map);
+    Assertions.assertFalse(map.isEmpty());
+    Assertions.assertTrue(map.size() == 2);
+    Assertions.assertNotNull(map.get("atlas"));
+    Assertions.assertFalse(map.get("atlas").isEmpty());
+    Assertions.assertNotNull(map.get("cms"));
+    Assertions.assertFalse(map.get("cms").isEmpty());
+    Assertions.assertTrue(map.get("atlas").size() == 2);
+    Assertions.assertEquals("/atlas/Role=production", map.get("atlas").get(0));
+    Assertions.assertEquals("/atlas/Role=admin", map.get("atlas").get(1));
+    Assertions.assertTrue(map.get("cms").size() == 1);
+    Assertions.assertEquals("/cms/camaghe", map.get("cms").get(0));
   }
 
   @Test
@@ -134,10 +134,10 @@ public class TestVOMSCommandsParser {
     Map<String, List<String>> map = parser.parseCommands(Arrays
       .asList("atlas:all"));
 
-    Assert.assertNotNull(map);
-    Assert.assertFalse(map.isEmpty());
-    Assert.assertTrue(map.size() == 1);
-    Assert.assertNotNull(map.get("atlas"));
-    Assert.assertTrue(map.get("atlas").isEmpty());
+    Assertions.assertNotNull(map);
+    Assertions.assertFalse(map.isEmpty());
+    Assertions.assertTrue(map.size() == 1);
+    Assertions.assertNotNull(map.get("atlas"));
+    Assertions.assertTrue(map.get("atlas").isEmpty());
   }
 }

@@ -10,8 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TestSimpleDateFormat {
 
@@ -41,7 +41,7 @@ public class TestSimpleDateFormat {
         .get(Calendar.HOUR_OF_DAY))
         + TimeUnit.MINUTES.toSeconds(c.get(Calendar.MINUTE));
 
-      Assert.assertTrue(lengthInSeconds[i] == calculatedInterval);
+      Assertions.assertTrue(lengthInSeconds[i] == calculatedInterval);
     }
   }
 

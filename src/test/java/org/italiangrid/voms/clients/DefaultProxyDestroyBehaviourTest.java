@@ -4,14 +4,13 @@
 
 package org.italiangrid.voms.clients;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.IOException;
 
 import org.italiangrid.voms.clients.impl.DefaultProxyDestroyBehaviour;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class DefaultProxyDestroyBehaviourTest {
 
@@ -50,7 +49,7 @@ public class DefaultProxyDestroyBehaviourTest {
      * check that /tmp/x509_u<uid> exists no longer.
      */
 
-    assertFalse(file.exists());
+    Assertions.assertFalse(file.exists());
   }
 
   /**
@@ -85,7 +84,7 @@ public class DefaultProxyDestroyBehaviourTest {
      * check that /tmp/x509_u<uid> exists no longer.
      */
 
-    assertFalse(file.exists());
+    Assertions.assertFalse(file.exists());
   }
 
 }
