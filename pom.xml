@@ -10,7 +10,7 @@ SPDX-License-Identifier: Apache-2.0
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>voms-clients</artifactId>
-  <version>3.3.8</version>
+  <version>3.4.0</version>
 
   <name>voms-clients</name>
   <description>VOMS service command-line clients</description>
@@ -57,7 +57,7 @@ SPDX-License-Identifier: Apache-2.0
     <mockito.version>5.24.0</mockito.version>
     <commons-io.version>2.22.0</commons-io.version>
     <commons-cli.version>1.11.0</commons-cli.version>
-    <voms-api-java.version>3.3.8</voms-api-java.version>
+    <voms-api-java.version>3.4.0</voms-api-java.version>
 
     <!-- Leave this defined as empty -->
     <voms-clients.libs />
