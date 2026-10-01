@@ -16,18 +16,12 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: 17
+        cache: maven
         server-id: central
         server-username: MAVEN_CENTRAL_USERNAME
         server-password: MAVEN_CENTRAL_PASSWORD
         gpg-private-key: ${{ secrets.MAVEN_GPG_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
-
-    - name: Cache Maven packages
-      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
 
     - name: Build with Maven
       run: mvn -B clean package
