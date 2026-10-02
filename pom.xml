@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2006 Istituto Nazionale di Fisica Nucleare
 SPDX-License-Identifier: Apache-2.0
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
@@ -27,7 +28,8 @@ SPDX-License-Identifier: Apache-2.0
   <scm>
     <url>https://github.com/italiangrid/voms-clients</url>
     <connection>scm:git:git://github.com/italiangrid/voms-clients.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:italiangrid/voms-clients.git</developerConnection>
+    <developerConnection>
+      scm:git:ssh://git@github.com:italiangrid/voms-clients.git</developerConnection>
   </scm>
 
   <properties>
@@ -49,6 +51,7 @@ SPDX-License-Identifier: Apache-2.0
     <plugin.maven-gpg.version>3.2.8</plugin.maven-gpg.version>
     <plugin.central-publishing.version>0.10.0</plugin.central-publishing.version>
     <plugin.asciidoctor.version>3.1.1</plugin.asciidoctor.version>
+    <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
 
     <junit.version>6.0.3</junit.version>
     <mockito.version>5.24.0</mockito.version>
@@ -211,6 +214,27 @@ SPDX-License-Identifier: Apache-2.0
             <phase>generate-resources</phase>
             <goals>
               <goal>process-asciidoc</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${plugin.jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
             </goals>
           </execution>
         </executions>
