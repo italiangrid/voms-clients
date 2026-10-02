@@ -48,6 +48,9 @@ jobs:
       - name: Build and test
         run: mvn --batch-mode --no-transfer-progress clean verify
 
+      - name: Verify coverage report exists
+        run: test -s target/site/jacoco/jacoco.xml
+
       - name: Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
