@@ -10,9 +10,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.cert.CertificateException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -391,20 +392,16 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
   private void ensureProxyLifetimeIsConsistentWithIssuingCredential(ProxyCertificateOptions options,
       X509Credential issuingCredential, List<String> proxyCreationWarnings) {
 
-    Calendar cal = Calendar.getInstance();
+    Date proxyStartTime = options.getNotBefore();
+    Date proxyEndTime =
+        Date.from(proxyStartTime.toInstant().plusSeconds(options.getLifetime()));
 
-    Date proxyStartTime = cal.getTime();
-
-    cal.add(Calendar.SECOND, options.getLifetime());
-
-    Date proxyEndTime = cal.getTime();
-    Date issuingCredentialEndTime = issuingCredential.getCertificate().getNotAfter();
-
-    options.setValidityBounds(proxyStartTime, proxyEndTime);
+    Date issuingCredentialEndTime =
+        issuingCredential.getCertificate().getNotAfter();
 
     if (proxyEndTime.after(issuingCredentialEndTime)) {
-
-      proxyCreationWarnings.add("proxy lifetime limited to issuing " + "credential lifetime.");
+      proxyCreationWarnings.add(
+          "proxy lifetime limited to issuing credential lifetime.");
       options.setValidityBounds(proxyStartTime, issuingCredentialEndTime);
     }
   }
@@ -440,7 +437,13 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     proxyOptions.setProxyPathLimit(params.getPathLenConstraint());
 
     proxyOptions.setLimited(params.isLimited());
-    proxyOptions.setLifetime(params.getProxyLifetimeInSeconds());
+
+    Instant now = Instant.now();
+
+    proxyOptions.setValidityBounds(
+        Date.from(now.minus(5, ChronoUnit.MINUTES)),
+        Date.from(now.plusSeconds(params.getProxyLifetimeInSeconds())));
+    
     proxyOptions.setType(params.getProxyType());
     proxyOptions.setKeyLength(params.getKeySize());
 

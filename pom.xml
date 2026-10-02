@@ -46,7 +46,7 @@ SPDX-License-Identifier: Apache-2.0
     <plugin.source.version>3.4.0</plugin.source.version>
     <plugin.assembly.version>3.8.0</plugin.assembly.version>
     <plugin.deploy.version>3.1.4</plugin.deploy.version>
-    <plugin.jar.version>3.5.0</plugin.jar.version>
+    <plugin.jar.version>3.4.2</plugin.jar.version>
     <plugin.javadoc.version>3.12.0</plugin.javadoc.version>
     <plugin.maven-gpg.version>3.2.8</plugin.maven-gpg.version>
     <plugin.central-publishing.version>0.10.0</plugin.central-publishing.version>
@@ -54,6 +54,7 @@ SPDX-License-Identifier: Apache-2.0
     <plugin.jacoco.version>0.8.15</plugin.jacoco.version>
 
     <junit.version>6.0.3</junit.version>
+    <mockito.version>5.24.0</mockito.version>
     <commons-io.version>2.22.0</commons-io.version>
     <commons-cli.version>1.11.0</commons-cli.version>
     <voms-api-java.version>3.3.8</voms-api-java.version>
@@ -246,6 +247,12 @@ SPDX-License-Identifier: Apache-2.0
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
