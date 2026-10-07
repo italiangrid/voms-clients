@@ -6,6 +6,14 @@ SPDX-License-Identifier: Apache-2.0
 
 # Changelog
 
+## 3.4.0 (2026-10-07)
+
+* Move to VOMS API Java 3.4.0:
+  * Change the default hash algorithm for OpenSSL-compatible trust-directory filenames from MD5 to SHA-1.
+  * Upgrade Bouncy Castle from 1.84 to 1.86.
+  * Upgrade CANL from 2.8.3 to 2.9.0.
+
+
 ## 3.3.8 (2026-05-08)
 
 * Move to VOMS API Java 3.3.8 which means Bouncy Castle 1.84
