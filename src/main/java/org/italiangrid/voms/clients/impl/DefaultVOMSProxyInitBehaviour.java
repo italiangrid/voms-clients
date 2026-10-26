@@ -44,6 +44,7 @@ import org.italiangrid.voms.request.VOMSACService;
 import org.italiangrid.voms.request.VOMSESLookupStrategy;
 import org.italiangrid.voms.request.VOMSProtocolListener;
 import org.italiangrid.voms.request.VOMSRequestListener;
+import org.italiangrid.voms.request.VOMSServerInfo;
 import org.italiangrid.voms.request.VOMSServerInfoStore;
 import org.italiangrid.voms.request.VOMSServerInfoStoreListener;
 import org.italiangrid.voms.request.impl.BaseVOMSESLookupStrategy;
@@ -143,7 +144,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
   }
 
-  private void init(ProxyInitParams params) {
+  private void init(ProxyInitParams params, VOMSServerInfoStore serverInfoStore) {
 
     if (hasVomsCommands(params) || params.validateUserCredential()) {
 
@@ -151,7 +152,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       initCertChainValidator(params);
 
       if (params.verifyAC() && hasVomsCommands(params)) {
-        initVOMSValidator(params);
+        initVOMSValidator(params, serverInfoStore);
       }
     }
 
@@ -175,8 +176,6 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
   public void initProxy(ProxyInitParams params) {
 
-    init(params);
-
     VOMSServerInfoStore serverInfoStore = null;
 
     // Fail fast if VO is not configured correctly
@@ -184,6 +183,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       serverInfoStore = initServerInfoStore(params);
       checkCommands(params, serverInfoStore);
     }
+
+    init(params, serverInfoStore);
 
     X509Credential cred = lookupCredential(params);
     if (cred == null) {
@@ -204,7 +205,7 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     }
 
     if (params.verifyAC() && !acs.isEmpty()) {
-      verifyACs(params, acs);
+      verifyACs(params, acs, serverInfoStore);
     }
 
     createProxy(params, cred, acs);
@@ -282,7 +283,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     }
   }
 
-  private VOMSACValidator initVOMSValidator(ProxyInitParams params) {
+  private VOMSACValidator initVOMSValidator(ProxyInitParams params,
+      VOMSServerInfoStore serverInfoStore) {
 
     if (vomsValidator != null) {
       return vomsValidator;
@@ -301,14 +303,18 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     Map<String, List<String>> vomsCommandsMap =
         commandsParser.parseCommands(params.getVomsCommands());
 
-    List<String> VOs = new ArrayList<>();
+    Set<String> voNames = new LinkedHashSet<>();
 
-    for (String vo : vomsCommandsMap.keySet()) {
-      VOs.add(vo);
+    // Command keys are vomses aliases; trust directories are named after the actual VO.
+    for (String alias : vomsCommandsMap.keySet()) {
+      for (VOMSServerInfo server : serverInfoStore.getVOMSServerInfo(alias)) {
+        voNames.add(server.getVoName());
+      }
     }
 
     VOMSTrustStore trustStore =
-        new DefaultVOMSTrustStore(Arrays.asList(vomsdir), VOs, vomsTrustStoreListener);
+        new DefaultVOMSTrustStore(Arrays.asList(vomsdir), new ArrayList<>(voNames),
+            vomsTrustStoreListener);
 
     vomsValidator =
         VOMSValidators.newValidator(trustStore, certChainValidator, validationResultListener);
@@ -316,9 +322,10 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
     return vomsValidator;
   }
 
-  private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs) {
+  private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs,
+      VOMSServerInfoStore serverInfoStore) {
 
-    VOMSACValidator acValidator = initVOMSValidator(params);
+    VOMSACValidator acValidator = initVOMSValidator(params, serverInfoStore);
     acValidator.validateACs(acs);
 
   }
