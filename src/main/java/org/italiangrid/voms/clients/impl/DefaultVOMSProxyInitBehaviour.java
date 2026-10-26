@@ -84,19 +84,19 @@ import eu.emi.security.authn.x509.proxy.ProxyUtils;
  */
 public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
-  private VOMSCommandsParsingStrategy commandsParser;
+  private final VOMSCommandsParsingStrategy commandsParser;
   private X509CertChainValidatorExt certChainValidator;
   private VOMSACValidator vomsValidator;
 
-  private ValidationResultListener validationResultListener;
-  private VOMSRequestListener requestListener;
-  private ProxyCreationListener proxyCreationListener;
-  private VOMSServerInfoStoreListener serverInfoStoreListener;
-  private LoadCredentialsEventListener loadCredentialsEventListener;
-  private ValidationErrorListener certChainValidationErrorListener;
-  private VOMSTrustStoreStatusListener vomsTrustStoreListener;
-  private StoreUpdateListener storeUpdateListener;
-  private VOMSProtocolListener protocolListener;
+  private final ValidationResultListener validationResultListener;
+  private final VOMSRequestListener requestListener;
+  private final ProxyCreationListener proxyCreationListener;
+  private final VOMSServerInfoStoreListener serverInfoStoreListener;
+  private final LoadCredentialsEventListener loadCredentialsEventListener;
+  private final ValidationErrorListener certChainValidationErrorListener;
+  private final VOMSTrustStoreStatusListener vomsTrustStoreListener;
+  private final StoreUpdateListener storeUpdateListener;
+  private final VOMSProtocolListener protocolListener;
 
   private ACResolverStrategy acResolver;
 
@@ -312,9 +312,8 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       }
     }
 
-    VOMSTrustStore trustStore =
-        new DefaultVOMSTrustStore(Arrays.asList(vomsdir), new ArrayList<>(voNames),
-            vomsTrustStoreListener);
+    VOMSTrustStore trustStore = new DefaultVOMSTrustStore(Arrays.asList(vomsdir),
+        new ArrayList<>(voNames), vomsTrustStoreListener);
 
     vomsValidator =
         VOMSValidators.newValidator(trustStore, certChainValidator, validationResultListener);
@@ -400,15 +399,12 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
       X509Credential issuingCredential, List<String> proxyCreationWarnings) {
 
     Date proxyStartTime = options.getNotBefore();
-    Date proxyEndTime =
-        Date.from(proxyStartTime.toInstant().plusSeconds(options.getLifetime()));
+    Date proxyEndTime = Date.from(proxyStartTime.toInstant().plusSeconds(options.getLifetime()));
 
-    Date issuingCredentialEndTime =
-        issuingCredential.getCertificate().getNotAfter();
+    Date issuingCredentialEndTime = issuingCredential.getCertificate().getNotAfter();
 
     if (proxyEndTime.after(issuingCredentialEndTime)) {
-      proxyCreationWarnings.add(
-          "proxy lifetime limited to issuing credential lifetime.");
+      proxyCreationWarnings.add("proxy lifetime limited to issuing credential lifetime.");
       options.setValidityBounds(proxyStartTime, issuingCredentialEndTime);
     }
   }
@@ -447,10 +443,9 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
 
     Instant now = Instant.now();
 
-    proxyOptions.setValidityBounds(
-        Date.from(now.minus(5, ChronoUnit.MINUTES)),
+    proxyOptions.setValidityBounds(Date.from(now.minus(5, ChronoUnit.MINUTES)),
         Date.from(now.plusSeconds(params.getProxyLifetimeInSeconds())));
-    
+
     proxyOptions.setType(params.getProxyType());
     proxyOptions.setKeyLength(params.getKeySize());
 

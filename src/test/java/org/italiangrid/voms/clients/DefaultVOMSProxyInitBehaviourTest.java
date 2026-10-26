@@ -200,8 +200,8 @@ class DefaultVOMSProxyInitBehaviourTest {
   @Test
   void loadsAllRequestedVosAndDeduplicatesAliases() throws Exception {
     assertLoadedTrust(Arrays.asList("atlas-test", "atlas-backup", "cms-test"),
-        Arrays.asList(vomsesEntry("atlas-test", "atlas"),
-            vomsesEntry("atlas-backup", "atlas"), vomsesEntry("cms-test", "cms")),
+        Arrays.asList(vomsesEntry("atlas-test", "atlas"), vomsesEntry("atlas-backup", "atlas"),
+            vomsesEntry("cms-test", "cms")),
         Arrays.asList("atlas", "cms"));
   }
 
@@ -216,8 +216,8 @@ class DefaultVOMSProxyInitBehaviourTest {
     }
     // An unrelated directory must not be loaded, even if its contents are invalid.
     Path unrelated = Files.createDirectory(trustDir.resolve("unrelated"));
-    Files.write(unrelated.resolve("invalid.pem"),
-        Collections.singletonList("not a certificate"), StandardCharsets.US_ASCII);
+    Files.write(unrelated.resolve("invalid.pem"), Collections.singletonList("not a certificate"),
+        StandardCharsets.US_ASCII);
 
     Path vomses = directory.resolve("vomses");
     Files.write(vomses, entries, StandardCharsets.US_ASCII);
