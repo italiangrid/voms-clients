@@ -4,7 +4,6 @@
 
 package org.italiangrid.voms.clients;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,10 +90,9 @@ class DefaultProxyDestroyBehaviourTest {
       assumeFalse(parent.toFile().canWrite(),
           "Privileged users may bypass directory write permissions");
 
-      assertAll(
-          () -> assertThrows(VOMSError.class, () -> destroyProxy(params),
-              "A failed deletion must not be reported as success"),
-          () -> assertArrayEquals(original, Files.readAllBytes(proxy)));
+      assertThrows(VOMSError.class, () -> destroyProxy(params),
+          "A failed deletion must not be reported as success");
+      assertArrayEquals(original, Files.readAllBytes(proxy));
     } finally {
       // Restore access even when the test is skipped or an assertion fails.
       Files.setPosixFilePermissions(parent, permissions);
