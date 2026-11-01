@@ -59,7 +59,7 @@ SPDX-License-Identifier: Apache-2.0
     <mockito.version>5.24.0</mockito.version>
     <commons-io.version>2.22.0</commons-io.version>
     <commons-cli.version>1.11.0</commons-cli.version>
-    <voms-api-java.version>3.4.0</voms-api-java.version>
+    <voms-api-java.version>3.4.1</voms-api-java.version>
 
     <!-- Leave these defined as empty -->
     <voms-clients.libs />
