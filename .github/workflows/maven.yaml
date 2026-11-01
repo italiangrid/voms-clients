@@ -24,6 +24,9 @@ jobs:
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
     - name: Build with Maven
+      # Keep tests independent of dynamic Java agent attachment.
+      env:
+        JAVA_TOOL_OPTIONS: -XX:-EnableDynamicAgentLoading
       run: mvn -B clean package
 
     - name: Deploy to Maven Central
