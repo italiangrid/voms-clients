@@ -7,6 +7,7 @@ package org.italiangrid.voms.clients;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -26,6 +27,7 @@ import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -35,12 +37,15 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.italiangrid.voms.clients.impl.DefaultVOMSCommandsParser;
 import org.italiangrid.voms.clients.impl.DefaultVOMSProxyInitBehaviour;
+import org.italiangrid.voms.store.LSCInfo;
 import org.italiangrid.voms.clients.impl.InitListenerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import eu.emi.security.authn.x509.X509Credential;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyType;
 
@@ -176,6 +181,86 @@ class DefaultVOMSProxyInitBehaviourTest {
         after.plusSeconds(LIFETIME_SECONDS));
 
     assertTrue(warnings.isEmpty());
+  }
+
+  @Test
+  void loadsCanonicalVoTrustForNickname() throws Exception {
+    assertLoadedTrust(Collections.singletonList("atlas-test:/atlas"),
+        Collections.singletonList(vomsesEntry("atlas-test", "atlas")),
+        Collections.singletonList("atlas"));
+  }
+
+  @Test
+  void loadsTrustWhenAliasEqualsVoName() throws Exception {
+    assertLoadedTrust(Collections.singletonList("atlas"),
+        Collections.singletonList(vomsesEntry("atlas", "atlas")),
+        Collections.singletonList("atlas"));
+  }
+
+  @Test
+  void loadsAllRequestedVosAndDeduplicatesAliases() throws Exception {
+    assertLoadedTrust(Arrays.asList("atlas-test", "atlas-backup", "cms-test"),
+        Arrays.asList(vomsesEntry("atlas-test", "atlas"), vomsesEntry("atlas-backup", "atlas"),
+            vomsesEntry("cms-test", "cms")),
+        Arrays.asList("atlas", "cms"));
+  }
+
+  private void assertLoadedTrust(List<String> commands, List<String> entries,
+      List<String> expectedVos) throws Exception {
+    writeIssuer(Instant.now().plus(2, ChronoUnit.DAYS));
+    Path trustDir = Files.createDirectory(directory.resolve("vomsdir"));
+    for (String vo : expectedVos) {
+      Path voDir = Files.createDirectory(trustDir.resolve(vo));
+      Files.write(voDir.resolve("voms.example.org.lsc"),
+          Arrays.asList("/CN=voms.example.org", "/CN=Test CA"), StandardCharsets.US_ASCII);
+    }
+    // An unrelated directory must not be loaded, even if its contents are invalid.
+    Path unrelated = Files.createDirectory(trustDir.resolve("unrelated"));
+    Files.write(unrelated.resolve("invalid.pem"), Collections.singletonList("not a certificate"),
+        StandardCharsets.US_ASCII);
+
+    Path vomses = directory.resolve("vomses");
+    Files.write(vomses, entries, StandardCharsets.US_ASCII);
+    params.setVomsesLocations(Collections.singletonList(vomses.toString()));
+    params.setVomsCommands(commands);
+    params.setVomsdir(trustDir.toString());
+    params.setTrustAnchorsDir(Files.createDirectory(directory.resolve("certificates")).toString());
+    params.setVerifyAC(true);
+
+    List<String> loadedVos = new ArrayList<>();
+    doAnswer(invocation -> {
+      LSCInfo info = invocation.getArgument(0);
+      loadedVos.add(info.getVOName());
+      return null;
+    }).when(listener).notifyLSCLoadEvent(any(LSCInfo.class), any(java.io.File.class));
+
+    behaviour = new DefaultVOMSProxyInitBehaviour(new DefaultVOMSCommandsParser(), listener) {
+      @Override
+      protected void validateUserCredential(ProxyInitParams parameters, X509Credential credential) {
+        // Credential validation is independent of alias resolution.
+      }
+
+      @Override
+      protected void buildACResolver() {
+        // Stop after real vomses/trust-store initialization, before any network request.
+        throw new TrustInitializationComplete();
+      }
+    };
+
+    assertThrows(TrustInitializationComplete.class, () -> behaviour.initProxy(params));
+    Collections.sort(loadedVos);
+    List<String> expected = new ArrayList<>(expectedVos);
+    Collections.sort(expected);
+    assertEquals(expected, loadedVos);
+  }
+
+  private static String vomsesEntry(String alias, String vo) {
+    return String.format("\"%s\" \"voms.example.org\" \"15000\" \"/CN=voms.example.org\" \"%s\"",
+        alias, vo);
+  }
+
+  private static class TrustInitializationComplete extends RuntimeException {
+    private static final long serialVersionUID = 1L;
   }
 
   private void assertBackdatedStart(Instant before, Instant after) {
