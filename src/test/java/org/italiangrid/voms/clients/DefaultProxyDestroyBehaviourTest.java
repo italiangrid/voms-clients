@@ -4,70 +4,67 @@
 
 package org.italiangrid.voms.clients;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.mock;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.italiangrid.voms.clients.impl.DefaultProxyDestroyBehaviour;
+import org.italiangrid.voms.clients.impl.ProxyDestroyListenerAdapter;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class DefaultProxyDestroyBehaviourTest {
 
-  /**
-   * The object under test.
-   */
-  DefaultProxyDestroyBehaviour defaultProxyDestroyBehaviour = new DefaultProxyDestroyBehaviour(
-    null);
+  @TempDir
+  Path directory;
 
-  /**
-   * Tests that destroyProxy called with an empty arguments delete the proxy
-   * certificate file.
-   * 
-   * @throws IOException
-   *           when it can not create the file to be destroyed
-   */
+  @Test
+  void deletesProxyAtExplicitPath() throws IOException {
+
+    Path proxy = Files.createFile(directory.resolve("proxy.pem"));
+
+    ProxyDestroyParams params = new ProxyDestroyParams();
+    params.setProxyFile(proxy.toString());
+
+    new DefaultProxyDestroyBehaviour(mock(ProxyDestroyListenerAdapter.class)).destroyProxy(params);
+
+    assertFalse(Files.exists(proxy));
+  }
+
   @Test
   public void test() throws IOException {
 
-    DefaultProxyDestroyBehaviour behaviour = new DefaultProxyDestroyBehaviour(
-      null);
-
     /*
-     * make sure a file exists in /tmp/x509_u<uid>. It does not have to actually
-     * contains a proxy certificate as destroy delete it anyway.
+     * Make sure a file exists in /tmp/x509_u<uid>.
+     * It does not have to actually contains a proxy certificate as destroy delete 
+     * it anyway.
      */
 
     File file = new File(VOMSProxyPathBuilder.buildProxyPath());
     file.createNewFile();
 
-    ProxyDestroyParams params = new ProxyDestroyParams();
+    new DefaultProxyDestroyBehaviour(null).destroyProxy(new ProxyDestroyParams());
 
-    behaviour.destroyProxy(params);
-
-    /*
-     * check that /tmp/x509_u<uid> exists no longer.
-     */
-
-    Assertions.assertFalse(file.exists());
+    assertFalse(file.exists());
   }
 
   /**
-   * Tests that destroyProxy called passing an alternative proxy location in the
-   * parameters, delete the proxy certificate file.
+   * Tests that destroyProxy called passing an alternative proxy location in the parameters, delete
+   * the proxy certificate file.
    * 
-   * @throws IOException
-   *           when it can not create the file to be destroyed
+   * @throws IOException when it can not create the file to be destroyed
    */
   @Test
   public void anotherTest() throws IOException {
 
-    DefaultProxyDestroyBehaviour behaviour = new DefaultProxyDestroyBehaviour(
-      null);
-
     /*
-     * create the file that destroys is going to delete. It does not have to
-     * actually contains a proxy certificate as destroy delete it anyway.
+     * create the file that destroys is going to delete. It does not have to actually contains a
+     * proxy certificate as destroy delete it anyway.
      */
 
     String fileName = "/tmp/destroy_me";
@@ -78,13 +75,9 @@ public class DefaultProxyDestroyBehaviourTest {
     ProxyDestroyParams params = new ProxyDestroyParams();
     params.setProxyFile(fileName);
 
-    behaviour.destroyProxy(params);
+    new DefaultProxyDestroyBehaviour(null).destroyProxy(params);
 
-    /*
-     * check that /tmp/x509_u<uid> exists no longer.
-     */
-
-    Assertions.assertFalse(file.exists());
+    assertFalse(file.exists());
   }
 
 }

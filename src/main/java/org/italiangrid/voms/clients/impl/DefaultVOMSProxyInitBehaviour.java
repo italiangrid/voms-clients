@@ -324,9 +324,12 @@ public class DefaultVOMSProxyInitBehaviour implements ProxyInitStrategy {
   private void verifyACs(ProxyInitParams params, List<AttributeCertificate> acs,
       VOMSServerInfoStore serverInfoStore) {
 
-    VOMSACValidator acValidator = initVOMSValidator(params, serverInfoStore);
-    acValidator.validateACs(acs);
+    VOMSACValidator validator = initVOMSValidator(params, serverInfoStore);
+    List<AttributeCertificate> validated = validator.validateACs(acs);
 
+    if (validated.size() != acs.size()) {
+      throw new VOMSError("VOMS AC validation failed; the existing proxy has not been replaced.");
+    }
   }
 
   // Why we have to do this nonsense?
