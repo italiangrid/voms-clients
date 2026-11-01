@@ -5,7 +5,11 @@
 package org.italiangrid.voms.clients.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import org.italiangrid.voms.VOMSError;
 import org.italiangrid.voms.clients.ProxyDestroyBehaviour;
 import org.italiangrid.voms.clients.ProxyDestroyParams;
 import org.italiangrid.voms.clients.util.VOMSProxyPathBuilder;
@@ -29,9 +33,7 @@ public class DefaultProxyDestroyBehaviour implements ProxyDestroyBehaviour {
   /**
    * Constructor that takes a {@link ProxyDestroyListenerAdapter}.
    * 
-   * @param listener
-   *          The listener that will receive events related to proxy destroy
-   *          events
+   * @param listener The listener that will receive events related to proxy destroy events
    */
   public DefaultProxyDestroyBehaviour(ProxyDestroyListenerAdapter listener) {
 
@@ -41,16 +43,14 @@ public class DefaultProxyDestroyBehaviour implements ProxyDestroyBehaviour {
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.italiangrid.voms.clients.ProxyDestroyBehaviourInt#destroyProxy(org.
+   * @see org.italiangrid.voms.clients.ProxyDestroyBehaviourInt#destroyProxy(org.
    * italiangrid.voms.clients.ProxyDestroyParams)
    */
   @Override
   public void destroyProxy(ProxyDestroyParams params) {
     String proxyFilePath = VOMSProxyPathBuilder.buildProxyPath();
 
-    String envProxyPath = System
-      .getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
+    String envProxyPath = System.getenv(VOMSEnvironmentVariables.X509_USER_PROXY);
 
     if (envProxyPath != null)
       proxyFilePath = envProxyPath;
@@ -74,7 +74,11 @@ public class DefaultProxyDestroyBehaviour implements ProxyDestroyBehaviour {
       System.exit(0);
     }
 
-    file.delete();
+    try {
+      Files.delete(Paths.get(proxyFilePath));
+    } catch (IOException e) {
+      throw new VOMSError("Unable to delete proxy file: " + proxyFilePath, e);
+    }
 
   }
 
