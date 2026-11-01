@@ -4,6 +4,9 @@
 
 package org.italiangrid.voms.clients;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,8 +17,12 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -32,7 +39,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.AttributeCertificateHolder;
+import org.bouncycastle.cert.AttributeCertificateIssuer;
+import org.bouncycastle.cert.X509v2AttributeCertificateBuilder;
+import org.italiangrid.voms.VOMSError;
+import org.italiangrid.voms.ac.VOMSACValidator;
+import org.italiangrid.voms.clients.strategies.ACResolverStrategy;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
@@ -45,6 +61,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.X509Credential;
 import eu.emi.security.authn.x509.proxy.ProxyCertificate;
 import eu.emi.security.authn.x509.proxy.ProxyType;
@@ -261,6 +278,122 @@ class DefaultVOMSProxyInitBehaviourTest {
 
   private static class TrustInitializationComplete extends RuntimeException {
     private static final long serialVersionUID = 1L;
+  }
+
+
+  @Test
+  void rejectsInvalidAcWithoutReplacingExistingProxy() throws Exception {
+    assertRejectedAcsPreserveProxy(false);
+  }
+
+  @Test
+  void rejectsMixedValidAndInvalidAcsWithoutReplacingExistingProxy() throws Exception {
+    assertRejectedAcsPreserveProxy(true);
+  }
+
+  private void assertRejectedAcsPreserveProxy(boolean includeValidAc) throws Exception {
+    AttributeCertificate invalid = newAttributeCertificate(1);
+    AttributeCertificate valid = newAttributeCertificate(2);
+    List<AttributeCertificate> requested = includeValidAc
+        ? Arrays.asList(valid, invalid) : Collections.singletonList(invalid);
+    List<AttributeCertificate> accepted = includeValidAc
+        ? Collections.singletonList(valid) : Collections.emptyList();
+
+    VOMSACValidator validator = prepareAcValidation(requested, accepted);
+    Path proxyPath = directory.resolve("proxy.pem");
+    byte[] originalProxy = Files.readAllBytes(proxyPath);
+
+    // All assertions run even on the unfixed implementation, which writes the proxy.
+    assertAll(
+        () -> assertThrows(VOMSError.class, () -> behaviour.initProxy(params)),
+        () -> verify(validator).validateACs(requested),
+        () -> assertArrayEquals(originalProxy, Files.readAllBytes(proxyPath),
+            "A failed AC validation must preserve the existing proxy byte for byte"),
+        () -> verify(listener, never()).proxyCreated(
+            anyString(), any(ProxyCertificate.class), anyList()));
+  }
+
+  @Test
+  void createsProxyWhenEveryAcPassesValidation() throws Exception {
+    List<AttributeCertificate> acs = Collections.singletonList(newAttributeCertificate(1));
+    VOMSACValidator validator = prepareAcValidation(acs, acs);
+    Path proxyPath = directory.resolve("proxy.pem");
+    byte[] originalProxy = Files.readAllBytes(proxyPath);
+
+    assertDoesNotThrow(() -> behaviour.initProxy(params));
+
+    verify(validator).validateACs(acs);
+    verify(listener).proxyCreated(anyString(), any(ProxyCertificate.class), anyList());
+    assertNotNull(generatedCertificate);
+    assertFalse(Arrays.equals(originalProxy, Files.readAllBytes(proxyPath)));
+  }
+
+  /**
+   * Exercises initProxy through real credential loading, generation and file writing.
+   * Only certificate validation and the network AC resolver are replaced with mocks.
+   * The AC validator contract returns the subset of accepted certificates.
+   */
+  private VOMSACValidator prepareAcValidation(List<AttributeCertificate> requested,
+      List<AttributeCertificate> accepted) throws Exception {
+    writeIssuer(Instant.now().plus(2, ChronoUnit.DAYS));
+
+    // Start with a real, usable proxy rather than a placeholder file.
+    behaviour.initProxy(params);
+    org.mockito.Mockito.clearInvocations(listener);
+    generatedCertificate = null;
+    warnings.clear();
+
+    Path vomses = directory.resolve("validation-vomses");
+    Files.write(vomses, Collections.singletonList(vomsesEntry("test", "test")),
+        StandardCharsets.US_ASCII);
+    params.setVomsesLocations(Collections.singletonList(vomses.toString()));
+    params.setVomsCommands(Collections.singletonList("test"));
+    params.setVerifyAC(true);
+
+    VOMSACValidator validator = mock(VOMSACValidator.class);
+    when(validator.validateACs(requested)).thenReturn(accepted);
+    ACResolverStrategy resolver = mock(ACResolverStrategy.class);
+    when(resolver.getVOMSACs(org.mockito.ArgumentMatchers.same(params),
+        any(X509Credential.class), any())).thenReturn(requested);
+
+    behaviour = new DefaultVOMSProxyInitBehaviour(new DefaultVOMSCommandsParser(), listener) {
+      @Override
+      protected void validateUserCredential(ProxyInitParams parameters, X509Credential credential) {
+        // Issuer trust validation is independent of the AC acceptance decision under test.
+      }
+
+      @Override
+      protected void buildACResolver() {
+        // Keep the injected resolver: no VOMS server is contacted.
+      }
+    };
+
+    // No production visibility changes are needed for these private collaborators.
+    injectField("certChainValidator", mock(X509CertChainValidatorExt.class));
+    injectField("vomsValidator", validator);
+    injectField("acResolver", resolver);
+    return validator;
+  }
+
+  private void injectField(String name, Object value) throws Exception {
+    Field field = DefaultVOMSProxyInitBehaviour.class.getDeclaredField(name);
+    field.setAccessible(true);
+    field.set(behaviour, value);
+  }
+
+  private AttributeCertificate newAttributeCertificate(int serial) throws Exception {
+    Instant now = Instant.now();
+    X500Name holder = new X500Name("CN=Test User,O=VOMS Tests");
+    X500Name issuer = new X500Name("CN=Test Attribute Authority");
+    X509v2AttributeCertificateBuilder builder = new X509v2AttributeCertificateBuilder(
+        new AttributeCertificateHolder(holder), new AttributeCertificateIssuer(issuer),
+        BigInteger.valueOf(serial), Date.from(now.minusSeconds(60)),
+        Date.from(now.plusSeconds(3600)));
+    builder.addAttribute(new ASN1ObjectIdentifier("1.2.3.4"), new DERUTF8String("test"));
+    // Structurally valid ACs allow the real proxy writer to run on the unfixed code.
+    // Cryptographic/VOMS validation is intentionally controlled by the validator mock.
+    return builder.build(new JcaContentSignerBuilder("SHA256withRSA")
+        .build(issuerKey.getPrivate())).toASN1Structure();
   }
 
   private void assertBackdatedStart(Instant before, Instant after) {
